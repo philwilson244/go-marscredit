@@ -46,7 +46,7 @@ var FullNodeGPO = gasprice.Config{
 	IgnorePrice:      gasprice.DefaultIgnorePrice,
 }
 
-// Defaults contains default settings for use on the Ethereum main net.
+// Defaults contains default settings for use on the Mars Credit main net.
 var Defaults = Config{
 	SyncMode:           downloader.SnapSync,
 	NetworkId:          0, // enable auto configuration of networkID == chainID
@@ -74,7 +74,7 @@ var Defaults = Config{
 // Config contains configuration options for ETH and LES protocols.
 type Config struct {
 	// The genesis block, which is inserted if the database is empty.
-	// If nil, the Ethereum main net block is used.
+	// If nil, the Mars Credit main net block is used.
 	Genesis *core.Genesis `toml:",omitempty"`
 
 	// Network ID separates blockchains on the peer-to-peer networking level. When left

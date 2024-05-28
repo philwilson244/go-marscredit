@@ -35,14 +35,14 @@ import (
 	"github.com/ethereum/go-ethereum/trie"
 )
 
-// DebugAPI is the collection of Ethereum full node APIs for debugging the
+// DebugAPI is the collection of Mars Credit full node APIs for debugging the
 // protocol.
 type DebugAPI struct {
-	eth *Ethereum
+	eth *Mars Credit
 }
 
 // NewDebugAPI creates a new DebugAPI instance.
-func NewDebugAPI(eth *Ethereum) *DebugAPI {
+func NewDebugAPI(eth *Mars Credit) *DebugAPI {
 	return &DebugAPI{eth: eth}
 }
 

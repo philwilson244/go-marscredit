@@ -107,7 +107,7 @@ func (c *Config) sanitize() *Config {
 	return &conf
 }
 
-// Defaults contains default settings for Ethereum mainnet.
+// Defaults contains default settings for Mars Credit mainnet.
 var Defaults = &Config{
 	StateHistory:   params.FullImmutabilityThreshold,
 	CleanCacheSize: defaultCleanSize,

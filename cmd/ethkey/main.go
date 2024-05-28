@@ -31,7 +31,7 @@ const (
 var app *cli.App
 
 func init() {
-	app = flags.NewApp("Ethereum key manager")
+	app = flags.NewApp("Mars Credit key manager")
 	app.Commands = []*cli.Command{
 		commandGenerate,
 		commandInspect,

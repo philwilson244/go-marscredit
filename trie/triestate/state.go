@@ -28,7 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/trie/trienode"
 )
 
-// Trie is an Ethereum state trie, can be implemented by Ethereum Merkle Patricia
+// Trie is an Mars Credit state trie, can be implemented by Mars Credit Merkle Patricia
 // tree or Verkle tree.
 type Trie interface {
 	// Get returns the value for key stored in the trie.

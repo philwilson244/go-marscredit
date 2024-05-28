@@ -29,14 +29,14 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
-// AdminAPI is the collection of Ethereum full node related APIs for node
+// AdminAPI is the collection of Mars Credit full node related APIs for node
 // administration.
 type AdminAPI struct {
-	eth *Ethereum
+	eth *Mars Credit
 }
 
 // NewAdminAPI creates a new instance of AdminAPI.
-func NewAdminAPI(eth *Ethereum) *AdminAPI {
+func NewAdminAPI(eth *Mars Credit) *AdminAPI {
 	return &AdminAPI{eth: eth}
 }
 

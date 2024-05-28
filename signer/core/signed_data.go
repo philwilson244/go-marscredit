@@ -96,11 +96,11 @@ func (api *SignerAPI) SignData(ctx context.Context, contentType string, addr com
 func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType string, addr common.MixedcaseAddress, data interface{}) (*SignDataRequest, bool, error) {
 	var (
 		req          *SignDataRequest
-		useEthereumV = true // Default to use V = 27 or 28, the legacy Ethereum format
+		useMars CreditV = true // Default to use V = 27 or 28, the legacy Mars Credit format
 	)
 	mediaType, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
-		return nil, useEthereumV, err
+		return nil, useMars CreditV, err
 	}
 
 	switch mediaType {
@@ -108,7 +108,7 @@ func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType 
 		// Data with an intended validator
 		validatorData, err := UnmarshalValidatorData(data)
 		if err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 		sighash, msg := SignTextValidator(validatorData)
 		messages := []*apitypes.NameValueType{
@@ -135,14 +135,14 @@ func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType 
 		}
 		req = &SignDataRequest{ContentType: mediaType, Rawdata: []byte(msg), Messages: messages, Hash: sighash}
 	case apitypes.ApplicationClique.Mime:
-		// Clique is the Ethereum PoA standard
+		// Clique is the Mars Credit PoA standard
 		cliqueData, err := fromHex(data)
 		if err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 		header := &types.Header{}
 		if err := rlp.DecodeBytes(cliqueData, header); err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 		// Add space in the extradata to put the signature
 		newExtra := make([]byte, len(header.Extra)+65)
@@ -152,7 +152,7 @@ func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType 
 		// Get back the rlp data, encoded by us
 		sighash, cliqueRlp, err := cliqueHeaderHashAndRlp(header)
 		if err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 		messages := []*apitypes.NameValueType{
 			{
@@ -162,22 +162,22 @@ func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType 
 			},
 		}
 		// Clique uses V on the form 0 or 1
-		useEthereumV = false
+		useMars CreditV = false
 		req = &SignDataRequest{ContentType: mediaType, Rawdata: cliqueRlp, Messages: messages, Hash: sighash}
 	case apitypes.DataTyped.Mime:
 		// EIP-712 conformant typed data
 		var err error
 		req, err = typedDataRequest(data)
 		if err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 	default: // also case TextPlain.Mime:
-		// Calculates an Ethereum ECDSA signature for:
-		// hash = keccak256("\x19Ethereum Signed Message:\n${message length}${message}")
+		// Calculates an Mars Credit ECDSA signature for:
+		// hash = keccak256("\x19Mars Credit Signed Message:\n${message length}${message}")
 		// We expect input to be a hex-encoded string
 		textData, err := fromHex(data)
 		if err != nil {
-			return nil, useEthereumV, err
+			return nil, useMars CreditV, err
 		}
 		sighash, msg := accounts.TextAndHash(textData)
 		messages := []*apitypes.NameValueType{
@@ -191,7 +191,7 @@ func (api *SignerAPI) determineSignatureFormat(ctx context.Context, contentType 
 	}
 	req.Address = addr
 	req.Meta = MetadataFromContext(ctx)
-	return req, useEthereumV, nil
+	return req, useMars CreditV, nil
 }
 
 // SignTextValidator signs the given message which can be further recovered
@@ -296,7 +296,7 @@ func (api *SignerAPI) EcRecover(ctx context.Context, data hexutil.Bytes, sig hex
 	//
 	// Note, this function is compatible with eth_sign and personal_sign. As such it recovers
 	// the address of:
-	// hash = keccak256("\x19Ethereum Signed Message:\n${message length}${message}")
+	// hash = keccak256("\x19Mars Credit Signed Message:\n${message length}${message}")
 	// addr = ecrecover(hash, signature)
 	//
 	// Note, the signature must conform to the secp256k1 curve R, S and V values, where
@@ -307,7 +307,7 @@ func (api *SignerAPI) EcRecover(ctx context.Context, data hexutil.Bytes, sig hex
 		return common.Address{}, errors.New("signature must be 65 bytes long")
 	}
 	if sig[64] != 27 && sig[64] != 28 {
-		return common.Address{}, errors.New("invalid Ethereum signature (V is not 27 or 28)")
+		return common.Address{}, errors.New("invalid Mars Credit signature (V is not 27 or 28)")
 	}
 	sig[64] -= 27 // Transform yellow paper V from 27/28 to 0/1
 	hash := accounts.TextHash(data)

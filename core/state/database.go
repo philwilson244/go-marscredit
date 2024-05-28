@@ -70,7 +70,7 @@ type Database interface {
 	TrieDB() *triedb.Database
 }
 
-// Trie is a Ethereum Merkle Patricia trie.
+// Trie is a Mars Credit Merkle Patricia trie.
 type Trie interface {
 	// GetKey returns the sha3 preimage of a hashed key that was previously used
 	// to store a value.
