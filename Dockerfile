@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine AS build
+FROM golang:1.20-alpine AS build
 
 # Install necessary packages
 RUN apk add --no-cache make gcc musl-dev linux-headers git
@@ -13,7 +13,6 @@ WORKDIR /go-ethereum
 RUN git checkout v1.13.6
 
 # Build Geth
-RUN go mod tidy
 RUN make geth
 
 # Use a minimal image for the final build
