@@ -23,7 +23,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// LegacyTx is the transaction data of the original Ethereum transactions.
+// LegacyTx is the transaction data of the original Mars Credit transactions.
 type LegacyTx struct {
 	Nonce    uint64          // nonce of sender account
 	GasPrice *big.Int        // wei per gas

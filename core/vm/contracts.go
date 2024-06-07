@@ -46,7 +46,7 @@ type PrecompiledContract interface {
 	Run(input []byte) ([]byte, error) // Run runs the precompiled contract
 }
 
-// PrecompiledContractsHomestead contains the default set of pre-compiled Ethereum
+// PrecompiledContractsHomestead contains the default set of pre-compiled Mars Credit
 // contracts used in the Frontier and Homestead releases.
 var PrecompiledContractsHomestead = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x1}): &ecrecover{},
@@ -55,7 +55,7 @@ var PrecompiledContractsHomestead = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x4}): &dataCopy{},
 }
 
-// PrecompiledContractsByzantium contains the default set of pre-compiled Ethereum
+// PrecompiledContractsByzantium contains the default set of pre-compiled Mars Credit
 // contracts used in the Byzantium release.
 var PrecompiledContractsByzantium = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x1}): &ecrecover{},
@@ -68,7 +68,7 @@ var PrecompiledContractsByzantium = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x8}): &bn256PairingByzantium{},
 }
 
-// PrecompiledContractsIstanbul contains the default set of pre-compiled Ethereum
+// PrecompiledContractsIstanbul contains the default set of pre-compiled Mars Credit
 // contracts used in the Istanbul release.
 var PrecompiledContractsIstanbul = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x1}): &ecrecover{},
@@ -82,7 +82,7 @@ var PrecompiledContractsIstanbul = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x9}): &blake2F{},
 }
 
-// PrecompiledContractsBerlin contains the default set of pre-compiled Ethereum
+// PrecompiledContractsBerlin contains the default set of pre-compiled Mars Credit
 // contracts used in the Berlin release.
 var PrecompiledContractsBerlin = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x1}): &ecrecover{},
@@ -96,7 +96,7 @@ var PrecompiledContractsBerlin = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x9}): &blake2F{},
 }
 
-// PrecompiledContractsCancun contains the default set of pre-compiled Ethereum
+// PrecompiledContractsCancun contains the default set of pre-compiled Mars Credit
 // contracts used in the Cancun release.
 var PrecompiledContractsCancun = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x1}): &ecrecover{},
@@ -111,7 +111,7 @@ var PrecompiledContractsCancun = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0xa}): &kzgPointEvaluation{},
 }
 
-// PrecompiledContractsPrague contains the set of pre-compiled Ethereum
+// PrecompiledContractsPrague contains the set of pre-compiled Mars Credit
 // contracts used in the Prague release.
 var PrecompiledContractsPrague = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{0x01}): &ecrecover{},

@@ -81,19 +81,19 @@ var (
 	debExecutables = []debExecutable{
 		{
 			BinaryName:  "abigen",
-			Description: "Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages.",
+			Description: "Source code generator to convert Mars Credit contract definitions into easy to use, compile-time type-safe Go packages.",
 		},
 		{
 			BinaryName:  "bootnode",
-			Description: "Ethereum bootnode.",
+			Description: "Mars Credit bootnode.",
 		},
 		{
 			BinaryName:  "evm",
-			Description: "Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
+			Description: "Developer utility version of the EVM (Mars Credit Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
 		},
 		{
 			BinaryName:  "geth",
-			Description: "Ethereum CLI client.",
+			Description: "Mars Credit CLI client.",
 		},
 		{
 			BinaryName:  "rlpdump",
@@ -101,12 +101,12 @@ var (
 		},
 		{
 			BinaryName:  "clef",
-			Description: "Ethereum account management tool.",
+			Description: "Mars Credit account management tool.",
 		},
 	}
 
 	// A debian package is created for all executables listed here.
-	debEthereum = debPackage{
+	debMars Credit = debPackage{
 		Name:        "ethereum",
 		Version:     params.Version,
 		Executables: debExecutables,
@@ -114,7 +114,7 @@ var (
 
 	// Debian meta packages to build and push to Ubuntu PPA
 	debPackages = []debPackage{
-		debEthereum,
+		debMars Credit,
 	}
 
 	// Distros for which packages are created
@@ -876,7 +876,7 @@ func (d debExecutable) Package() string {
 func newDebMetadata(distro, author string, env build.Environment, t time.Time, name string, version string, exes []debExecutable) debMetadata {
 	if author == "" {
 		// No signing key, use default author.
-		author = "Ethereum Builds <fjl@ethereum.org>"
+		author = "Mars Credit Builds <fjl@ethereum.org>"
 	}
 	return debMetadata{
 		PackageName: name,

@@ -35,7 +35,7 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-func startSimulatedBeaconEthService(t *testing.T, genesis *core.Genesis) (*node.Node, *eth.Ethereum, *SimulatedBeacon) {
+func startSimulatedBeaconEthService(t *testing.T, genesis *core.Genesis) (*node.Node, *eth.Mars Credit, *SimulatedBeacon) {
 	t.Helper()
 
 	n, err := node.New(&node.Config{
@@ -80,7 +80,7 @@ func TestSimulatedBeaconSendWithdrawals(t *testing.T) {
 		// testKey is a private key to use for funding a tester account.
 		testKey, _ = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
 
-		// testAddr is the Ethereum address of the tester account.
+		// testAddr is the Mars Credit address of the tester account.
 		testAddr = crypto.PubkeyToAddress(testKey.PublicKey)
 	)
 

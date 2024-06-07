@@ -76,7 +76,7 @@ func (h *testEthHandler) Handle(peer *eth.Peer, packet eth.Packet) error {
 
 // Tests that peers are correctly accepted (or rejected) based on the advertised
 // fork IDs in the protocol handshake.
-func TestForkIDSplit68(t *testing.T) { testForkIDSplit(t, eth.ETH68) }
+func TestForkIDSplit68(t *testing.T) { testForkIDSplit(t, eth.MARS68) }
 
 func testForkIDSplit(t *testing.T, protocol uint) {
 	t.Parallel()
@@ -228,7 +228,7 @@ func testForkIDSplit(t *testing.T, protocol uint) {
 }
 
 // Tests that received transactions are added to the local pool.
-func TestRecvTransactions68(t *testing.T) { testRecvTransactions(t, eth.ETH68) }
+func TestRecvTransactions68(t *testing.T) { testRecvTransactions(t, eth.MARS68) }
 
 func testRecvTransactions(t *testing.T, protocol uint) {
 	t.Parallel()
@@ -285,7 +285,7 @@ func testRecvTransactions(t *testing.T, protocol uint) {
 }
 
 // This test checks that pending transactions are sent.
-func TestSendTransactions68(t *testing.T) { testSendTransactions(t, eth.ETH68) }
+func TestSendTransactions68(t *testing.T) { testSendTransactions(t, eth.MARS68) }
 
 func testSendTransactions(t *testing.T, protocol uint) {
 	t.Parallel()
@@ -369,7 +369,7 @@ func testSendTransactions(t *testing.T, protocol uint) {
 
 // Tests that transactions get propagated to all attached peers, either via direct
 // broadcasts or via announcements/retrievals.
-func TestTransactionPropagation68(t *testing.T) { testTransactionPropagation(t, eth.ETH68) }
+func TestTransactionPropagation68(t *testing.T) { testTransactionPropagation(t, eth.MARS68) }
 
 func testTransactionPropagation(t *testing.T, protocol uint) {
 	t.Parallel()

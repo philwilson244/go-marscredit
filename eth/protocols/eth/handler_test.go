@@ -43,13 +43,13 @@ var (
 	// testKey is a private key to use for funding a tester account.
 	testKey, _ = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
 
-	// testAddr is the Ethereum address of the tester account.
+	// testAddr is the Mars Credit address of the tester account.
 	testAddr = crypto.PubkeyToAddress(testKey.PublicKey)
 )
 
 func u64(val uint64) *uint64 { return &val }
 
-// testBackend is a mock implementation of the live Ethereum message handler. Its
+// testBackend is a mock implementation of the live Mars Credit message handler. Its
 // purpose is to allow testing the request/reply workflows and wire serialization
 // in the `eth` protocol without actually doing any data processing.
 type testBackend struct {
@@ -150,7 +150,7 @@ func (b *testBackend) Handle(*Peer, Packet) error {
 }
 
 // Tests that block headers can be retrieved from a remote chain based on user queries.
-func TestGetBlockHeaders68(t *testing.T) { testGetBlockHeaders(t, ETH68) }
+func TestGetBlockHeaders68(t *testing.T) { testGetBlockHeaders(t, MARS68) }
 
 func testGetBlockHeaders(t *testing.T, protocol uint) {
 	t.Parallel()
@@ -335,7 +335,7 @@ func testGetBlockHeaders(t *testing.T, protocol uint) {
 }
 
 // Tests that block contents can be retrieved from a remote chain based on their hashes.
-func TestGetBlockBodies68(t *testing.T) { testGetBlockBodies(t, ETH68) }
+func TestGetBlockBodies68(t *testing.T) { testGetBlockBodies(t, MARS68) }
 
 func testGetBlockBodies(t *testing.T, protocol uint) {
 	t.Parallel()
@@ -429,7 +429,7 @@ func testGetBlockBodies(t *testing.T, protocol uint) {
 }
 
 // Tests that the transaction receipts can be retrieved based on hashes.
-func TestGetBlockReceipts68(t *testing.T) { testGetBlockReceipts(t, ETH68) }
+func TestGetBlockReceipts68(t *testing.T) { testGetBlockReceipts(t, MARS68) }
 
 func testGetBlockReceipts(t *testing.T, protocol uint) {
 	t.Parallel()

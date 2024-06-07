@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// geth is a command-line client for Ethereum.
+// geth is a command-line client for Mars Credit.
 package main
 
 import (
@@ -258,7 +258,7 @@ func init() {
 		debug.Flags,
 		metricsFlags,
 	)
-	flags.AutoEnvVars(app.Flags, "GETH")
+	flags.AutoEnvVars(app.Flags, "GMARS")
 
 	app.Before = func(ctx *cli.Context) error {
 		maxprocs.Set() // Automatically set GOMAXPROCS to match Linux container CPU quota.
@@ -266,7 +266,7 @@ func init() {
 		if err := debug.Setup(ctx); err != nil {
 			return err
 		}
-		flags.CheckEnvVars(ctx, app.Flags, "GETH")
+		flags.CheckEnvVars(ctx, app.Flags, "GMARS")
 		return nil
 	}
 	app.After = func(ctx *cli.Context) error {
@@ -316,7 +316,7 @@ func prepare(ctx *cli.Context) {
 `)
 
 	case !ctx.IsSet(utils.NetworkIdFlag.Name):
-		log.Info("Starting Geth on Ethereum mainnet...")
+		log.Info("Starting Geth on Mars Credit mainnet...")
 	}
 	// If we're a full node on mainnet without --cache specified, bump default cache allowance
 	if !ctx.IsSet(utils.CacheFlag.Name) && !ctx.IsSet(utils.NetworkIdFlag.Name) {

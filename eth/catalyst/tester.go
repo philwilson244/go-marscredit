@@ -35,7 +35,7 @@ import (
 // post-merge, but only for full-sync.
 type FullSyncTester struct {
 	stack   *node.Node
-	backend *eth.Ethereum
+	backend *eth.Mars Credit
 	target  common.Hash
 	closed  chan struct{}
 	wg      sync.WaitGroup
@@ -43,7 +43,7 @@ type FullSyncTester struct {
 
 // RegisterFullSyncTester registers the full-sync tester service into the node
 // stack for launching and stopping the service controlled by node.
-func RegisterFullSyncTester(stack *node.Node, backend *eth.Ethereum, target common.Hash) (*FullSyncTester, error) {
+func RegisterFullSyncTester(stack *node.Node, backend *eth.Mars Credit, target common.Hash) (*FullSyncTester, error) {
 	cl := &FullSyncTester{
 		stack:   stack,
 		backend: backend,

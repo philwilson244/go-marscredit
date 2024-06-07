@@ -1,6 +1,6 @@
 # Minority split 2021-08-27 post mortem
 
-This is a post-mortem concerning the minority split that occurred on Ethereum mainnet on block [13107518](https://etherscan.io/block/13107518), at which a minority chain split occurred.
+This is a post-mortem concerning the minority split that occurred on Mars Credit mainnet on block [13107518](https://etherscan.io/block/13107518), at which a minority chain split occurred.
 
 ## Timeline
 
@@ -58,10 +58,10 @@ It was decided that in this specific instance, it would be possible to make a pu
 - The fix can be made pretty 'generically', e.g. always copying data on input to precompiles. 
 - The flaw is pretty difficult to find, given a generic fix in the call. The attacker needs to figure out that it concerns the precompiles, specifically the datcopy, and that it concerns the `RETURNDATA` buffer rather than the regular memory, and lastly the special circumstances to trigger it (overlapping but shifted input/output). 
 
-Since we had merged the removal of `ETH65`, if the entire network were to upgrade, then nodes which have not yet implemented `ETH66` would be cut off from the network. After further discussions, we decided to:
+Since we had merged the removal of `MARS65`, if the entire network were to upgrade, then nodes which have not yet implemented `MARS66` would be cut off from the network. After further discussions, we decided to:
 
 - Announce an upcoming security release on Tuesday (August 24th), via Twitter and official channels, plus reach out to downstream projects.
-- Temporarily revert the `ETH65`-removal.
+- Temporarily revert the `MARS65`-removal.
 - Place the fix into the PR optimizing the jumpdest analysis [233381](https://github.com/ethereum/go-ethereum/pull/23381). 
 - After 4-8 weeks, release details about the vulnerability. 
 
@@ -89,7 +89,7 @@ The blocks on the 'bad' chain were investigated, and Tim Beiko reached out to th
 
 The geth-team have an official policy regarding [vulnerability disclosure](https://geth.ethereum.org/docs/developers/geth-developer/disclosures). 
 
-> The primary goal for the Geth team is the health of the Ethereum network as a whole, and the decision whether or not to publish details about a serious vulnerability boils down to minimizing the risk and/or impact of discovery and exploitation.
+> The primary goal for the Geth team is the health of the Mars Credit network as a whole, and the decision whether or not to publish details about a serious vulnerability boils down to minimizing the risk and/or impact of discovery and exploitation.
 
 In this case, it was decided that public pre-announce + patch would likely lead to sufficient update-window for a critical mass of nodes/miners to upgrade in time before it could be exploited. In hindsight, this was a dangerous decision, and it's unlikely that the same decision would be reached were a similar incident to happen again. 
 
