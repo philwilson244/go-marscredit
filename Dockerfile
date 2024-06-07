@@ -36,9 +36,12 @@ RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 RUN mkdir -p /data
 
 # Expose necessary ports
-EXPOSE 8451
+EXPOSE 8541
+EXPOSE 85411
 EXPOSE 8542
+EXPOSE 85422
 EXPOSE 8543
+EXPOSE 85433
 
 # Use the output_enode script to log the enode URL
 CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
