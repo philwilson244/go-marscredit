@@ -37,11 +37,11 @@ RUN mkdir -p /data
 
 # Expose necessary ports
 EXPOSE 8541
-EXPOSE 85411
 EXPOSE 8542
-EXPOSE 85422
 EXPOSE 8543
-EXPOSE 85433
+EXPOSE 8544
+EXPOSE 8545
+EXPOSE 8546
 
 # Use the output_enode script to log the enode URL
 CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
