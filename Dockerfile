@@ -10,7 +10,7 @@ RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum
 WORKDIR /go-ethereum
 
 # Checkout the desired version
-RUN git checkout v1.13.6
+RUN git checkout v1.10.25
 
 # Build Geth
 RUN make geth
