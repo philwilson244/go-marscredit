@@ -258,7 +258,7 @@ func init() {
 		debug.Flags,
 		metricsFlags,
 	)
-	flags.AutoEnvVars(app.Flags, "GETH")
+	flags.AutoEnvVars(app.Flags, "GMARS")
 
 	app.Before = func(ctx *cli.Context) error {
 		maxprocs.Set() // Automatically set GOMAXPROCS to match Linux container CPU quota.
@@ -266,7 +266,7 @@ func init() {
 		if err := debug.Setup(ctx); err != nil {
 			return err
 		}
-		flags.CheckEnvVars(ctx, app.Flags, "GETH")
+		flags.CheckEnvVars(ctx, app.Flags, "GMARS")
 		return nil
 	}
 	app.After = func(ctx *cli.Context) error {

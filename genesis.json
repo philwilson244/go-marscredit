@@ -11,18 +11,15 @@
     "istanbulBlock": 0,
     "berlinBlock": 0,
     "londonBlock": 0,
-    "clique": {
-      "period": 1,
-      "epoch": 30000
-    }
+    "ethash": {}
   },
   "alloc": {
     "0xD21602919e81e32A456195e9cE34215Af504535A": {
-      "balance": " 4730400000000000000000000000 "
+      "balance": "4730400000000000000000000000"
     }
   },
   "coinbase": "0xD21602919e81e32A456195e9cE34215Af504535A",
-  "difficulty": "0x20000",
+  "difficulty": "0x1000",
   "extraData": "",
   "gasLimit": "0x1c9c380",
   "nonce": "0x0000000000000042",

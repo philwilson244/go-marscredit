@@ -28,7 +28,7 @@ var Enabled = false
 var enablerFlags = []string{"metrics"}
 
 // enablerEnvVars is the env var names to use to enable metrics collections.
-var enablerEnvVars = []string{"GETH_METRICS"}
+var enablerEnvVars = []string{"GMARS_METRICS"}
 
 // init enables or disables the metrics system. Since we need this to run before
 // any other code gets to create meters and timers, we'll actually do an ugly hack
