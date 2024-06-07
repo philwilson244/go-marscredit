@@ -1,4 +1,4 @@
-FROM ethereum/client-go:1.13.6
+FROM ethereum/client-go:alltools-stable
 
 COPY genesis.json /genesis.json
 
