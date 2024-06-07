@@ -1,13 +1,23 @@
-FROM ethereum/client-go:alltools-stable
+FROM golang:1.17-alpine AS build
 
-# Create necessary directories
-RUN mkdir -p /data
+RUN apk add --no-cache make gcc musl-dev linux-headers git
 
-# Copy the genesis.json file into the container
+RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum
+
+WORKDIR /go-ethereum
+
+RUN git checkout v1.13.6
+
+RUN make geth
+
+FROM alpine:latest
+
+COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
+
 COPY genesis.json /genesis.json
 
-# Initialize Geth with the genesis block
-RUN geth init --datadir /data /genesis.json
+RUN mkdir -p /data
 
-# Run Geth with the specified configurations
+RUN geth init /genesis.json --datadir /data
+
 CMD ["geth", "--datadir", "/data", "--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "personal,eth,net,web3", "--networkid", "110110"]
