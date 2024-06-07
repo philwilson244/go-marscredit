@@ -24,11 +24,14 @@ COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 # Copy the genesis file
 COPY genesis.json /genesis.json
 
+# Copy the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /entrypoint.sh
+
 # Create the data directory
 RUN mkdir -p /data
 
-# Initialize Geth with the genesis file
-RUN /usr/local/bin/geth init /genesis.json --datadir /data
-
-# Start Geth
-CMD ["/usr/local/bin/geth", "--datadir", "/data", "--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "personal,eth,net,web3", "--networkid", "110110"]
+# Use the shell script as the entry point
+ENTRYPOINT ["/entrypoint.sh"]
