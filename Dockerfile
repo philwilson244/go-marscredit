@@ -28,12 +28,13 @@ COPY genesis.json /genesis.json
 COPY entrypoint_node1.sh /entrypoint_node1.sh
 COPY entrypoint_node2.sh /entrypoint_node2.sh
 COPY entrypoint_node3.sh /entrypoint_node3.sh
+COPY output_enode.sh /output_enode.sh
 
-# Make the entrypoint scripts executable
-RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
+# Make the scripts executable
+RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh /output_enode.sh
 
 # Create the data directory
 RUN mkdir -p /data
 
-# Use environment variables to select the entrypoint script
-CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
+# Use the output_enode script to log the enode URL
+CMD ["/bin/sh", "-c", "sh /output_enode.sh && sh /entrypoint_${NODE_ID}.sh"]
