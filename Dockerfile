@@ -35,5 +35,9 @@ RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 # Create the data directory
 RUN mkdir -p /data
 
+# Expose necessary ports
+EXPOSE 8545
+EXPOSE 30303
+
 # Use the output_enode script to log the enode URL
 CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
