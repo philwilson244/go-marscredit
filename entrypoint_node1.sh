@@ -10,11 +10,10 @@ echo "marscredit011" > /data/passwordfile
 
 # Create a new account and capture the address
 ACCOUNT_OUTPUT=$(geth account new --datadir /data --password /data/passwordfile)
-ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | awk -F'[{}]' '{print $2}')
-KEYFILE=$(echo "$ACCOUNT_OUTPUT" | grep -oP '.*keystore.*')
+ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | sed -n 's/.*Address: {\([^}]*\)}.*/\1/p')
 
 # Export the private key of the created account
-PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | grep -oP '(?<=Private key: ).*')
+PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | sed -n 's/.*Private key: \(.*\)/\1/p')
 
 # Log the private key (ensure this log is stored securely)
 echo "Private key for $ACCOUNT_ADDRESS: $PRIVATE_KEY"
