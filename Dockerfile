@@ -32,9 +32,6 @@ COPY entrypoint_node3.sh /entrypoint_node3.sh
 # Make the scripts executable
 RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 
-# Install Docker and shell utilities
-RUN apk add --no-cache docker
-
 # Create the data directory
 RUN mkdir -p /data
 
@@ -47,4 +44,4 @@ EXPOSE 8545
 EXPOSE 8546
 
 # Use the output_enode script to log the enode URL
-CMD ["/entrypoint_${NODE_ID}.sh"]
+CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
