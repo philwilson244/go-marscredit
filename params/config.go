@@ -26,7 +26,7 @@ import (
 
 // Genesis hashes to enforce below configs on.
 var (
-	MarsCreditGenesisHash = common.HexToHash("0xYOUR_MARS_CREDIT_GENESIS_HASH")
+	MarsCreditGenesisHash = common.HexToHash("0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3")
 )
 
 func newUint64(val uint64) *uint64 { return &val }
@@ -37,31 +37,6 @@ var (
 	// MarsCreditChainConfig is the chain configuration for the Mars Credit network.
 	var MarsCreditChainConfig = &ChainConfig{
 		ChainID:                       big.NewInt(110110), // ChainID for Mars Credit
-		HomesteadBlock:                big.NewInt(0),
-		DAOForkBlock:                  nil,
-		DAOForkSupport:                false,
-		EIP150Block:                   big.NewInt(0),
-		EIP155Block:                   big.NewInt(0),
-		EIP158Block:                   big.NewInt(0),
-		ByzantiumBlock:                big.NewInt(0),
-		ConstantinopleBlock:           big.NewInt(0),
-		PetersburgBlock:               big.NewInt(0),
-		IstanbulBlock:                 big.NewInt(0),
-		MuirGlacierBlock:              big.NewInt(0),
-		BerlinBlock:                   big.NewInt(0),
-		LondonBlock:                   big.NewInt(0),
-		ArrowGlacierBlock:             big.NewInt(0),
-		GrayGlacierBlock:              big.NewInt(0),
-		TerminalTotalDifficulty:       MarsCreditTerminalTotalDifficulty, // Adjust as needed
-		TerminalTotalDifficultyPassed: true,
-		ShanghaiTime:                  nil,
-		CancunTime:                    nil,
-		Ethash:                        new(EthashConfig),
-	}
-
-	// MarsCreditChainConfig is the chain configuration for the Mars Credit network.
-	var MarsCreditChainConfig = &ChainConfig{
-		ChainID:                       big.NewInt(110110110), // ChainID for Mars Credit
 		HomesteadBlock:                big.NewInt(0),
 		DAOForkBlock:                  nil,
 		DAOForkSupport:                false,

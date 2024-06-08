@@ -40,11 +40,11 @@ import (
 
 // Ethash proof-of-work protocol constants.
 var (
-	FrontierBlockReward           = uint256.NewInt(5e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward          = uint256.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
-	ConstantinopleBlockReward     = uint256.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
-	maxUncles                     = 2                     // Maximum number of uncles allowed in a single block
-	allowedFutureBlockTimeSeconds = int64(3)             // Max seconds from current time allowed for blocks, before they're considered future blocks
+	FrontierBlockReward           = uint256.NewInt(50e+18) // Block reward in wei for successfully mining a block
+	ByzantiumBlockReward          = uint256.NewInt(30e+18) // Block reward in wei for successfully mining a block upward from Byzantium
+	ConstantinopleBlockReward     = uint256.NewInt(20e+18) // Block reward in wei for successfully mining a block upward from Constantinople
+	maxUncles                     = 2                      // Maximum number of uncles allowed in a single block
+	allowedFutureBlockTimeSeconds = int64(3)               // Max seconds from current time allowed for blocks, before they're considered future blocks
 
 	// calcDifficultyEip5133 is the difficulty adjustment algorithm as specified by EIP 5133.
 	// It offsets the bomb a total of 11.4M blocks.
