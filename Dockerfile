@@ -25,19 +25,18 @@ COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 COPY genesis.json /genesis.json
 
 # Copy the entrypoint scripts
-COPY entrypoint_node1.sh /entrypoint_node1.sh
+COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 # COPY entrypoint_node2.sh /entrypoint_node2.sh
 # COPY entrypoint_node3.sh /entrypoint_node3.sh
 
-COPY keystore /data/keystore
-COPY passwordfile_ /data/passwordfile
-
-# Debugging step: List files
-RUN ls -l /data/keystore && ls -l /data
+COPY keystore /app/data/keystore
+COPY passwordfile /app/data/passwordfile
 
 # Make the scripts executable
 # RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 RUN chmod +x /entrypoint_node1.sh
+
+WORKDIR /app
 
 # Create the data directory
 RUN mkdir -p /data
@@ -46,4 +45,4 @@ RUN mkdir -p /data
 EXPOSE 8541 8542 8543 8544 8545 8546 30303
 
 # Use the output_enode script to log the enode URL
-CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
+CMD ["/bin/sh", "-c", "sh /app/entrypoint_${NODE_ID}.sh"]
