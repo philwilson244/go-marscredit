@@ -26,7 +26,7 @@ COPY genesis.json /genesis.json
 
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /entrypoint_node1.sh
-COPY entrypoint_node2.sh /entrypoint_node2.sh
+# COPY entrypoint_node2.sh /entrypoint_node2.sh
 # COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 COPY keystore /data/keystore
@@ -37,7 +37,7 @@ RUN ls -l /data/keystore && ls -l /data
 
 # Make the scripts executable
 # RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
-RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh
+RUN chmod +x /entrypoint_node1.sh
 
 # Create the data directory
 RUN mkdir -p /data
