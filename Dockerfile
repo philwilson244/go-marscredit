@@ -32,6 +32,9 @@ COPY entrypoint_node1.sh /entrypoint_node1.sh
 COPY keystore /data/keystore
 COPY passwordfile /data/passwordfile
 
+# Debugging step: List files
+RUN ls -l /data/keystore && ls -l /data
+
 # Make the scripts executable
 # RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 RUN chmod +x /entrypoint_node1.sh
