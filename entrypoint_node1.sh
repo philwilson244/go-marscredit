@@ -3,7 +3,13 @@
 echo "Starting Node 1"
 
 # Initialize Geth with the genesis file
-# geth init /genesis.json --datadir /data
+# Check if the blockchain is already initialized
+if [ ! -d "/data/geth/chaindata" ]; then
+    echo "Initializing genesis block"
+    geth init /genesis.json --datadir /data
+else
+    echo "Genesis block already initialized"
+fi
 
 # Start Geth and enable mining
 exec geth --datadir /data \
