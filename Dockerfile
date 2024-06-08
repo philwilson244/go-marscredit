@@ -10,7 +10,7 @@ RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum
 WORKDIR /go-ethereum
 
 # Checkout the desired version
-RUN git checkout v1.10.25
+RUN git checkout v1.10.18
 
 # Build Geth
 RUN make geth
@@ -36,12 +36,7 @@ RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 RUN mkdir -p /data
 
 # Expose necessary ports
-EXPOSE 8541
-EXPOSE 8542
-EXPOSE 8543
-EXPOSE 8544
-EXPOSE 8545
-EXPOSE 8546
+EXPOSE 8541 8542 8543 8544 8545 8546 30303
 
 # Use the output_enode script to log the enode URL
 CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]

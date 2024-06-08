@@ -19,6 +19,7 @@ package miner
 
 import (
 	"fmt"
+	"log"
 	"math/big"
 	"sync"
 	"time"
@@ -161,5 +162,8 @@ func (miner *Miner) getPending() *newPayloadResult {
 		return nil
 	}
 	miner.pending.update(header.Hash(), ret)
+	// Add logging here to log the new block mined
+	log.Printf("New block mined: Number=%d Hash=%s", ret.block.NumberU64(), ret.block.Hash().Hex())
+
 	return ret
 }
