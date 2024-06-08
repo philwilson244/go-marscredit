@@ -27,8 +27,8 @@ import (
 	"github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/triedb"
 )
 
 func verifyUnbrokenCanonchain(hc *HeaderChain) error {
@@ -70,18 +70,19 @@ func testInsert(t *testing.T, hc *HeaderChain, chain []*types.Header, wantStatus
 // This test checks status reporting of InsertHeaderChain.
 func TestHeaderInsertion(t *testing.T) {
 	var (
-		db    = rawdb.NewMemoryDatabase()
-		gspec = &Genesis{BaseFee: big.NewInt(params.InitialBaseFee), Config: params.AllEthashProtocolChanges}
+		db      = rawdb.NewMemoryDatabase()
+		genesis = (&Genesis{BaseFee: big.NewInt(params.InitialBaseFee)}).MustCommit(db)
 	)
-	gspec.Commit(db, triedb.NewDatabase(db, nil))
-	hc, err := NewHeaderChain(db, gspec.Config, ethash.NewFaker(), func() bool { return false })
+
+	hc, err := NewHeaderChain(db, params.AllEthashProtocolChanges, ethash.NewFaker(), func() bool { return false })
 	if err != nil {
 		t.Fatal(err)
 	}
 	// chain A: G->A1->A2...A128
-	genDb, chainA := makeHeaderChainWithGenesis(gspec, 128, ethash.NewFaker(), 10)
+	chainA := makeHeaderChain(genesis.Header(), 128, ethash.NewFaker(), db, 10)
 	// chain B: G->A1->B1...B128
-	chainB := makeHeaderChain(gspec.Config, chainA[0], 128, ethash.NewFaker(), genDb, 10)
+	chainB := makeHeaderChain(chainA[0], 128, ethash.NewFaker(), db, 10)
+	log.Root().SetHandler(log.StdoutHandler)
 
 	forker := NewForkChoice(hc, nil)
 	// Inserting 64 headers on an empty chain, expecting

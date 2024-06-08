@@ -23,18 +23,18 @@ import (
 
 	"github.com/ethereum/go-ethereum/cmd/evm/internal/compiler"
 
-	"github.com/urfave/cli/v2"
+	"gopkg.in/urfave/cli.v1"
 )
 
-var compileCommand = &cli.Command{
+var compileCommand = cli.Command{
 	Action:    compileCmd,
 	Name:      "compile",
-	Usage:     "Compiles easm source to evm binary",
+	Usage:     "compiles easm source to evm binary",
 	ArgsUsage: "<file>",
 }
 
 func compileCmd(ctx *cli.Context) error {
-	debug := ctx.Bool(DebugFlag.Name)
+	debug := ctx.GlobalBool(DebugFlag.Name)
 
 	if len(ctx.Args().First()) == 0 {
 		return errors.New("filename required")

@@ -19,9 +19,11 @@ package bloombits
 import (
 	"bytes"
 	"math/big"
+	"math/rand"
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 // Tests that the scheduler can deduplicate and forward retrieval requests to
@@ -45,13 +47,14 @@ func testScheduler(t *testing.T, clients int, fetchers int, requests int) {
 	fetch := make(chan *request, 16)
 	defer close(fetch)
 
-	var delivered atomic.Uint32
+	var delivered uint32
 	for i := 0; i < fetchers; i++ {
 		go func() {
 			defer fetchPend.Done()
 
 			for req := range fetch {
-				delivered.Add(1)
+				time.Sleep(time.Duration(rand.Intn(int(100 * time.Microsecond))))
+				atomic.AddUint32(&delivered, 1)
 
 				f.deliver([]uint64{
 					req.section + uint64(requests), // Non-requested data (ensure it doesn't go out of bounds)
@@ -97,7 +100,7 @@ func testScheduler(t *testing.T, clients int, fetchers int, requests int) {
 	}
 	pend.Wait()
 
-	if have := delivered.Load(); int(have) != requests {
+	if have := atomic.LoadUint32(&delivered); int(have) != requests {
 		t.Errorf("request count mismatch: have %v, want %v", have, requests)
 	}
 }

@@ -23,7 +23,7 @@
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHMARSER IN CONTRACT, STRICT LIABILITY, OR TORT
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -39,7 +39,6 @@ import (
 	"crypto/elliptic"
 	"crypto/sha256"
 	"crypto/sha512"
-	"errors"
 	"fmt"
 	"hash"
 
@@ -48,8 +47,8 @@ import (
 
 var (
 	DefaultCurve                  = ethcrypto.S256()
-	ErrUnsupportedECDHAlgorithm   = errors.New("ecies: unsupported ECDH algorithm")
-	ErrUnsupportedECIESParameters = errors.New("ecies: unsupported ECIES parameters")
+	ErrUnsupportedECDHAlgorithm   = fmt.Errorf("ecies: unsupported ECDH algorithm")
+	ErrUnsupportedECIESParameters = fmt.Errorf("ecies: unsupported ECIES parameters")
 	ErrInvalidKeyLen              = fmt.Errorf("ecies: invalid key size (> %d) in ECIESParams", maxKeyLen)
 )
 

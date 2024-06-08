@@ -16,7 +16,7 @@
 
 // This file contains the implementation for interacting with the Ledger hardware
 // wallets. The wire protocol spec can be found in the Ledger Blue GitHub repo:
-// https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.adoc
+// https://raw.githubusercontent.com/LedgerHQ/blue-app-eth/master/doc/ethapp.asc
 
 package usbwallet
 
@@ -49,18 +49,16 @@ type ledgerParam1 byte
 type ledgerParam2 byte
 
 const (
-	ledgerOpRetrieveAddress  ledgerOpcode = 0x02 // Returns the public key and Mars Credit address for a given BIP 32 path
-	ledgerOpSignTransaction  ledgerOpcode = 0x04 // Signs an Mars Credit transaction after having the user validate the parameters
+	ledgerOpRetrieveAddress  ledgerOpcode = 0x02 // Returns the public key and Ethereum address for a given BIP 32 path
+	ledgerOpSignTransaction  ledgerOpcode = 0x04 // Signs an Ethereum transaction after having the user validate the parameters
 	ledgerOpGetConfiguration ledgerOpcode = 0x06 // Returns specific wallet application configuration
-	ledgerOpSignTypedMessage ledgerOpcode = 0x0c // Signs an Mars Credit message following the EIP 712 specification
+	ledgerOpSignTypedMessage ledgerOpcode = 0x0c // Signs an Ethereum message following the EIP 712 specification
 
 	ledgerP1DirectlyFetchAddress    ledgerParam1 = 0x00 // Return address directly from the wallet
 	ledgerP1InitTypedMessageData    ledgerParam1 = 0x00 // First chunk of Typed Message data
 	ledgerP1InitTransactionData     ledgerParam1 = 0x00 // First transaction data block for signing
 	ledgerP1ContTransactionData     ledgerParam1 = 0x80 // Subsequent transaction data block for signing
 	ledgerP2DiscardAddressChainCode ledgerParam2 = 0x00 // Do not return the chain code along with the address
-
-	ledgerEip155Size int = 3 // Size of the EIP-155 chain_id,r,s in unsigned transactions
 )
 
 // errLedgerReplyInvalidHeader is the error message returned by a Ledger data exchange
@@ -95,15 +93,15 @@ func (w *ledgerDriver) Status() (string, error) {
 		return fmt.Sprintf("Failed: %v", w.failure), w.failure
 	}
 	if w.browser {
-		return "Mars Credit app in browser mode", w.failure
+		return "Ethereum app in browser mode", w.failure
 	}
 	if w.offline() {
-		return "Mars Credit app offline", w.failure
+		return "Ethereum app offline", w.failure
 	}
-	return fmt.Sprintf("Mars Credit app v%d.%d.%d online", w.version[0], w.version[1], w.version[2]), w.failure
+	return fmt.Sprintf("Ethereum app v%d.%d.%d online", w.version[0], w.version[1], w.version[2]), w.failure
 }
 
-// offline returns whether the wallet and the Mars Credit app is offline or not.
+// offline returns whether the wallet and the Ethereum app is offline or not.
 //
 // The method assumes that the state lock is held!
 func (w *ledgerDriver) offline() bool {
@@ -118,13 +116,13 @@ func (w *ledgerDriver) Open(device io.ReadWriter, passphrase string) error {
 
 	_, err := w.ledgerDerive(accounts.DefaultBaseDerivationPath)
 	if err != nil {
-		// Mars Credit app is not running or in browser mode, nothing more to do, return
+		// Ethereum app is not running or in browser mode, nothing more to do, return
 		if err == errLedgerReplyInvalidHeader {
 			w.browser = true
 		}
 		return nil
 	}
-	// Try to resolve the Mars Credit app's version, will fail prior to v1.0.2
+	// Try to resolve the Ethereum app's version, will fail prior to v1.0.2
 	if w.version, err = w.ledgerVersion(); err != nil {
 		w.version = [3]byte{1, 0, 0} // Assume worst case, can't verify if v1.0.0 or v1.0.1
 	}
@@ -149,7 +147,7 @@ func (w *ledgerDriver) Heartbeat() error {
 }
 
 // Derive implements usbwallet.driver, sending a derivation request to the Ledger
-// and returning the Mars Credit address located on that derivation path.
+// and returning the Ethereum address located on that derivation path.
 func (w *ledgerDriver) Derive(path accounts.DerivationPath) (common.Address, error) {
 	return w.ledgerDerive(path)
 }
@@ -157,11 +155,11 @@ func (w *ledgerDriver) Derive(path accounts.DerivationPath) (common.Address, err
 // SignTx implements usbwallet.driver, sending the transaction to the Ledger and
 // waiting for the user to confirm or deny the transaction.
 //
-// Note, if the version of the Mars Credit application running on the Ledger wallet is
+// Note, if the version of the Ethereum application running on the Ledger wallet is
 // too old to sign EIP-155 transactions, but such is requested nonetheless, an error
 // will be returned opposed to silently signing in Homestead mode.
 func (w *ledgerDriver) SignTx(path accounts.DerivationPath, tx *types.Transaction, chainID *big.Int) (common.Address, *types.Transaction, error) {
-	// If the Mars Credit app doesn't run, abort
+	// If the Ethereum app doesn't run, abort
 	if w.offline() {
 		return common.Address{}, nil, accounts.ErrWalletClosed
 	}
@@ -179,7 +177,7 @@ func (w *ledgerDriver) SignTx(path accounts.DerivationPath, tx *types.Transactio
 //
 // Note: this was introduced in the ledger 1.5.0 firmware
 func (w *ledgerDriver) SignTypedMessage(path accounts.DerivationPath, domainHash []byte, messageHash []byte) ([]byte, error) {
-	// If the Mars Credit app doesn't run, abort
+	// If the Ethereum app doesn't run, abort
 	if w.offline() {
 		return nil, accounts.ErrWalletClosed
 	}
@@ -192,23 +190,23 @@ func (w *ledgerDriver) SignTypedMessage(path accounts.DerivationPath, domainHash
 	return w.ledgerSignTypedMessage(path, domainHash, messageHash)
 }
 
-// ledgerVersion retrieves the current version of the Mars Credit wallet app running
+// ledgerVersion retrieves the current version of the Ethereum wallet app running
 // on the Ledger wallet.
 //
 // The version retrieval protocol is defined as follows:
 //
-//	CLA | INS | P1 | P2 | Lc | Le
-//	----+-----+----+----+----+---
-//	 E0 | 06  | 00 | 00 | 00 | 04
+//   CLA | INS | P1 | P2 | Lc | Le
+//   ----+-----+----+----+----+---
+//    E0 | 06  | 00 | 00 | 00 | 04
 //
 // With no input data, and the output data being:
 //
-//	Description                                        | Length
-//	---------------------------------------------------+--------
-//	Flags 01: arbitrary data signature enabled by user | 1 byte
-//	Application major version                          | 1 byte
-//	Application minor version                          | 1 byte
-//	Application patch version                          | 1 byte
+//   Description                                        | Length
+//   ---------------------------------------------------+--------
+//   Flags 01: arbitrary data signature enabled by user | 1 byte
+//   Application major version                          | 1 byte
+//   Application minor version                          | 1 byte
+//   Application patch version                          | 1 byte
 func (w *ledgerDriver) ledgerVersion() ([3]byte, error) {
 	// Send the request and wait for the response
 	reply, err := w.ledgerExchange(ledgerOpGetConfiguration, 0, 0, nil)
@@ -224,37 +222,37 @@ func (w *ledgerDriver) ledgerVersion() ([3]byte, error) {
 	return version, nil
 }
 
-// ledgerDerive retrieves the currently active Mars Credit address from a Ledger
+// ledgerDerive retrieves the currently active Ethereum address from a Ledger
 // wallet at the specified derivation path.
 //
 // The address derivation protocol is defined as follows:
 //
-//	CLA | INS | P1 | P2 | Lc  | Le
-//	----+-----+----+----+-----+---
-//	 E0 | 02  | 00 return address
-//	            01 display address and confirm before returning
-//	               | 00: do not return the chain code
-//	               | 01: return the chain code
-//	                    | var | 00
+//   CLA | INS | P1 | P2 | Lc  | Le
+//   ----+-----+----+----+-----+---
+//    E0 | 02  | 00 return address
+//               01 display address and confirm before returning
+//                  | 00: do not return the chain code
+//                  | 01: return the chain code
+//                       | var | 00
 //
 // Where the input data is:
 //
-//	Description                                      | Length
-//	-------------------------------------------------+--------
-//	Number of BIP 32 derivations to perform (max 10) | 1 byte
-//	First derivation index (big endian)              | 4 bytes
-//	...                                              | 4 bytes
-//	Last derivation index (big endian)               | 4 bytes
+//   Description                                      | Length
+//   -------------------------------------------------+--------
+//   Number of BIP 32 derivations to perform (max 10) | 1 byte
+//   First derivation index (big endian)              | 4 bytes
+//   ...                                              | 4 bytes
+//   Last derivation index (big endian)               | 4 bytes
 //
 // And the output data is:
 //
-//	Description             | Length
-//	------------------------+-------------------
-//	Public Key length       | 1 byte
-//	Uncompressed Public Key | arbitrary
-//	Mars Credit address length | 1 byte
-//	Mars Credit address        | 40 bytes hex ascii
-//	Chain code if requested | 32 bytes
+//   Description             | Length
+//   ------------------------+-------------------
+//   Public Key length       | 1 byte
+//   Uncompressed Public Key | arbitrary
+//   Ethereum address length | 1 byte
+//   Ethereum address        | 40 bytes hex ascii
+//   Chain code if requested | 32 bytes
 func (w *ledgerDriver) ledgerDerive(derivationPath []uint32) (common.Address, error) {
 	// Flatten the derivation path into the Ledger request
 	path := make([]byte, 1+4*len(derivationPath))
@@ -273,13 +271,13 @@ func (w *ledgerDriver) ledgerDerive(derivationPath []uint32) (common.Address, er
 	}
 	reply = reply[1+int(reply[0]):]
 
-	// Extract the Mars Credit hex address string
+	// Extract the Ethereum hex address string
 	if len(reply) < 1 || len(reply) < 1+int(reply[0]) {
 		return common.Address{}, errors.New("reply lacks address entry")
 	}
 	hexstr := reply[1 : 1+int(reply[0])]
 
-	// Decode the hex string into an Mars Credit address and return
+	// Decode the hex sting into an Ethereum address and return
 	var address common.Address
 	if _, err = hex.Decode(address[:], hexstr); err != nil {
 		return common.Address{}, err
@@ -292,35 +290,35 @@ func (w *ledgerDriver) ledgerDerive(derivationPath []uint32) (common.Address, er
 //
 // The transaction signing protocol is defined as follows:
 //
-//	CLA | INS | P1 | P2 | Lc  | Le
-//	----+-----+----+----+-----+---
-//	 E0 | 04  | 00: first transaction data block
-//	            80: subsequent transaction data block
-//	               | 00 | variable | variable
+//   CLA | INS | P1 | P2 | Lc  | Le
+//   ----+-----+----+----+-----+---
+//    E0 | 04  | 00: first transaction data block
+//               80: subsequent transaction data block
+//                  | 00 | variable | variable
 //
 // Where the input for the first transaction block (first 255 bytes) is:
 //
-//	Description                                      | Length
-//	-------------------------------------------------+----------
-//	Number of BIP 32 derivations to perform (max 10) | 1 byte
-//	First derivation index (big endian)              | 4 bytes
-//	...                                              | 4 bytes
-//	Last derivation index (big endian)               | 4 bytes
-//	RLP transaction chunk                            | arbitrary
+//   Description                                      | Length
+//   -------------------------------------------------+----------
+//   Number of BIP 32 derivations to perform (max 10) | 1 byte
+//   First derivation index (big endian)              | 4 bytes
+//   ...                                              | 4 bytes
+//   Last derivation index (big endian)               | 4 bytes
+//   RLP transaction chunk                            | arbitrary
 //
 // And the input for subsequent transaction blocks (first 255 bytes) are:
 //
-//	Description           | Length
-//	----------------------+----------
-//	RLP transaction chunk | arbitrary
+//   Description           | Length
+//   ----------------------+----------
+//   RLP transaction chunk | arbitrary
 //
 // And the output data is:
 //
-//	Description | Length
-//	------------+---------
-//	signature V | 1 byte
-//	signature R | 32 bytes
-//	signature S | 32 bytes
+//   Description | Length
+//   ------------+---------
+//   signature V | 1 byte
+//   signature R | 32 bytes
+//   signature S | 32 bytes
 func (w *ledgerDriver) ledgerSign(derivationPath []uint32, tx *types.Transaction, chainID *big.Int) (common.Address, *types.Transaction, error) {
 	// Flatten the derivation path into the Ledger request
 	path := make([]byte, 1+4*len(derivationPath))
@@ -349,15 +347,9 @@ func (w *ledgerDriver) ledgerSign(derivationPath []uint32, tx *types.Transaction
 		op    = ledgerP1InitTransactionData
 		reply []byte
 	)
-
-	// Chunk size selection to mitigate an underlying RLP deserialization issue on the ledger app.
-	// https://github.com/LedgerHQ/app-ethereum/issues/409
-	chunk := 255
-	for ; len(payload)%chunk <= ledgerEip155Size; chunk-- {
-	}
-
 	for len(payload) > 0 {
 		// Calculate the size of the next data chunk
+		chunk := 255
 		if chunk > len(payload) {
 			chunk = len(payload)
 		}
@@ -370,7 +362,7 @@ func (w *ledgerDriver) ledgerSign(derivationPath []uint32, tx *types.Transaction
 		payload = payload[chunk:]
 		op = ledgerP1ContTransactionData
 	}
-	// Extract the Mars Credit signature and do a sanity validation
+	// Extract the Ethereum signature and do a sanity validation
 	if len(reply) != crypto.SignatureLength {
 		return common.Address{}, nil, errors.New("reply lacks signature")
 	}
@@ -400,28 +392,30 @@ func (w *ledgerDriver) ledgerSign(derivationPath []uint32, tx *types.Transaction
 //
 // The signing protocol is defined as follows:
 //
-//	CLA | INS | P1 | P2                          | Lc  | Le
-//	----+-----+----+-----------------------------+-----+---
-//	 E0 | 0C  | 00 | implementation version : 00 | variable | variable
+//   CLA | INS | P1 | P2                          | Lc  | Le
+//   ----+-----+----+-----------------------------+-----+---
+//    E0 | 0C  | 00 | implementation version : 00 | variable | variable
 //
 // Where the input is:
 //
-//	Description                                      | Length
-//	-------------------------------------------------+----------
-//	Number of BIP 32 derivations to perform (max 10) | 1 byte
-//	First derivation index (big endian)              | 4 bytes
-//	...                                              | 4 bytes
-//	Last derivation index (big endian)               | 4 bytes
-//	domain hash                                      | 32 bytes
-//	message hash                                     | 32 bytes
+//   Description                                      | Length
+//   -------------------------------------------------+----------
+//   Number of BIP 32 derivations to perform (max 10) | 1 byte
+//   First derivation index (big endian)              | 4 bytes
+//   ...                                              | 4 bytes
+//   Last derivation index (big endian)               | 4 bytes
+//   domain hash                                      | 32 bytes
+//   message hash                                     | 32 bytes
+//
+//
 //
 // And the output data is:
 //
-//	Description | Length
-//	------------+---------
-//	signature V | 1 byte
-//	signature R | 32 bytes
-//	signature S | 32 bytes
+//   Description | Length
+//   ------------+---------
+//   signature V | 1 byte
+//   signature R | 32 bytes
+//   signature S | 32 bytes
 func (w *ledgerDriver) ledgerSignTypedMessage(derivationPath []uint32, domainHash []byte, messageHash []byte) ([]byte, error) {
 	// Flatten the derivation path into the Ledger request
 	path := make([]byte, 1+4*len(derivationPath))
@@ -447,7 +441,7 @@ func (w *ledgerDriver) ledgerSignTypedMessage(derivationPath []uint32, domainHas
 		return nil, err
 	}
 
-	// Extract the Mars Credit signature and do a sanity validation
+	// Extract the Ethereum signature and do a sanity validation
 	if len(reply) != crypto.SignatureLength {
 		return nil, errors.New("reply lacks signature")
 	}
@@ -460,12 +454,12 @@ func (w *ledgerDriver) ledgerSignTypedMessage(derivationPath []uint32, domainHas
 //
 // The common transport header is defined as follows:
 //
-//	Description                           | Length
-//	--------------------------------------+----------
-//	Communication channel ID (big endian) | 2 bytes
-//	Command tag                           | 1 byte
-//	Packet sequence index (big endian)    | 2 bytes
-//	Payload                               | arbitrary
+//  Description                           | Length
+//  --------------------------------------+----------
+//  Communication channel ID (big endian) | 2 bytes
+//  Command tag                           | 1 byte
+//  Packet sequence index (big endian)    | 2 bytes
+//  Payload                               | arbitrary
 //
 // The Communication channel ID allows commands multiplexing over the same
 // physical link. It is not used for the time being, and should be set to 0101
@@ -479,15 +473,15 @@ func (w *ledgerDriver) ledgerSignTypedMessage(derivationPath []uint32, domainHas
 //
 // APDU Command payloads are encoded as follows:
 //
-//	Description              | Length
-//	-----------------------------------
-//	APDU length (big endian) | 2 bytes
-//	APDU CLA                 | 1 byte
-//	APDU INS                 | 1 byte
-//	APDU P1                  | 1 byte
-//	APDU P2                  | 1 byte
-//	APDU length              | 1 byte
-//	Optional APDU data       | arbitrary
+//  Description              | Length
+//  -----------------------------------
+//  APDU length (big endian) | 2 bytes
+//  APDU CLA                 | 1 byte
+//  APDU INS                 | 1 byte
+//  APDU P1                  | 1 byte
+//  APDU P2                  | 1 byte
+//  APDU length              | 1 byte
+//  Optional APDU data       | arbitrary
 func (w *ledgerDriver) ledgerExchange(opcode ledgerOpcode, p1 ledgerParam1, p2 ledgerParam2, data []byte) ([]byte, error) {
 	// Construct the message payload, possibly split into multiple chunks
 	apdu := make([]byte, 2, 7+len(data))

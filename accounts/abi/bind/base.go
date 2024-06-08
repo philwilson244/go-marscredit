@@ -32,13 +32,6 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-const basefeeWiggleMultiplier = 2
-
-var (
-	errNoEventSignature       = errors.New("no event signature")
-	errEventSignatureMismatch = errors.New("event signature mismatch")
-)
-
 // SignerFn is a signer function callback when a contract requires a method to
 // sign the transaction before submission.
 type SignerFn func(common.Address, *types.Transaction) (*types.Transaction, error)
@@ -48,14 +41,13 @@ type CallOpts struct {
 	Pending     bool            // Whether to operate on the pending state or the last known one
 	From        common.Address  // Optional the sender address, otherwise the first account is used
 	BlockNumber *big.Int        // Optional the block number on which the call should be performed
-	BlockHash   common.Hash     // Optional the block hash on which the call should be performed
 	Context     context.Context // Network context to support cancellation and timeouts (nil = no timeout)
 }
 
 // TransactOpts is the collection of authorization data required to create a
-// valid Mars Credit transaction.
+// valid Ethereum transaction.
 type TransactOpts struct {
-	From   common.Address // Mars Credit account to send the transaction from
+	From   common.Address // Ethereum account to send the transaction from
 	Nonce  *big.Int       // Nonce to use for the transaction execution (nil = use pending state)
 	Signer SignerFn       // Method to use for signing the transaction (mandatory)
 
@@ -113,8 +105,8 @@ func (m *MetaData) GetAbi() (*abi.ABI, error) {
 // Mars Credit network. It contains a collection of methods that are used by the
 // higher level contract bindings to operate.
 type BoundContract struct {
-	address    common.Address     // Deployment address of the contract on the Mars Credit blockchain
-	abi        abi.ABI            // Reflect based ABI to access the correct Mars Credit methods
+	address    common.Address     // Deployment address of the contract on the Ethereum blockchain
+	abi        abi.ABI            // Reflect based ABI to access the correct Ethereum methods
 	caller     ContractCaller     // Read interface to interact with the blockchain
 	transactor ContractTransactor // Write interface to interact with the blockchain
 	filterer   ContractFilterer   // Event filtering to interact with the blockchain
@@ -132,7 +124,7 @@ func NewBoundContract(address common.Address, abi abi.ABI, caller ContractCaller
 	}
 }
 
-// DeployContract deploys a contract onto the Mars Credit blockchain and binds the
+// DeployContract deploys a contract onto the Ethereum blockchain and binds the
 // deployment address with a Go wrapper.
 func DeployContract(opts *TransactOpts, abi abi.ABI, bytecode []byte, backend ContractBackend, params ...interface{}) (common.Address, *types.Transaction, *BoundContract, error) {
 	// Otherwise try to deploy the contract
@@ -190,23 +182,6 @@ func (c *BoundContract) Call(opts *CallOpts, results *[]interface{}, method stri
 				return ErrNoCode
 			}
 		}
-	} else if opts.BlockHash != (common.Hash{}) {
-		bh, ok := c.caller.(BlockHashContractCaller)
-		if !ok {
-			return ErrNoBlockHashState
-		}
-		output, err = bh.CallContractAtHash(ctx, msg, opts.BlockHash)
-		if err != nil {
-			return err
-		}
-		if len(output) == 0 {
-			// Make sure we have a contract to operate on, and bail out otherwise.
-			if code, err = bh.CodeAtHash(ctx, c.address, opts.BlockHash); err != nil {
-				return err
-			} else if len(code) == 0 {
-				return ErrNoCode
-			}
-		}
 	} else {
 		output, err = c.caller.CallContract(ctx, msg, opts.BlockNumber)
 		if err != nil {
@@ -238,7 +213,7 @@ func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...in
 	if err != nil {
 		return nil, err
 	}
-	// todo(rjl493456442) check whether the method is payable or not,
+	// todo(rjl493456442) check the method is payable or not,
 	// reject invalid transaction at the first place
 	return c.transact(opts, &c.address, input)
 }
@@ -246,7 +221,7 @@ func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...in
 // RawTransact initiates a transaction with the given raw calldata as the input.
 // It's usually used to initiate transactions for invoking **Fallback** function.
 func (c *BoundContract) RawTransact(opts *TransactOpts, calldata []byte) (*types.Transaction, error) {
-	// todo(rjl493456442) check whether the method is payable or not,
+	// todo(rjl493456442) check the method is payable or not,
 	// reject invalid transaction at the first place
 	return c.transact(opts, &c.address, calldata)
 }
@@ -279,7 +254,7 @@ func (c *BoundContract) createDynamicTx(opts *TransactOpts, contract *common.Add
 	if gasFeeCap == nil {
 		gasFeeCap = new(big.Int).Add(
 			gasTipCap,
-			new(big.Int).Mul(head.BaseFee, big.NewInt(basefeeWiggleMultiplier)),
+			new(big.Int).Mul(head.BaseFee, big.NewInt(2)),
 		)
 	}
 	if gasFeeCap.Cmp(gasTipCap) < 0 {
@@ -396,8 +371,6 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	)
 	if opts.GasPrice != nil {
 		rawTx, err = c.createLegacyTx(opts, contract, input)
-	} else if opts.GasFeeCap != nil && opts.GasTipCap != nil {
-		rawTx, err = c.createDynamicTx(opts, contract, input, nil)
 	} else {
 		// Only query for basefee if gasPrice not specified
 		if head, errHead := c.transactor.HeaderByNumber(ensureContext(opts.Context), nil); errHead != nil {
@@ -461,7 +434,7 @@ func (c *BoundContract) FilterLogs(opts *FilterOpts, name string, query ...[]int
 	if err != nil {
 		return nil, nil, err
 	}
-	sub := event.NewSubscription(func(quit <-chan struct{}) error {
+	sub, err := event.NewSubscription(func(quit <-chan struct{}) error {
 		for _, log := range buff {
 			select {
 			case logs <- log:
@@ -470,8 +443,11 @@ func (c *BoundContract) FilterLogs(opts *FilterOpts, name string, query ...[]int
 			}
 		}
 		return nil
-	})
+	}), nil
 
+	if err != nil {
+		return nil, nil, err
+	}
 	return logs, sub, nil
 }
 
@@ -508,12 +484,8 @@ func (c *BoundContract) WatchLogs(opts *WatchOpts, name string, query ...[]inter
 
 // UnpackLog unpacks a retrieved log into the provided output structure.
 func (c *BoundContract) UnpackLog(out interface{}, event string, log types.Log) error {
-	// Anonymous events are not supported.
-	if len(log.Topics) == 0 {
-		return errNoEventSignature
-	}
 	if log.Topics[0] != c.abi.Events[event].ID {
-		return errEventSignatureMismatch
+		return fmt.Errorf("event signature mismatch")
 	}
 	if len(log.Data) > 0 {
 		if err := c.abi.UnpackIntoInterface(out, event, log.Data); err != nil {
@@ -531,12 +503,8 @@ func (c *BoundContract) UnpackLog(out interface{}, event string, log types.Log) 
 
 // UnpackLogIntoMap unpacks a retrieved log into the provided map.
 func (c *BoundContract) UnpackLogIntoMap(out map[string]interface{}, event string, log types.Log) error {
-	// Anonymous events are not supported.
-	if len(log.Topics) == 0 {
-		return errNoEventSignature
-	}
 	if log.Topics[0] != c.abi.Events[event].ID {
-		return errEventSignatureMismatch
+		return fmt.Errorf("event signature mismatch")
 	}
 	if len(log.Data) > 0 {
 		if err := c.abi.UnpackIntoMap(out, event, log.Data); err != nil {

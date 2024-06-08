@@ -23,11 +23,10 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
-	"path/filepath"
+	"path"
 	"sync"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/core/rawdb/ancienttest"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/stretchr/testify/require"
@@ -191,9 +190,9 @@ func TestFreezerConcurrentModifyTruncate(t *testing.T) {
 
 	var item = make([]byte, 256)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000; i++ {
 		// First reset and write 100 items.
-		if _, err := f.TruncateHead(0); err != nil {
+		if err := f.TruncateHead(0); err != nil {
 			t.Fatal("truncate failed:", err)
 		}
 		_, err := f.ModifyAncients(func(op ethdb.AncientWriteOp) error {
@@ -228,7 +227,7 @@ func TestFreezerConcurrentModifyTruncate(t *testing.T) {
 			wg.Done()
 		}()
 		go func() {
-			_, truncateErr = f.TruncateHead(10)
+			truncateErr = f.TruncateHead(10)
 			wg.Done()
 		}()
 		go func() {
@@ -268,70 +267,19 @@ func TestFreezerReadonlyValidate(t *testing.T) {
 	bBatch := f.tables["b"].newBatch()
 	require.NoError(t, bBatch.AppendRaw(0, item))
 	require.NoError(t, bBatch.commit())
-	if f.tables["a"].items.Load() != 3 {
+	if f.tables["a"].items != 3 {
 		t.Fatalf("unexpected number of items in table")
 	}
-	if f.tables["b"].items.Load() != 1 {
+	if f.tables["b"].items != 1 {
 		t.Fatalf("unexpected number of items in table")
 	}
 	require.NoError(t, f.Close())
 
-	// Re-opening as readonly should fail when validating
+	// Re-openening as readonly should fail when validating
 	// table lengths.
-	_, err = NewFreezer(dir, "", true, 2049, tables)
+	f, err = NewFreezer(dir, "", true, 2049, tables)
 	if err == nil {
 		t.Fatal("readonly freezer should fail with differing table lengths")
-	}
-}
-
-func TestFreezerConcurrentReadonly(t *testing.T) {
-	t.Parallel()
-
-	tables := map[string]bool{"a": true}
-	dir := t.TempDir()
-
-	f, err := NewFreezer(dir, "", false, 2049, tables)
-	if err != nil {
-		t.Fatal("can't open freezer", err)
-	}
-	var item = make([]byte, 1024)
-	batch := f.tables["a"].newBatch()
-	items := uint64(10)
-	for i := uint64(0); i < items; i++ {
-		require.NoError(t, batch.AppendRaw(i, item))
-	}
-	require.NoError(t, batch.commit())
-	if loaded := f.tables["a"].items.Load(); loaded != items {
-		t.Fatalf("unexpected number of items in table, want: %d, have: %d", items, loaded)
-	}
-	require.NoError(t, f.Close())
-
-	var (
-		wg   sync.WaitGroup
-		fs   = make([]*Freezer, 5)
-		errs = make([]error, 5)
-	)
-	for i := 0; i < 5; i++ {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-
-			f, err := NewFreezer(dir, "", true, 2049, tables)
-			if err == nil {
-				fs[i] = f
-			} else {
-				errs[i] = err
-			}
-		}(i)
-	}
-
-	wg.Wait()
-
-	for i := range fs {
-		if err := errs[i]; err != nil {
-			t.Fatal("failed to open freezer", err)
-		}
-		require.NoError(t, fs[i].Close())
 	}
 }
 
@@ -394,15 +342,15 @@ func TestRenameWindows(t *testing.T) {
 	dir2 := t.TempDir()
 
 	// Create file in dir1 and fill with data
-	f, err := os.Create(filepath.Join(dir1, fname))
+	f, err := os.Create(path.Join(dir1, fname))
 	if err != nil {
 		t.Fatal(err)
 	}
-	f2, err := os.Create(filepath.Join(dir1, fname2))
+	f2, err := os.Create(path.Join(dir1, fname2))
 	if err != nil {
 		t.Fatal(err)
 	}
-	f3, err := os.Create(filepath.Join(dir2, fname2))
+	f3, err := os.Create(path.Join(dir2, fname2))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -424,15 +372,15 @@ func TestRenameWindows(t *testing.T) {
 	if err := f3.Close(); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Rename(f.Name(), filepath.Join(dir2, fname)); err != nil {
+	if err := os.Rename(f.Name(), path.Join(dir2, fname)); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Rename(f2.Name(), filepath.Join(dir2, fname2)); err != nil {
+	if err := os.Rename(f2.Name(), path.Join(dir2, fname2)); err != nil {
 		t.Fatal(err)
 	}
 
 	// Check file contents
-	f, err = os.Open(filepath.Join(dir2, fname))
+	f, err = os.Open(path.Join(dir2, fname))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -446,7 +394,7 @@ func TestRenameWindows(t *testing.T) {
 		t.Errorf("unexpected file contents. Got %v\n", buf)
 	}
 
-	f, err = os.Open(filepath.Join(dir2, fname2))
+	f, err = os.Open(path.Join(dir2, fname2))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -458,45 +406,4 @@ func TestRenameWindows(t *testing.T) {
 	if !bytes.Equal(buf, data2) {
 		t.Errorf("unexpected file contents. Got %v\n", buf)
 	}
-}
-
-func TestFreezerCloseSync(t *testing.T) {
-	t.Parallel()
-	f, _ := newFreezerForTesting(t, map[string]bool{"a": true, "b": true})
-	defer f.Close()
-
-	// Now, close and sync. This mimics the behaviour if the node is shut down,
-	// just as the chain freezer is writing.
-	// 1: thread-1: chain treezer writes, via freezeRange (holds lock)
-	// 2: thread-2: Close called, waits for write to finish
-	// 3: thread-1: finishes writing, releases lock
-	// 4: thread-2: obtains lock, completes Close()
-	// 5: thread-1: calls f.Sync()
-	if err := f.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err := f.Sync(); err == nil {
-		t.Fatalf("want error, have nil")
-	} else if have, want := err.Error(), "[closed closed]"; have != want {
-		t.Fatalf("want %v, have %v", have, want)
-	}
-}
-
-func TestFreezerSuite(t *testing.T) {
-	ancienttest.TestAncientSuite(t, func(kinds []string) ethdb.AncientStore {
-		tables := make(map[string]bool)
-		for _, kind := range kinds {
-			tables[kind] = true
-		}
-		f, _ := newFreezerForTesting(t, tables)
-		return f
-	})
-	ancienttest.TestResettableAncientSuite(t, func(kinds []string) ethdb.ResettableAncientStore {
-		tables := make(map[string]bool)
-		for _, kind := range kinds {
-			tables[kind] = true
-		}
-		f, _ := newResettableFreezer(t.TempDir(), "", false, 2048, tables)
-		return f
-	})
 }

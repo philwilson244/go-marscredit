@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html"
 	"io"
@@ -102,7 +101,7 @@ type SubscribeOpts struct {
 // nodes and connections and filtering message events
 func (c *Client) SubscribeNetwork(events chan *Event, opts SubscribeOpts) (event.Subscription, error) {
 	url := fmt.Sprintf("%s/events?current=%t&filter=%s", c.URL, opts.Current, opts.Filter)
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -215,18 +214,18 @@ func (c *Client) RPCClient(ctx context.Context, nodeID string) (*rpc.Client, err
 // Get performs a HTTP GET request decoding the resulting JSON response
 // into "out"
 func (c *Client) Get(path string, out interface{}) error {
-	return c.Send(http.MethodGet, path, nil, out)
+	return c.Send("GET", path, nil, out)
 }
 
 // Post performs a HTTP POST request sending "in" as the JSON body and
 // decoding the resulting JSON response into "out"
 func (c *Client) Post(path string, in, out interface{}) error {
-	return c.Send(http.MethodPost, path, in, out)
+	return c.Send("POST", path, in, out)
 }
 
 // Delete performs a HTTP DELETE request
 func (c *Client) Delete(path string) error {
-	return c.Send(http.MethodDelete, path, nil, nil)
+	return c.Send("DELETE", path, nil, nil)
 }
 
 // Send performs a HTTP request, sending "in" as the JSON request body and
@@ -365,8 +364,9 @@ func (s *Server) StopMocker(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// GetMockers returns a list of available mockers
+// GetMockerList returns a list of available mockers
 func (s *Server) GetMockers(w http.ResponseWriter, req *http.Request) {
+
 	list := GetMockerList()
 	s.JSON(w, http.StatusOK, list)
 }
@@ -441,7 +441,6 @@ func (s *Server) StreamNetworkEvents(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 		for _, conn := range snap.Conns {
-			conn := conn
 			event := NewEvent(&conn)
 			if err := writeEvent(event); err != nil {
 				writeErr(err)
@@ -479,12 +478,12 @@ func (s *Server) StreamNetworkEvents(w http.ResponseWriter, req *http.Request) {
 func NewMsgFilters(filterParam string) (MsgFilters, error) {
 	filters := make(MsgFilters)
 	for _, filter := range strings.Split(filterParam, "-") {
-		proto, codes, found := strings.Cut(filter, ":")
-		if !found || proto == "" || codes == "" {
+		protoCodes := strings.SplitN(filter, ":", 2)
+		if len(protoCodes) != 2 || protoCodes[0] == "" || protoCodes[1] == "" {
 			return nil, fmt.Errorf("invalid message filter: %s", filter)
 		}
-
-		for _, code := range strings.Split(codes, ",") {
+		proto := protoCodes[0]
+		for _, code := range strings.Split(protoCodes[1], ",") {
 			if code == "*" || code == "-1" {
 				filters[MsgFilter{Proto: proto, Code: -1}] = struct{}{}
 				continue
@@ -560,7 +559,7 @@ func (s *Server) CreateNode(w http.ResponseWriter, req *http.Request) {
 	config := &adapters.NodeConfig{}
 
 	err := json.NewDecoder(req.Body).Decode(config)
-	if err != nil && !errors.Is(err, io.EOF) {
+	if err != nil && err != io.EOF {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

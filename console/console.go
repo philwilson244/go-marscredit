@@ -34,7 +34,6 @@ import (
 	"github.com/ethereum/go-ethereum/internal/jsre"
 	"github.com/ethereum/go-ethereum/internal/jsre/deps"
 	"github.com/ethereum/go-ethereum/internal/web3ext"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
@@ -58,7 +57,7 @@ const DefaultPrompt = "> "
 type Config struct {
 	DataDir  string              // Data directory to store the console history at
 	DocRoot  string              // Filesystem path from where to load JavaScript files from
-	Client   *rpc.Client         // RPC client to execute Mars Credit requests through
+	Client   *rpc.Client         // RPC client to execute Ethereum requests through
 	Prompt   string              // Input prompt prefix string (defaults to DefaultPrompt)
 	Prompter prompt.UserPrompter // Input prompter to allow interactive user feedback (defaults to TerminalPrompter)
 	Printer  io.Writer           // Output writer to serialize any display strings to (defaults to os.Stdout)
@@ -69,7 +68,7 @@ type Config struct {
 // JavaScript console attached to a running node via an external or in-process RPC
 // client.
 type Console struct {
-	client   *rpc.Client         // RPC client to execute Mars Credit requests through
+	client   *rpc.Client         // RPC client to execute Ethereum requests through
 	jsre     *jsre.JSRE          // JavaScript runtime environment running the interpreter
 	prompt   string              // Input prompt prefix string
 	prompter prompt.UserPrompter // Input prompter to allow interactive user feedback
@@ -199,23 +198,14 @@ func (c *Console) initWeb3(bridge *bridge) error {
 	return err
 }
 
-var defaultAPIs = map[string]string{"eth": "1.0", "net": "1.0", "debug": "1.0"}
-
 // initExtensions loads and registers web3.js extensions.
 func (c *Console) initExtensions() error {
-	const methodNotFound = -32601
+	// Compute aliases from server-provided modules.
 	apis, err := c.client.SupportedModules()
 	if err != nil {
-		if rpcErr, ok := err.(rpc.Error); ok && rpcErr.ErrorCode() == methodNotFound {
-			log.Warn("Server does not support method rpc_modules, using default API list.")
-			apis = defaultAPIs
-		} else {
-			return err
-		}
+		return fmt.Errorf("api modules: %v", err)
 	}
-
-	// Compute aliases from server-provided modules.
-	aliases := map[string]struct{}{"eth": {}}
+	aliases := map[string]struct{}{"eth": {}, "personal": {}}
 	for api := range apis {
 		if api == "web3" {
 			continue
@@ -260,7 +250,6 @@ func (c *Console) initPersonal(vm *goja.Runtime, bridge *bridge) {
 	if personal == nil || c.prompter == nil {
 		return
 	}
-	log.Warn("Enabling deprecated personal namespace")
 	jeth := vm.NewObject()
 	vm.Set("jeth", jeth)
 	jeth.Set("openWallet", personal.Get("openWallet"))
@@ -301,13 +290,17 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 	if len(line) == 0 || pos == 0 {
 		return "", nil, ""
 	}
-	// Chunk data to relevant part for autocompletion
+	// Chunck data to relevant part for autocompletion
 	// E.g. in case of nested lines eth.getBalance(eth.coinb<tab><tab>
 	start := pos - 1
 	for ; start > 0; start-- {
 		// Skip all methods and namespaces (i.e. including the dot)
-		c := line[start]
-		if c == '.' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '1' && c <= '9') {
+		if line[start] == '.' || (line[start] >= 'a' && line[start] <= 'z') || (line[start] >= 'A' && line[start] <= 'Z') {
+			continue
+		}
+		// Handle web3 in a special way (i.e. other numbers aren't auto completed)
+		if start >= 3 && line[start-3:start] == "web3" {
+			start -= 3
 			continue
 		}
 		// We've hit an unexpected character, autocomplete form here
@@ -325,6 +318,9 @@ func (c *Console) Welcome() {
 	// Print some generic Geth metadata
 	if res, err := c.jsre.Run(`
 		var message = "instance: " + web3.version.node + "\n";
+		try {
+			message += "coinbase: " + eth.coinbase + "\n";
+		} catch (err) {}
 		message += "at block: " + eth.blockNumber + " (" + new Date(1000 * eth.getBlock(eth.blockNumber).timestamp) + ")\n";
 		try {
 			message += " datadir: " + admin.datadir + "\n";
@@ -411,7 +407,7 @@ func (c *Console) StopInteractive() {
 	}
 }
 
-// Interactive starts an interactive user session, where input is prompted from
+// Interactive starts an interactive user session, where in.put is propted from
 // the configured user prompter.
 func (c *Console) Interactive() {
 	var (
@@ -501,7 +497,7 @@ func (c *Console) readLines(input chan<- string, errc chan<- error, prompt <-cha
 	}
 }
 
-// countIndents returns the number of indentations for the given input.
+// countIndents returns the number of identations for the given input.
 // In case of invalid input such as var a = } the result can be negative.
 func countIndents(input string) int {
 	var (
@@ -542,6 +538,11 @@ func countIndents(input string) int {
 	}
 
 	return indents
+}
+
+// Execute runs the JavaScript file specified as the argument.
+func (c *Console) Execute(path string) error {
+	return c.jsre.Exec(path)
 }
 
 // Stop cleans up the console and terminates the runtime environment.

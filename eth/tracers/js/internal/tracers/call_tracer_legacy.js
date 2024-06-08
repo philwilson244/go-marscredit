@@ -204,6 +204,7 @@
 			gasUsed: '0x' + bigInt(ctx.gasUsed).toString(16),
 			input:   toHex(ctx.input),
 			output:  toHex(ctx.output),
+			time:    ctx.time,
 		};
 		if (this.callstack[0].calls !== undefined) {
 			result.calls = this.callstack[0].calls;
@@ -219,7 +220,7 @@
 		return this.finalize(result);
 	},
 
-	// finalize recreates a call object using the final desired field order for json
+	// finalize recreates a call object using the final desired field oder for json
 	// serialization. This is a nicety feature to pass meaningfully ordered results
 	// to users who don't interpret it, just display it.
 	finalize: function(call) {
@@ -233,6 +234,7 @@
 			input:   call.input,
 			output:  call.output,
 			error:   call.error,
+			time:    call.time,
 			calls:   call.calls,
 		}
 		for (var key in sorted) {

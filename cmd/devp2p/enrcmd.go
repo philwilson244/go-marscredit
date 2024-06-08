@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -31,12 +30,12 @@ import (
 	"github.com/ethereum/go-ethereum/p2p/enode"
 	"github.com/ethereum/go-ethereum/p2p/enr"
 	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/urfave/cli/v2"
+	"gopkg.in/urfave/cli.v1"
 )
 
-var fileFlag = &cli.StringFlag{Name: "file"}
+var fileFlag = cli.StringFlag{Name: "file"}
 
-var enrdumpCommand = &cli.Command{
+var enrdumpCommand = cli.Command{
 	Name:   "enrdump",
 	Usage:  "Pretty-prints node records",
 	Action: enrdump,
@@ -49,7 +48,7 @@ func enrdump(ctx *cli.Context) error {
 	var source string
 	if file := ctx.String(fileFlag.Name); file != "" {
 		if ctx.NArg() != 0 {
-			return errors.New("can't dump record from command-line argument in -file mode")
+			return fmt.Errorf("can't dump record from command-line argument in -file mode")
 		}
 		var b []byte
 		var err error
@@ -63,9 +62,9 @@ func enrdump(ctx *cli.Context) error {
 		}
 		source = string(b)
 	} else if ctx.NArg() == 1 {
-		source = ctx.Args().First()
+		source = ctx.Args()[0]
 	} else {
-		return errors.New("need record as argument")
+		return fmt.Errorf("need record as argument")
 	}
 
 	r, err := parseRecord(source)
@@ -183,8 +182,8 @@ var attrFormatters = map[string]func(rlp.RawValue) (string, bool){
 }
 
 func formatAttrRaw(v rlp.RawValue) (string, bool) {
-	content, _, err := rlp.SplitString(v)
-	return hex.EncodeToString(content), err == nil
+	s := hex.EncodeToString(v)
+	return s, true
 }
 
 func formatAttrString(v rlp.RawValue) (string, bool) {

@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/console/prompt"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/eth"
@@ -76,7 +77,7 @@ func (p *hookedPrompter) SetWordCompleter(completer prompt.WordCompleter) {}
 type tester struct {
 	workspace string
 	stack     *node.Node
-	ethereum  *eth.Mars Credit
+	ethereum  *eth.Ethereum
 	console   *Console
 	input     *hookedPrompter
 	output    *bytes.Buffer
@@ -88,15 +89,18 @@ func newTester(t *testing.T, confOverride func(*ethconfig.Config)) *tester {
 	// Create a temporary storage for the node keys and initialize it
 	workspace := t.TempDir()
 
-	// Create a networkless protocol stack and start an Mars Credit service within
+	// Create a networkless protocol stack and start an Ethereum service within
 	stack, err := node.New(&node.Config{DataDir: workspace, UseLightweightKDF: true, Name: testInstance})
 	if err != nil {
 		t.Fatalf("failed to create node: %v", err)
 	}
 	ethConf := &ethconfig.Config{
-		Genesis: core.DeveloperGenesisBlock(11_500_000, nil),
+		Genesis: core.DeveloperGenesisBlock(15, 11_500_000, common.Address{}),
 		Miner: miner.Config{
-			PendingFeeRecipient: common.HexToAddress(testAddress),
+			Etherbase: common.HexToAddress(testAddress),
+		},
+		Ethash: ethash.Config{
+			PowMode: ethash.ModeTest,
 		},
 	}
 	if confOverride != nil {
@@ -104,17 +108,16 @@ func newTester(t *testing.T, confOverride func(*ethconfig.Config)) *tester {
 	}
 	ethBackend, err := eth.New(stack, ethConf)
 	if err != nil {
-		t.Fatalf("failed to register Mars Credit protocol: %v", err)
+		t.Fatalf("failed to register Ethereum protocol: %v", err)
 	}
 	// Start the node and assemble the JavaScript console around it
 	if err = stack.Start(); err != nil {
 		t.Fatalf("failed to start test stack: %v", err)
 	}
-	client := stack.Attach()
-	t.Cleanup(func() {
-		client.Close()
-	})
-
+	client, err := stack.Attach()
+	if err != nil {
+		t.Fatalf("failed to attach to node: %v", err)
+	}
 	prompter := &hookedPrompter{scheduler: make(chan string)}
 	printer := new(bytes.Buffer)
 
@@ -152,7 +155,8 @@ func (env *tester) Close(t *testing.T) {
 }
 
 // Tests that the node lists the correct welcome message, notably that it contains
-// the instance name, block number, data directory and supported console modules.
+// the instance name, coinbase account, block number, data directory and supported
+// console modules.
 func TestWelcome(t *testing.T) {
 	tester := newTester(t, nil)
 	defer tester.Close(t)
@@ -166,14 +170,14 @@ func TestWelcome(t *testing.T) {
 	if want := fmt.Sprintf("instance: %s", testInstance); !strings.Contains(output, want) {
 		t.Fatalf("console output missing instance: have\n%s\nwant also %s", output, want)
 	}
+	if want := fmt.Sprintf("coinbase: %s", testAddress); !strings.Contains(output, want) {
+		t.Fatalf("console output missing coinbase: have\n%s\nwant also %s", output, want)
+	}
 	if want := "at block: 0"; !strings.Contains(output, want) {
 		t.Fatalf("console output missing sync status: have\n%s\nwant also %s", output, want)
 	}
 	if want := fmt.Sprintf("datadir: %s", tester.workspace); !strings.Contains(output, want) {
-		t.Fatalf("console output missing datadir: have\n%s\nwant also %s", output, want)
-	}
-	if want := "modules: "; !strings.Contains(output, want) {
-		t.Fatalf("console output missing modules: have\n%s\nwant also %s", output, want)
+		t.Fatalf("console output missing coinbase: have\n%s\nwant also %s", output, want)
 	}
 }
 
@@ -227,6 +231,19 @@ func TestPreload(t *testing.T) {
 	tester.console.Evaluate("preloaded")
 	if output := tester.output.String(); !strings.Contains(output, "some-preloaded-string") {
 		t.Fatalf("preloaded variable missing: have %s, want %s", output, "some-preloaded-string")
+	}
+}
+
+// Tests that JavaScript scripts can be executes from the configured asset path.
+func TestExecute(t *testing.T) {
+	tester := newTester(t, nil)
+	defer tester.Close(t)
+
+	tester.console.Execute("exec.js")
+
+	tester.console.Evaluate("execed")
+	if output := tester.output.String(); !strings.Contains(output, "some-executed-string") {
+		t.Fatalf("execed variable missing: have %s, want %s", output, "some-executed-string")
 	}
 }
 

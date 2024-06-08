@@ -165,6 +165,7 @@ func TestUDPv4_responseTimeouts(t *testing.T) {
 	test := newUDPTest(t)
 	defer test.close()
 
+	rand.Seed(time.Now().UnixNano())
 	randomDuration := func(max time.Duration) time.Duration {
 		return time.Duration(rand.Int63n(int64(max)))
 	}
@@ -264,12 +265,12 @@ func TestUDPv4_findnode(t *testing.T) {
 		n := wrapNode(enode.NewV4(&key.PublicKey, ip, 0, 2000))
 		// Ensure half of table content isn't verified live yet.
 		if i > numCandidates/2 {
-			n.isValidatedLive = true
+			n.livenessChecks = 1
 			live[n.ID()] = true
 		}
 		nodes.push(n, numCandidates)
 	}
-	fillTable(test.table, nodes.entries, false)
+	fillTable(test.table, nodes.entries)
 
 	// ensure there's a bond with the test node,
 	// findnode won't be accepted otherwise.
@@ -282,12 +283,11 @@ func TestUDPv4_findnode(t *testing.T) {
 	waitNeighbors := func(want []*node) {
 		test.waitPacketOut(func(p *v4wire.Neighbors, to *net.UDPAddr, hash []byte) {
 			if len(p.Nodes) != len(want) {
-				t.Errorf("wrong number of results: got %d, want %d", len(p.Nodes), len(want))
-				return
+				t.Errorf("wrong number of results: got %d, want %d", len(p.Nodes), bucketSize)
 			}
 			for i, n := range p.Nodes {
 				if n.ID.ID() != want[i].ID() {
-					t.Errorf("result mismatch at %d:\n  got: %v\n  want: %v", i, n, expected.entries[i])
+					t.Errorf("result mismatch at %d:\n  got:  %v\n  want: %v", i, n, expected.entries[i])
 				}
 				if !live[n.ID.ID()] {
 					t.Errorf("result includes dead node %v", n.ID.ID())
@@ -312,7 +312,7 @@ func TestUDPv4_findnodeMultiReply(t *testing.T) {
 	test.table.db.UpdateLastPingReceived(rid, test.remoteaddr.IP, time.Now())
 
 	// queue a pending findnode request
-	resultc, errc := make(chan []*node, 1), make(chan error, 1)
+	resultc, errc := make(chan []*node), make(chan error)
 	go func() {
 		rid := encodePubkey(&test.remotekey.PublicKey).id()
 		ns, err := test.udp.findnode(rid, test.remoteaddr, testTarget)
@@ -394,7 +394,7 @@ func TestUDPv4_pingMatchIP(t *testing.T) {
 func TestUDPv4_successfulPing(t *testing.T) {
 	test := newUDPTest(t)
 	added := make(chan *node, 1)
-	test.table.nodeAddedHook = func(b *bucket, n *node) { added <- n }
+	test.table.nodeAddedHook = func(n *node) { added <- n }
 	defer test.close()
 
 	// The remote side sends a ping packet to initiate the exchange.
@@ -489,7 +489,7 @@ func TestUDPv4_EIP868(t *testing.T) {
 			t.Fatalf("invalid record: %v", err)
 		}
 		if !reflect.DeepEqual(n, wantNode) {
-			t.Fatalf("wrong node in ENRResponse: %v", n)
+			t.Fatalf("wrong node in enrResponse: %v", n)
 		}
 	})
 }
@@ -557,7 +557,12 @@ func startLocalhostV4(t *testing.T, cfg Config) *UDPv4 {
 
 	// Prefix logs with node ID.
 	lprefix := fmt.Sprintf("(%s)", ln.ID().TerminalString())
-	cfg.Log = testlog.Logger(t, log.LevelTrace).With("node-id", lprefix)
+	lfmt := log.TerminalFormat(false)
+	cfg.Log = testlog.Logger(t, log.LvlTrace)
+	cfg.Log.SetHandler(log.FuncHandler(func(r *log.Record) error {
+		t.Logf("%s %s", lprefix, lfmt.Format(r))
+		return nil
+	}))
 
 	// Listen.
 	socket, err := net.ListenUDP("udp4", &net.UDPAddr{IP: net.IP{127, 0, 0, 1}})

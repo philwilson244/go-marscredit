@@ -20,7 +20,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log/slog"
 	"math/rand"
 	"net/http/httptest"
 	"os"
@@ -44,7 +43,8 @@ func TestMain(m *testing.M) {
 	loglevel := flag.Int("loglevel", 2, "verbosity of logs")
 
 	flag.Parse()
-	log.SetDefault(log.NewLogger(log.NewTerminalHandlerWithLevel(colorable.NewColorableStderr(), slog.Level(*loglevel), true)))
+	log.PrintOrigins(true)
+	log.Root().SetHandler(log.LvlFilterHandler(log.Lvl(*loglevel), log.StreamHandler(colorable.NewColorableStderr(), log.TerminalFormat(true))))
 	os.Exit(m.Run())
 }
 
@@ -282,6 +282,8 @@ func (t *TestAPI) Events(ctx context.Context) (*rpc.Subscription, error) {
 				return
 			case <-rpcSub.Err():
 				return
+			case <-notifier.Closed():
+				return
 			}
 		}
 	}()
@@ -487,6 +489,7 @@ func (t *expectEvents) expect(events ...*Event) {
 			}
 
 			switch expected.Type {
+
 			case EventTypeNode:
 				if event.Node == nil {
 					t.Fatal("expected event.Node to be set")
@@ -511,6 +514,7 @@ func (t *expectEvents) expect(events ...*Event) {
 				if event.Conn.Up != expected.Conn.Up {
 					t.Fatalf("expected conn event %d to have up=%t, got up=%t", i, expected.Conn.Up, event.Conn.Up)
 				}
+
 			}
 
 			i++
@@ -594,7 +598,7 @@ func TestHTTPSnapshot(t *testing.T) {
 	network, s := testHTTPServer(t)
 	defer s.Close()
 
-	var eventsDone = make(chan struct{}, 1)
+	var eventsDone = make(chan struct{})
 	count := 1
 	eventsDoneChan := make(chan *Event)
 	eventSub := network.Events().Subscribe(eventsDoneChan)
@@ -838,7 +842,7 @@ func TestMsgFilterPassSingle(t *testing.T) {
 	})
 }
 
-// TestMsgFilterFailBadParams tests streaming message events using an invalid
+// TestMsgFilterPassSingle tests streaming message events using an invalid
 // filter
 func TestMsgFilterFailBadParams(t *testing.T) {
 	// start the server

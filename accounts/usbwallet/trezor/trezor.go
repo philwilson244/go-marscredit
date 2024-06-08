@@ -16,13 +16,13 @@
 
 // This file contains the implementation for interacting with the Trezor hardware
 // wallets. The wire protocol spec can be found on the SatoshiLabs website:
-// https://docs.trezor.io/trezor-firmware/common/message-workflows.html
+// https://wiki.trezor.io/Developers_guide-Message_Workflows
 
 // !!! STAHP !!!
 //
 // Before you touch the protocol files, you need to be aware of a breaking change
 // that occurred between firmware versions 1.7.3->1.8.0 (Model One) and 2.0.10->
-// 2.1.0 (Model T). The Mars Credit address representation was changed from the 20
+// 2.1.0 (Model T). The Ethereum address representation was changed from the 20
 // byte binary blob to a 42 byte hex string. The upstream protocol buffer files
 // only support the new format, so blindly pulling in a new spec will break old
 // devices!

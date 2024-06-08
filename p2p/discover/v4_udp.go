@@ -130,7 +130,7 @@ func ListenV4(c UDPConn, ln *enode.LocalNode, cfg Config) (*UDPv4, error) {
 	cfg = cfg.withDefaults()
 	closeCtx, cancel := context.WithCancel(context.Background())
 	t := &UDPv4{
-		conn:            newMeteredConn(c),
+		conn:            c,
 		priv:            cfg.PrivateKey,
 		netrestrict:     cfg.NetRestrict,
 		localNode:       ln,
@@ -142,7 +142,7 @@ func ListenV4(c UDPConn, ln *enode.LocalNode, cfg Config) (*UDPv4, error) {
 		log:             cfg.Log,
 	}
 
-	tab, err := newTable(t, ln.Database(), cfg)
+	tab, err := newTable(t, ln.Database(), cfg.Bootnodes, t.log)
 	if err != nil {
 		return nil, err
 	}
@@ -328,13 +328,13 @@ func (t *UDPv4) findnode(toid enode.ID, toaddr *net.UDPAddr, target v4wire.Pubke
 	// enough nodes the reply matcher will time out waiting for the second reply, but
 	// there's no need for an error in that case.
 	err := <-rm.errc
-	if errors.Is(err, errTimeout) && rm.reply != nil {
+	if err == errTimeout && rm.reply != nil {
 		err = nil
 	}
 	return nodes, err
 }
 
-// RequestENR sends ENRRequest to the given node and waits for a response.
+// RequestENR sends enrRequest to the given node and waits for a response.
 func (t *UDPv4) RequestENR(n *enode.Node) (*enode.Node, error) {
 	addr := &net.UDPAddr{IP: n.IP(), Port: n.UDP()}
 	t.ensureBond(n.ID(), addr)
@@ -364,7 +364,7 @@ func (t *UDPv4) RequestENR(n *enode.Node) (*enode.Node, error) {
 		return nil, err
 	}
 	if respN.ID() != n.ID() {
-		return nil, errors.New("invalid ID in response record")
+		return nil, fmt.Errorf("invalid ID in response record")
 	}
 	if respN.Seq() < n.Seq() {
 		return n, nil // response record is older
@@ -373,10 +373,6 @@ func (t *UDPv4) RequestENR(n *enode.Node) (*enode.Node, error) {
 		return nil, fmt.Errorf("invalid IP in response record: %v", err)
 	}
 	return respN, nil
-}
-
-func (t *UDPv4) TableBuckets() [][]BucketNode {
-	return t.tab.Nodes()
 }
 
 // pending adds a reply matcher to the pending reply queue.
@@ -529,8 +525,8 @@ func (t *UDPv4) readLoop(unhandled chan<- ReadPacket) {
 			t.log.Debug("Temporary UDP read error", "err", err)
 			continue
 		} else if err != nil {
-			// Shut down the loop for permanent errors.
-			if !errors.Is(err, io.EOF) {
+			// Shut down the loop for permament errors.
+			if err != io.EOF {
 				t.log.Debug("UDP read error", "err", err)
 			}
 			return
@@ -552,7 +548,7 @@ func (t *UDPv4) handlePacket(from *net.UDPAddr, buf []byte) error {
 	}
 	packet := t.wrapPacket(rawpacket)
 	fromID := fromKey.ID()
-	if packet.preverify != nil {
+	if err == nil && packet.preverify != nil {
 		err = packet.preverify(packet, from, fromID, fromKey)
 	}
 	t.log.Trace("<< "+packet.Name(), "id", fromID, "addr", from, "err", err)
@@ -647,12 +643,12 @@ type packetHandlerV4 struct {
 func (t *UDPv4) verifyPing(h *packetHandlerV4, from *net.UDPAddr, fromID enode.ID, fromKey v4wire.Pubkey) error {
 	req := h.Packet.(*v4wire.Ping)
 
-	if v4wire.Expired(req.Expiration) {
-		return errExpired
-	}
 	senderKey, err := v4wire.DecodePubkey(crypto.S256(), fromKey)
 	if err != nil {
 		return err
+	}
+	if v4wire.Expired(req.Expiration) {
+		return errExpired
 	}
 	h.senderKey = senderKey
 	return nil
@@ -673,10 +669,10 @@ func (t *UDPv4) handlePing(h *packetHandlerV4, from *net.UDPAddr, fromID enode.I
 	n := wrapNode(enode.NewV4(h.senderKey, from.IP, int(req.From.TCP), from.Port))
 	if time.Since(t.db.LastPongReceived(n.ID(), from.IP)) > bondExpiration {
 		t.sendPing(fromID, from, func() {
-			t.tab.addInboundNode(n)
+			t.tab.addVerifiedNode(n)
 		})
 	} else {
-		t.tab.addInboundNode(n)
+		t.tab.addVerifiedNode(n)
 	}
 
 	// Update node database and endpoint predictor.

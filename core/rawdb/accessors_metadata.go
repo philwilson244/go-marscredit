@@ -81,16 +81,15 @@ func WriteChainConfig(db ethdb.KeyValueWriter, hash common.Hash, cfg *params.Cha
 	}
 }
 
-// ReadGenesisStateSpec retrieves the genesis state specification based on the
-// given genesis (block-)hash.
-func ReadGenesisStateSpec(db ethdb.KeyValueReader, blockhash common.Hash) []byte {
-	data, _ := db.Get(genesisStateSpecKey(blockhash))
+// ReadGenesisState retrieves the genesis state based on the given genesis hash.
+func ReadGenesisState(db ethdb.KeyValueReader, hash common.Hash) []byte {
+	data, _ := db.Get(genesisKey(hash))
 	return data
 }
 
-// WriteGenesisStateSpec writes the genesis state specification into the disk.
-func WriteGenesisStateSpec(db ethdb.KeyValueWriter, blockhash common.Hash, data []byte) {
-	if err := db.Put(genesisStateSpecKey(blockhash), data); err != nil {
+// WriteGenesisState writes the genesis state into the disk.
+func WriteGenesisState(db ethdb.KeyValueWriter, hash common.Hash, data []byte) {
+	if err := db.Put(genesisKey(hash), data); err != nil {
 		log.Crit("Failed to store genesis state", "err", err)
 	}
 }
@@ -111,10 +110,10 @@ const crashesToKeep = 10
 func PushUncleanShutdownMarker(db ethdb.KeyValueStore) ([]uint64, uint64, error) {
 	var uncleanShutdowns crashList
 	// Read old data
-	if data, err := db.Get(uncleanShutdownKey); err == nil {
-		if err := rlp.DecodeBytes(data, &uncleanShutdowns); err != nil {
-			return nil, 0, err
-		}
+	if data, err := db.Get(uncleanShutdownKey); err != nil {
+		log.Warn("Error reading unclean shutdown markers", "error", err)
+	} else if err := rlp.DecodeBytes(data, &uncleanShutdowns); err != nil {
+		return nil, 0, err
 	}
 	var discarded = uncleanShutdowns.Discarded
 	var previous = make([]uint64, len(uncleanShutdowns.Recent))

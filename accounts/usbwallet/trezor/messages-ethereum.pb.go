@@ -21,12 +21,12 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// *
+//*
 // Request: Ask device for public key corresponding to address_n path
 // @start
-// @next Mars CreditPublicKey
+// @next EthereumPublicKey
 // @next Failure
-type Mars CreditGetPublicKey struct {
+type EthereumGetPublicKey struct {
 	AddressN             []uint32 `protobuf:"varint,1,rep,name=address_n,json=addressN" json:"address_n,omitempty"`
 	ShowDisplay          *bool    `protobuf:"varint,2,opt,name=show_display,json=showDisplay" json:"show_display,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -34,49 +34,49 @@ type Mars CreditGetPublicKey struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditGetPublicKey) Reset()         { *m = Mars CreditGetPublicKey{} }
-func (m *Mars CreditGetPublicKey) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditGetPublicKey) ProtoMessage()    {}
-func (*Mars CreditGetPublicKey) Descriptor() ([]byte, []int) {
+func (m *EthereumGetPublicKey) Reset()         { *m = EthereumGetPublicKey{} }
+func (m *EthereumGetPublicKey) String() string { return proto.CompactTextString(m) }
+func (*EthereumGetPublicKey) ProtoMessage()    {}
+func (*EthereumGetPublicKey) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{0}
 }
 
-func (m *Mars CreditGetPublicKey) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditGetPublicKey.Unmarshal(m, b)
+func (m *EthereumGetPublicKey) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumGetPublicKey.Unmarshal(m, b)
 }
-func (m *Mars CreditGetPublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditGetPublicKey.Marshal(b, m, deterministic)
+func (m *EthereumGetPublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumGetPublicKey.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditGetPublicKey) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditGetPublicKey.Merge(m, src)
+func (m *EthereumGetPublicKey) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumGetPublicKey.Merge(m, src)
 }
-func (m *Mars CreditGetPublicKey) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditGetPublicKey.Size(m)
+func (m *EthereumGetPublicKey) XXX_Size() int {
+	return xxx_messageInfo_EthereumGetPublicKey.Size(m)
 }
-func (m *Mars CreditGetPublicKey) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditGetPublicKey.DiscardUnknown(m)
+func (m *EthereumGetPublicKey) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumGetPublicKey.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditGetPublicKey proto.InternalMessageInfo
+var xxx_messageInfo_EthereumGetPublicKey proto.InternalMessageInfo
 
-func (m *Mars CreditGetPublicKey) GetAddressN() []uint32 {
+func (m *EthereumGetPublicKey) GetAddressN() []uint32 {
 	if m != nil {
 		return m.AddressN
 	}
 	return nil
 }
 
-func (m *Mars CreditGetPublicKey) GetShowDisplay() bool {
+func (m *EthereumGetPublicKey) GetShowDisplay() bool {
 	if m != nil && m.ShowDisplay != nil {
 		return *m.ShowDisplay
 	}
 	return false
 }
 
-// *
+//*
 // Response: Contains public key derived from device private seed
 // @end
-type Mars CreditPublicKey struct {
+type EthereumPublicKey struct {
 	Node                 *HDNodeType `protobuf:"bytes,1,opt,name=node" json:"node,omitempty"`
 	Xpub                 *string     `protobuf:"bytes,2,opt,name=xpub" json:"xpub,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
@@ -84,51 +84,51 @@ type Mars CreditPublicKey struct {
 	XXX_sizecache        int32       `json:"-"`
 }
 
-func (m *Mars CreditPublicKey) Reset()         { *m = Mars CreditPublicKey{} }
-func (m *Mars CreditPublicKey) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditPublicKey) ProtoMessage()    {}
-func (*Mars CreditPublicKey) Descriptor() ([]byte, []int) {
+func (m *EthereumPublicKey) Reset()         { *m = EthereumPublicKey{} }
+func (m *EthereumPublicKey) String() string { return proto.CompactTextString(m) }
+func (*EthereumPublicKey) ProtoMessage()    {}
+func (*EthereumPublicKey) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{1}
 }
 
-func (m *Mars CreditPublicKey) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditPublicKey.Unmarshal(m, b)
+func (m *EthereumPublicKey) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumPublicKey.Unmarshal(m, b)
 }
-func (m *Mars CreditPublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditPublicKey.Marshal(b, m, deterministic)
+func (m *EthereumPublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumPublicKey.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditPublicKey) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditPublicKey.Merge(m, src)
+func (m *EthereumPublicKey) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumPublicKey.Merge(m, src)
 }
-func (m *Mars CreditPublicKey) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditPublicKey.Size(m)
+func (m *EthereumPublicKey) XXX_Size() int {
+	return xxx_messageInfo_EthereumPublicKey.Size(m)
 }
-func (m *Mars CreditPublicKey) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditPublicKey.DiscardUnknown(m)
+func (m *EthereumPublicKey) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumPublicKey.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditPublicKey proto.InternalMessageInfo
+var xxx_messageInfo_EthereumPublicKey proto.InternalMessageInfo
 
-func (m *Mars CreditPublicKey) GetNode() *HDNodeType {
+func (m *EthereumPublicKey) GetNode() *HDNodeType {
 	if m != nil {
 		return m.Node
 	}
 	return nil
 }
 
-func (m *Mars CreditPublicKey) GetXpub() string {
+func (m *EthereumPublicKey) GetXpub() string {
 	if m != nil && m.Xpub != nil {
 		return *m.Xpub
 	}
 	return ""
 }
 
-// *
-// Request: Ask device for Mars Credit address corresponding to address_n path
+//*
+// Request: Ask device for Ethereum address corresponding to address_n path
 // @start
-// @next Mars CreditAddress
+// @next EthereumAddress
 // @next Failure
-type Mars CreditGetAddress struct {
+type EthereumGetAddress struct {
 	AddressN             []uint32 `protobuf:"varint,1,rep,name=address_n,json=addressN" json:"address_n,omitempty"`
 	ShowDisplay          *bool    `protobuf:"varint,2,opt,name=show_display,json=showDisplay" json:"show_display,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -136,49 +136,49 @@ type Mars CreditGetAddress struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditGetAddress) Reset()         { *m = Mars CreditGetAddress{} }
-func (m *Mars CreditGetAddress) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditGetAddress) ProtoMessage()    {}
-func (*Mars CreditGetAddress) Descriptor() ([]byte, []int) {
+func (m *EthereumGetAddress) Reset()         { *m = EthereumGetAddress{} }
+func (m *EthereumGetAddress) String() string { return proto.CompactTextString(m) }
+func (*EthereumGetAddress) ProtoMessage()    {}
+func (*EthereumGetAddress) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{2}
 }
 
-func (m *Mars CreditGetAddress) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditGetAddress.Unmarshal(m, b)
+func (m *EthereumGetAddress) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumGetAddress.Unmarshal(m, b)
 }
-func (m *Mars CreditGetAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditGetAddress.Marshal(b, m, deterministic)
+func (m *EthereumGetAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumGetAddress.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditGetAddress) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditGetAddress.Merge(m, src)
+func (m *EthereumGetAddress) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumGetAddress.Merge(m, src)
 }
-func (m *Mars CreditGetAddress) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditGetAddress.Size(m)
+func (m *EthereumGetAddress) XXX_Size() int {
+	return xxx_messageInfo_EthereumGetAddress.Size(m)
 }
-func (m *Mars CreditGetAddress) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditGetAddress.DiscardUnknown(m)
+func (m *EthereumGetAddress) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumGetAddress.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditGetAddress proto.InternalMessageInfo
+var xxx_messageInfo_EthereumGetAddress proto.InternalMessageInfo
 
-func (m *Mars CreditGetAddress) GetAddressN() []uint32 {
+func (m *EthereumGetAddress) GetAddressN() []uint32 {
 	if m != nil {
 		return m.AddressN
 	}
 	return nil
 }
 
-func (m *Mars CreditGetAddress) GetShowDisplay() bool {
+func (m *EthereumGetAddress) GetShowDisplay() bool {
 	if m != nil && m.ShowDisplay != nil {
 		return *m.ShowDisplay
 	}
 	return false
 }
 
-// *
-// Response: Contains an Mars Credit address derived from device private seed
+//*
+// Response: Contains an Ethereum address derived from device private seed
 // @end
-type Mars CreditAddress struct {
+type EthereumAddress struct {
 	AddressBin           []byte   `protobuf:"bytes,1,opt,name=addressBin" json:"addressBin,omitempty"`
 	AddressHex           *string  `protobuf:"bytes,2,opt,name=addressHex" json:"addressHex,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -186,53 +186,53 @@ type Mars CreditAddress struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditAddress) Reset()         { *m = Mars CreditAddress{} }
-func (m *Mars CreditAddress) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditAddress) ProtoMessage()    {}
-func (*Mars CreditAddress) Descriptor() ([]byte, []int) {
+func (m *EthereumAddress) Reset()         { *m = EthereumAddress{} }
+func (m *EthereumAddress) String() string { return proto.CompactTextString(m) }
+func (*EthereumAddress) ProtoMessage()    {}
+func (*EthereumAddress) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{3}
 }
 
-func (m *Mars CreditAddress) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditAddress.Unmarshal(m, b)
+func (m *EthereumAddress) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumAddress.Unmarshal(m, b)
 }
-func (m *Mars CreditAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditAddress.Marshal(b, m, deterministic)
+func (m *EthereumAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumAddress.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditAddress) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditAddress.Merge(m, src)
+func (m *EthereumAddress) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumAddress.Merge(m, src)
 }
-func (m *Mars CreditAddress) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditAddress.Size(m)
+func (m *EthereumAddress) XXX_Size() int {
+	return xxx_messageInfo_EthereumAddress.Size(m)
 }
-func (m *Mars CreditAddress) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditAddress.DiscardUnknown(m)
+func (m *EthereumAddress) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumAddress.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditAddress proto.InternalMessageInfo
+var xxx_messageInfo_EthereumAddress proto.InternalMessageInfo
 
-func (m *Mars CreditAddress) GetAddressBin() []byte {
+func (m *EthereumAddress) GetAddressBin() []byte {
 	if m != nil {
 		return m.AddressBin
 	}
 	return nil
 }
 
-func (m *Mars CreditAddress) GetAddressHex() string {
+func (m *EthereumAddress) GetAddressHex() string {
 	if m != nil && m.AddressHex != nil {
 		return *m.AddressHex
 	}
 	return ""
 }
 
-// *
+//*
 // Request: Ask device to sign transaction
 // All fields are optional from the protocol's point of view. Each field defaults to value `0` if missing.
 // Note: the first at most 1024 bytes of data MUST be transmitted as part of this message.
 // @start
-// @next Mars CreditTxRequest
+// @next EthereumTxRequest
 // @next Failure
-type Mars CreditSignTx struct {
+type EthereumSignTx struct {
 	AddressN             []uint32 `protobuf:"varint,1,rep,name=address_n,json=addressN" json:"address_n,omitempty"`
 	Nonce                []byte   `protobuf:"bytes,2,opt,name=nonce" json:"nonce,omitempty"`
 	GasPrice             []byte   `protobuf:"bytes,3,opt,name=gas_price,json=gasPrice" json:"gas_price,omitempty"`
@@ -249,115 +249,115 @@ type Mars CreditSignTx struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditSignTx) Reset()         { *m = Mars CreditSignTx{} }
-func (m *Mars CreditSignTx) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditSignTx) ProtoMessage()    {}
-func (*Mars CreditSignTx) Descriptor() ([]byte, []int) {
+func (m *EthereumSignTx) Reset()         { *m = EthereumSignTx{} }
+func (m *EthereumSignTx) String() string { return proto.CompactTextString(m) }
+func (*EthereumSignTx) ProtoMessage()    {}
+func (*EthereumSignTx) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{4}
 }
 
-func (m *Mars CreditSignTx) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditSignTx.Unmarshal(m, b)
+func (m *EthereumSignTx) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumSignTx.Unmarshal(m, b)
 }
-func (m *Mars CreditSignTx) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditSignTx.Marshal(b, m, deterministic)
+func (m *EthereumSignTx) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumSignTx.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditSignTx) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditSignTx.Merge(m, src)
+func (m *EthereumSignTx) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumSignTx.Merge(m, src)
 }
-func (m *Mars CreditSignTx) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditSignTx.Size(m)
+func (m *EthereumSignTx) XXX_Size() int {
+	return xxx_messageInfo_EthereumSignTx.Size(m)
 }
-func (m *Mars CreditSignTx) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditSignTx.DiscardUnknown(m)
+func (m *EthereumSignTx) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumSignTx.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditSignTx proto.InternalMessageInfo
+var xxx_messageInfo_EthereumSignTx proto.InternalMessageInfo
 
-func (m *Mars CreditSignTx) GetAddressN() []uint32 {
+func (m *EthereumSignTx) GetAddressN() []uint32 {
 	if m != nil {
 		return m.AddressN
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetNonce() []byte {
+func (m *EthereumSignTx) GetNonce() []byte {
 	if m != nil {
 		return m.Nonce
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetGasPrice() []byte {
+func (m *EthereumSignTx) GetGasPrice() []byte {
 	if m != nil {
 		return m.GasPrice
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetGasLimit() []byte {
+func (m *EthereumSignTx) GetGasLimit() []byte {
 	if m != nil {
 		return m.GasLimit
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetToBin() []byte {
+func (m *EthereumSignTx) GetToBin() []byte {
 	if m != nil {
 		return m.ToBin
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetToHex() string {
+func (m *EthereumSignTx) GetToHex() string {
 	if m != nil && m.ToHex != nil {
 		return *m.ToHex
 	}
 	return ""
 }
 
-func (m *Mars CreditSignTx) GetValue() []byte {
+func (m *EthereumSignTx) GetValue() []byte {
 	if m != nil {
 		return m.Value
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetDataInitialChunk() []byte {
+func (m *EthereumSignTx) GetDataInitialChunk() []byte {
 	if m != nil {
 		return m.DataInitialChunk
 	}
 	return nil
 }
 
-func (m *Mars CreditSignTx) GetDataLength() uint32 {
+func (m *EthereumSignTx) GetDataLength() uint32 {
 	if m != nil && m.DataLength != nil {
 		return *m.DataLength
 	}
 	return 0
 }
 
-func (m *Mars CreditSignTx) GetChainId() uint32 {
+func (m *EthereumSignTx) GetChainId() uint32 {
 	if m != nil && m.ChainId != nil {
 		return *m.ChainId
 	}
 	return 0
 }
 
-func (m *Mars CreditSignTx) GetTxType() uint32 {
+func (m *EthereumSignTx) GetTxType() uint32 {
 	if m != nil && m.TxType != nil {
 		return *m.TxType
 	}
 	return 0
 }
 
-// *
+//*
 // Response: Device asks for more data from transaction payload, or returns the signature.
 // If data_length is set, device awaits that many more bytes of payload.
 // Otherwise, the signature_* fields contain the computed transaction signature. All three fields will be present.
 // @end
-// @next Mars CreditTxAck
-type Mars CreditTxRequest struct {
+// @next EthereumTxAck
+type EthereumTxRequest struct {
 	DataLength           *uint32  `protobuf:"varint,1,opt,name=data_length,json=dataLength" json:"data_length,omitempty"`
 	SignatureV           *uint32  `protobuf:"varint,2,opt,name=signature_v,json=signatureV" json:"signature_v,omitempty"`
 	SignatureR           []byte   `protobuf:"bytes,3,opt,name=signature_r,json=signatureR" json:"signature_r,omitempty"`
@@ -367,107 +367,107 @@ type Mars CreditTxRequest struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditTxRequest) Reset()         { *m = Mars CreditTxRequest{} }
-func (m *Mars CreditTxRequest) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditTxRequest) ProtoMessage()    {}
-func (*Mars CreditTxRequest) Descriptor() ([]byte, []int) {
+func (m *EthereumTxRequest) Reset()         { *m = EthereumTxRequest{} }
+func (m *EthereumTxRequest) String() string { return proto.CompactTextString(m) }
+func (*EthereumTxRequest) ProtoMessage()    {}
+func (*EthereumTxRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{5}
 }
 
-func (m *Mars CreditTxRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditTxRequest.Unmarshal(m, b)
+func (m *EthereumTxRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumTxRequest.Unmarshal(m, b)
 }
-func (m *Mars CreditTxRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditTxRequest.Marshal(b, m, deterministic)
+func (m *EthereumTxRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumTxRequest.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditTxRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditTxRequest.Merge(m, src)
+func (m *EthereumTxRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumTxRequest.Merge(m, src)
 }
-func (m *Mars CreditTxRequest) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditTxRequest.Size(m)
+func (m *EthereumTxRequest) XXX_Size() int {
+	return xxx_messageInfo_EthereumTxRequest.Size(m)
 }
-func (m *Mars CreditTxRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditTxRequest.DiscardUnknown(m)
+func (m *EthereumTxRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumTxRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditTxRequest proto.InternalMessageInfo
+var xxx_messageInfo_EthereumTxRequest proto.InternalMessageInfo
 
-func (m *Mars CreditTxRequest) GetDataLength() uint32 {
+func (m *EthereumTxRequest) GetDataLength() uint32 {
 	if m != nil && m.DataLength != nil {
 		return *m.DataLength
 	}
 	return 0
 }
 
-func (m *Mars CreditTxRequest) GetSignatureV() uint32 {
+func (m *EthereumTxRequest) GetSignatureV() uint32 {
 	if m != nil && m.SignatureV != nil {
 		return *m.SignatureV
 	}
 	return 0
 }
 
-func (m *Mars CreditTxRequest) GetSignatureR() []byte {
+func (m *EthereumTxRequest) GetSignatureR() []byte {
 	if m != nil {
 		return m.SignatureR
 	}
 	return nil
 }
 
-func (m *Mars CreditTxRequest) GetSignatureS() []byte {
+func (m *EthereumTxRequest) GetSignatureS() []byte {
 	if m != nil {
 		return m.SignatureS
 	}
 	return nil
 }
 
-// *
+//*
 // Request: Transaction payload data.
-// @next Mars CreditTxRequest
-type Mars CreditTxAck struct {
+// @next EthereumTxRequest
+type EthereumTxAck struct {
 	DataChunk            []byte   `protobuf:"bytes,1,opt,name=data_chunk,json=dataChunk" json:"data_chunk,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditTxAck) Reset()         { *m = Mars CreditTxAck{} }
-func (m *Mars CreditTxAck) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditTxAck) ProtoMessage()    {}
-func (*Mars CreditTxAck) Descriptor() ([]byte, []int) {
+func (m *EthereumTxAck) Reset()         { *m = EthereumTxAck{} }
+func (m *EthereumTxAck) String() string { return proto.CompactTextString(m) }
+func (*EthereumTxAck) ProtoMessage()    {}
+func (*EthereumTxAck) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{6}
 }
 
-func (m *Mars CreditTxAck) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditTxAck.Unmarshal(m, b)
+func (m *EthereumTxAck) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumTxAck.Unmarshal(m, b)
 }
-func (m *Mars CreditTxAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditTxAck.Marshal(b, m, deterministic)
+func (m *EthereumTxAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumTxAck.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditTxAck) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditTxAck.Merge(m, src)
+func (m *EthereumTxAck) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumTxAck.Merge(m, src)
 }
-func (m *Mars CreditTxAck) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditTxAck.Size(m)
+func (m *EthereumTxAck) XXX_Size() int {
+	return xxx_messageInfo_EthereumTxAck.Size(m)
 }
-func (m *Mars CreditTxAck) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditTxAck.DiscardUnknown(m)
+func (m *EthereumTxAck) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumTxAck.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditTxAck proto.InternalMessageInfo
+var xxx_messageInfo_EthereumTxAck proto.InternalMessageInfo
 
-func (m *Mars CreditTxAck) GetDataChunk() []byte {
+func (m *EthereumTxAck) GetDataChunk() []byte {
 	if m != nil {
 		return m.DataChunk
 	}
 	return nil
 }
 
-// *
+//*
 // Request: Ask device to sign message
 // @start
-// @next Mars CreditMessageSignature
+// @next EthereumMessageSignature
 // @next Failure
-type Mars CreditSignMessage struct {
+type EthereumSignMessage struct {
 	AddressN             []uint32 `protobuf:"varint,1,rep,name=address_n,json=addressN" json:"address_n,omitempty"`
 	Message              []byte   `protobuf:"bytes,2,opt,name=message" json:"message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -475,49 +475,49 @@ type Mars CreditSignMessage struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditSignMessage) Reset()         { *m = Mars CreditSignMessage{} }
-func (m *Mars CreditSignMessage) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditSignMessage) ProtoMessage()    {}
-func (*Mars CreditSignMessage) Descriptor() ([]byte, []int) {
+func (m *EthereumSignMessage) Reset()         { *m = EthereumSignMessage{} }
+func (m *EthereumSignMessage) String() string { return proto.CompactTextString(m) }
+func (*EthereumSignMessage) ProtoMessage()    {}
+func (*EthereumSignMessage) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{7}
 }
 
-func (m *Mars CreditSignMessage) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditSignMessage.Unmarshal(m, b)
+func (m *EthereumSignMessage) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumSignMessage.Unmarshal(m, b)
 }
-func (m *Mars CreditSignMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditSignMessage.Marshal(b, m, deterministic)
+func (m *EthereumSignMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumSignMessage.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditSignMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditSignMessage.Merge(m, src)
+func (m *EthereumSignMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumSignMessage.Merge(m, src)
 }
-func (m *Mars CreditSignMessage) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditSignMessage.Size(m)
+func (m *EthereumSignMessage) XXX_Size() int {
+	return xxx_messageInfo_EthereumSignMessage.Size(m)
 }
-func (m *Mars CreditSignMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditSignMessage.DiscardUnknown(m)
+func (m *EthereumSignMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumSignMessage.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditSignMessage proto.InternalMessageInfo
+var xxx_messageInfo_EthereumSignMessage proto.InternalMessageInfo
 
-func (m *Mars CreditSignMessage) GetAddressN() []uint32 {
+func (m *EthereumSignMessage) GetAddressN() []uint32 {
 	if m != nil {
 		return m.AddressN
 	}
 	return nil
 }
 
-func (m *Mars CreditSignMessage) GetMessage() []byte {
+func (m *EthereumSignMessage) GetMessage() []byte {
 	if m != nil {
 		return m.Message
 	}
 	return nil
 }
 
-// *
+//*
 // Response: Signed message
 // @end
-type Mars CreditMessageSignature struct {
+type EthereumMessageSignature struct {
 	AddressBin           []byte   `protobuf:"bytes,1,opt,name=addressBin" json:"addressBin,omitempty"`
 	Signature            []byte   `protobuf:"bytes,2,opt,name=signature" json:"signature,omitempty"`
 	AddressHex           *string  `protobuf:"bytes,3,opt,name=addressHex" json:"addressHex,omitempty"`
@@ -526,58 +526,58 @@ type Mars CreditMessageSignature struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditMessageSignature) Reset()         { *m = Mars CreditMessageSignature{} }
-func (m *Mars CreditMessageSignature) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditMessageSignature) ProtoMessage()    {}
-func (*Mars CreditMessageSignature) Descriptor() ([]byte, []int) {
+func (m *EthereumMessageSignature) Reset()         { *m = EthereumMessageSignature{} }
+func (m *EthereumMessageSignature) String() string { return proto.CompactTextString(m) }
+func (*EthereumMessageSignature) ProtoMessage()    {}
+func (*EthereumMessageSignature) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{8}
 }
 
-func (m *Mars CreditMessageSignature) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditMessageSignature.Unmarshal(m, b)
+func (m *EthereumMessageSignature) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumMessageSignature.Unmarshal(m, b)
 }
-func (m *Mars CreditMessageSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditMessageSignature.Marshal(b, m, deterministic)
+func (m *EthereumMessageSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumMessageSignature.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditMessageSignature) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditMessageSignature.Merge(m, src)
+func (m *EthereumMessageSignature) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumMessageSignature.Merge(m, src)
 }
-func (m *Mars CreditMessageSignature) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditMessageSignature.Size(m)
+func (m *EthereumMessageSignature) XXX_Size() int {
+	return xxx_messageInfo_EthereumMessageSignature.Size(m)
 }
-func (m *Mars CreditMessageSignature) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditMessageSignature.DiscardUnknown(m)
+func (m *EthereumMessageSignature) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumMessageSignature.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditMessageSignature proto.InternalMessageInfo
+var xxx_messageInfo_EthereumMessageSignature proto.InternalMessageInfo
 
-func (m *Mars CreditMessageSignature) GetAddressBin() []byte {
+func (m *EthereumMessageSignature) GetAddressBin() []byte {
 	if m != nil {
 		return m.AddressBin
 	}
 	return nil
 }
 
-func (m *Mars CreditMessageSignature) GetSignature() []byte {
+func (m *EthereumMessageSignature) GetSignature() []byte {
 	if m != nil {
 		return m.Signature
 	}
 	return nil
 }
 
-func (m *Mars CreditMessageSignature) GetAddressHex() string {
+func (m *EthereumMessageSignature) GetAddressHex() string {
 	if m != nil && m.AddressHex != nil {
 		return *m.AddressHex
 	}
 	return ""
 }
 
-// *
+//*
 // Request: Ask device to verify message
 // @start
 // @next Success
 // @next Failure
-type Mars CreditVerifyMessage struct {
+type EthereumVerifyMessage struct {
 	AddressBin           []byte   `protobuf:"bytes,1,opt,name=addressBin" json:"addressBin,omitempty"`
 	Signature            []byte   `protobuf:"bytes,2,opt,name=signature" json:"signature,omitempty"`
 	Message              []byte   `protobuf:"bytes,3,opt,name=message" json:"message,omitempty"`
@@ -587,53 +587,53 @@ type Mars CreditVerifyMessage struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Mars CreditVerifyMessage) Reset()         { *m = Mars CreditVerifyMessage{} }
-func (m *Mars CreditVerifyMessage) String() string { return proto.CompactTextString(m) }
-func (*Mars CreditVerifyMessage) ProtoMessage()    {}
-func (*Mars CreditVerifyMessage) Descriptor() ([]byte, []int) {
+func (m *EthereumVerifyMessage) Reset()         { *m = EthereumVerifyMessage{} }
+func (m *EthereumVerifyMessage) String() string { return proto.CompactTextString(m) }
+func (*EthereumVerifyMessage) ProtoMessage()    {}
+func (*EthereumVerifyMessage) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cb33f46ba915f15c, []int{9}
 }
 
-func (m *Mars CreditVerifyMessage) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Mars CreditVerifyMessage.Unmarshal(m, b)
+func (m *EthereumVerifyMessage) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EthereumVerifyMessage.Unmarshal(m, b)
 }
-func (m *Mars CreditVerifyMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Mars CreditVerifyMessage.Marshal(b, m, deterministic)
+func (m *EthereumVerifyMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EthereumVerifyMessage.Marshal(b, m, deterministic)
 }
-func (m *Mars CreditVerifyMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Mars CreditVerifyMessage.Merge(m, src)
+func (m *EthereumVerifyMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EthereumVerifyMessage.Merge(m, src)
 }
-func (m *Mars CreditVerifyMessage) XXX_Size() int {
-	return xxx_messageInfo_Mars CreditVerifyMessage.Size(m)
+func (m *EthereumVerifyMessage) XXX_Size() int {
+	return xxx_messageInfo_EthereumVerifyMessage.Size(m)
 }
-func (m *Mars CreditVerifyMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_Mars CreditVerifyMessage.DiscardUnknown(m)
+func (m *EthereumVerifyMessage) XXX_DiscardUnknown() {
+	xxx_messageInfo_EthereumVerifyMessage.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Mars CreditVerifyMessage proto.InternalMessageInfo
+var xxx_messageInfo_EthereumVerifyMessage proto.InternalMessageInfo
 
-func (m *Mars CreditVerifyMessage) GetAddressBin() []byte {
+func (m *EthereumVerifyMessage) GetAddressBin() []byte {
 	if m != nil {
 		return m.AddressBin
 	}
 	return nil
 }
 
-func (m *Mars CreditVerifyMessage) GetSignature() []byte {
+func (m *EthereumVerifyMessage) GetSignature() []byte {
 	if m != nil {
 		return m.Signature
 	}
 	return nil
 }
 
-func (m *Mars CreditVerifyMessage) GetMessage() []byte {
+func (m *EthereumVerifyMessage) GetMessage() []byte {
 	if m != nil {
 		return m.Message
 	}
 	return nil
 }
 
-func (m *Mars CreditVerifyMessage) GetAddressHex() string {
+func (m *EthereumVerifyMessage) GetAddressHex() string {
 	if m != nil && m.AddressHex != nil {
 		return *m.AddressHex
 	}
@@ -641,16 +641,16 @@ func (m *Mars CreditVerifyMessage) GetAddressHex() string {
 }
 
 func init() {
-	proto.RegisterType((*Mars CreditGetPublicKey)(nil), "hw.trezor.messages.ethereum.Mars CreditGetPublicKey")
-	proto.RegisterType((*Mars CreditPublicKey)(nil), "hw.trezor.messages.ethereum.Mars CreditPublicKey")
-	proto.RegisterType((*Mars CreditGetAddress)(nil), "hw.trezor.messages.ethereum.Mars CreditGetAddress")
-	proto.RegisterType((*Mars CreditAddress)(nil), "hw.trezor.messages.ethereum.Mars CreditAddress")
-	proto.RegisterType((*Mars CreditSignTx)(nil), "hw.trezor.messages.ethereum.Mars CreditSignTx")
-	proto.RegisterType((*Mars CreditTxRequest)(nil), "hw.trezor.messages.ethereum.Mars CreditTxRequest")
-	proto.RegisterType((*Mars CreditTxAck)(nil), "hw.trezor.messages.ethereum.Mars CreditTxAck")
-	proto.RegisterType((*Mars CreditSignMessage)(nil), "hw.trezor.messages.ethereum.Mars CreditSignMessage")
-	proto.RegisterType((*Mars CreditMessageSignature)(nil), "hw.trezor.messages.ethereum.Mars CreditMessageSignature")
-	proto.RegisterType((*Mars CreditVerifyMessage)(nil), "hw.trezor.messages.ethereum.Mars CreditVerifyMessage")
+	proto.RegisterType((*EthereumGetPublicKey)(nil), "hw.trezor.messages.ethereum.EthereumGetPublicKey")
+	proto.RegisterType((*EthereumPublicKey)(nil), "hw.trezor.messages.ethereum.EthereumPublicKey")
+	proto.RegisterType((*EthereumGetAddress)(nil), "hw.trezor.messages.ethereum.EthereumGetAddress")
+	proto.RegisterType((*EthereumAddress)(nil), "hw.trezor.messages.ethereum.EthereumAddress")
+	proto.RegisterType((*EthereumSignTx)(nil), "hw.trezor.messages.ethereum.EthereumSignTx")
+	proto.RegisterType((*EthereumTxRequest)(nil), "hw.trezor.messages.ethereum.EthereumTxRequest")
+	proto.RegisterType((*EthereumTxAck)(nil), "hw.trezor.messages.ethereum.EthereumTxAck")
+	proto.RegisterType((*EthereumSignMessage)(nil), "hw.trezor.messages.ethereum.EthereumSignMessage")
+	proto.RegisterType((*EthereumMessageSignature)(nil), "hw.trezor.messages.ethereum.EthereumMessageSignature")
+	proto.RegisterType((*EthereumVerifyMessage)(nil), "hw.trezor.messages.ethereum.EthereumVerifyMessage")
 }
 
 func init() { proto.RegisterFile("messages-ethereum.proto", fileDescriptor_cb33f46ba915f15c) }

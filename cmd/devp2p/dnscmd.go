@@ -19,7 +19,6 @@ package main
 import (
 	"crypto/ecdsa"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -30,14 +29,14 @@ import (
 	"github.com/ethereum/go-ethereum/console/prompt"
 	"github.com/ethereum/go-ethereum/p2p/dnsdisc"
 	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/urfave/cli/v2"
+	"gopkg.in/urfave/cli.v1"
 )
 
 var (
-	dnsCommand = &cli.Command{
+	dnsCommand = cli.Command{
 		Name:  "dns",
 		Usage: "DNS Discovery Commands",
-		Subcommands: []*cli.Command{
+		Subcommands: []cli.Command{
 			dnsSyncCommand,
 			dnsSignCommand,
 			dnsTXTCommand,
@@ -46,34 +45,34 @@ var (
 			dnsRoute53NukeCommand,
 		},
 	}
-	dnsSyncCommand = &cli.Command{
+	dnsSyncCommand = cli.Command{
 		Name:      "sync",
 		Usage:     "Download a DNS discovery tree",
 		ArgsUsage: "<url> [ <directory> ]",
 		Action:    dnsSync,
 		Flags:     []cli.Flag{dnsTimeoutFlag},
 	}
-	dnsSignCommand = &cli.Command{
+	dnsSignCommand = cli.Command{
 		Name:      "sign",
 		Usage:     "Sign a DNS discovery tree",
 		ArgsUsage: "<tree-directory> <key-file>",
 		Action:    dnsSign,
 		Flags:     []cli.Flag{dnsDomainFlag, dnsSeqFlag},
 	}
-	dnsTXTCommand = &cli.Command{
+	dnsTXTCommand = cli.Command{
 		Name:      "to-txt",
 		Usage:     "Create a DNS TXT records for a discovery tree",
 		ArgsUsage: "<tree-directory> <output-file>",
 		Action:    dnsToTXT,
 	}
-	dnsCloudflareCommand = &cli.Command{
+	dnsCloudflareCommand = cli.Command{
 		Name:      "to-cloudflare",
 		Usage:     "Deploy DNS TXT records to CloudFlare",
 		ArgsUsage: "<tree-directory>",
 		Action:    dnsToCloudflare,
 		Flags:     []cli.Flag{cloudflareTokenFlag, cloudflareZoneIDFlag},
 	}
-	dnsRoute53Command = &cli.Command{
+	dnsRoute53Command = cli.Command{
 		Name:      "to-route53",
 		Usage:     "Deploy DNS TXT records to Amazon Route53",
 		ArgsUsage: "<tree-directory>",
@@ -85,7 +84,7 @@ var (
 			route53RegionFlag,
 		},
 	}
-	dnsRoute53NukeCommand = &cli.Command{
+	dnsRoute53NukeCommand = cli.Command{
 		Name:      "nuke-route53",
 		Usage:     "Deletes DNS TXT records of a subdomain on Amazon Route53",
 		ArgsUsage: "<domain>",
@@ -100,15 +99,15 @@ var (
 )
 
 var (
-	dnsTimeoutFlag = &cli.DurationFlag{
+	dnsTimeoutFlag = cli.DurationFlag{
 		Name:  "timeout",
 		Usage: "Timeout for DNS lookups",
 	}
-	dnsDomainFlag = &cli.StringFlag{
+	dnsDomainFlag = cli.StringFlag{
 		Name:  "domain",
 		Usage: "Domain name of the tree",
 	}
-	dnsSeqFlag = &cli.UintFlag{
+	dnsSeqFlag = cli.UintFlag{
 		Name:  "seq",
 		Usage: "New sequence number of the tree",
 	}
@@ -148,7 +147,7 @@ func dnsSync(ctx *cli.Context) error {
 
 func dnsSign(ctx *cli.Context) error {
 	if ctx.NArg() < 2 {
-		return errors.New("need tree definition directory and key file as arguments")
+		return fmt.Errorf("need tree definition directory and key file as arguments")
 	}
 	var (
 		defdir  = ctx.Args().Get(0)
@@ -202,7 +201,7 @@ func directoryName(dir string) string {
 // dnsToTXT performs dnsTXTCommand.
 func dnsToTXT(ctx *cli.Context) error {
 	if ctx.NArg() < 1 {
-		return errors.New("need tree definition directory as argument")
+		return fmt.Errorf("need tree definition directory as argument")
 	}
 	output := ctx.Args().Get(1)
 	if output == "" {
@@ -219,7 +218,7 @@ func dnsToTXT(ctx *cli.Context) error {
 // dnsToCloudflare performs dnsCloudflareCommand.
 func dnsToCloudflare(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
-		return errors.New("need tree definition directory as argument")
+		return fmt.Errorf("need tree definition directory as argument")
 	}
 	domain, t, err := loadTreeDefinitionForExport(ctx.Args().Get(0))
 	if err != nil {
@@ -232,7 +231,7 @@ func dnsToCloudflare(ctx *cli.Context) error {
 // dnsToRoute53 performs dnsRoute53Command.
 func dnsToRoute53(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
-		return errors.New("need tree definition directory as argument")
+		return fmt.Errorf("need tree definition directory as argument")
 	}
 	domain, t, err := loadTreeDefinitionForExport(ctx.Args().Get(0))
 	if err != nil {
@@ -245,13 +244,13 @@ func dnsToRoute53(ctx *cli.Context) error {
 // dnsNukeRoute53 performs dnsRoute53NukeCommand.
 func dnsNukeRoute53(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
-		return errors.New("need domain name as argument")
+		return fmt.Errorf("need domain name as argument")
 	}
 	client := newRoute53Client(ctx)
 	return client.deleteDomain(ctx.Args().First())
 }
 
-// loadSigningKey loads a private key in Mars Credit keystore format.
+// loadSigningKey loads a private key in Ethereum keystore format.
 func loadSigningKey(keyfile string) *ecdsa.PrivateKey {
 	keyjson, err := os.ReadFile(keyfile)
 	if err != nil {
@@ -364,10 +363,10 @@ func loadTreeDefinitionForExport(dir string) (domain string, t *dnsdisc.Tree, er
 // tree's signature if valid.
 func ensureValidTreeSignature(t *dnsdisc.Tree, pubkey *ecdsa.PublicKey, sig string) error {
 	if sig == "" {
-		return errors.New("missing signature, run 'devp2p dns sign' first")
+		return fmt.Errorf("missing signature, run 'devp2p dns sign' first")
 	}
 	if err := t.SetSignature(pubkey, sig); err != nil {
-		return errors.New("invalid signature on tree, run 'devp2p dns sign' to update it")
+		return fmt.Errorf("invalid signature on tree, run 'devp2p dns sign' to update it")
 	}
 	return nil
 }

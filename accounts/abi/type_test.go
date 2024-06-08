@@ -25,13 +25,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// typeWithoutStringer is an alias for the Type type which simply doesn't implement
+// typeWithoutStringer is a alias for the Type type which simply doesn't implement
 // the stringer interface to allow printing type details in the tests below.
 type typeWithoutStringer Type
 
 // Tests that all allowed types get recognized by the type parser.
 func TestTypeRegexp(t *testing.T) {
-	t.Parallel()
 	tests := []struct {
 		blob       string
 		components []ArgumentMarshaling
@@ -118,7 +117,6 @@ func TestTypeRegexp(t *testing.T) {
 }
 
 func TestTypeCheck(t *testing.T) {
-	t.Parallel()
 	for i, test := range []struct {
 		typ        string
 		components []ArgumentMarshaling
@@ -310,7 +308,6 @@ func TestTypeCheck(t *testing.T) {
 }
 
 func TestInternalType(t *testing.T) {
-	t.Parallel()
 	components := []ArgumentMarshaling{{Name: "a", Type: "int64"}}
 	internalType := "struct a.b[]"
 	kind := Type{
@@ -335,7 +332,6 @@ func TestInternalType(t *testing.T) {
 }
 
 func TestGetTypeSize(t *testing.T) {
-	t.Parallel()
 	var testCases = []struct {
 		typ        string
 		components []ArgumentMarshaling
@@ -368,13 +364,5 @@ func TestGetTypeSize(t *testing.T) {
 		if result != data.typSize {
 			t.Errorf("case %d type %q: get type size error: actual: %d expected: %d", i, data.typ, result, data.typSize)
 		}
-	}
-}
-
-func TestNewFixedBytesOver32(t *testing.T) {
-	t.Parallel()
-	_, err := NewType("bytes4096", "", nil)
-	if err == nil {
-		t.Errorf("fixed bytes with size over 32 is not spec'd")
 	}
 }

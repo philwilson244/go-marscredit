@@ -18,59 +18,66 @@
 package prque
 
 import (
-	"cmp"
 	"container/heap"
 )
 
-// Prque is a priority queue data structure.
-type Prque[P cmp.Ordered, V any] struct {
-	cont *sstack[P, V]
+// Priority queue data structure.
+type Prque struct {
+	cont *sstack
 }
 
 // New creates a new priority queue.
-func New[P cmp.Ordered, V any](setIndex SetIndexCallback[V]) *Prque[P, V] {
-	return &Prque[P, V]{newSstack[P, V](setIndex)}
+func New(setIndex SetIndexCallback) *Prque {
+	return &Prque{newSstack(setIndex, false)}
 }
 
-// Push a value with a given priority into the queue, expanding if necessary.
-func (p *Prque[P, V]) Push(data V, priority P) {
-	heap.Push(p.cont, &item[P, V]{data, priority})
+// NewWrapAround creates a new priority queue with wrap-around priority handling.
+func NewWrapAround(setIndex SetIndexCallback) *Prque {
+	return &Prque{newSstack(setIndex, true)}
 }
 
-// Peek returns the value with the greatest priority but does not pop it off.
-func (p *Prque[P, V]) Peek() (V, P) {
+// Pushes a value with a given priority into the queue, expanding if necessary.
+func (p *Prque) Push(data interface{}, priority int64) {
+	heap.Push(p.cont, &item{data, priority})
+}
+
+// Peek returns the value with the greates priority but does not pop it off.
+func (p *Prque) Peek() (interface{}, int64) {
 	item := p.cont.blocks[0][0]
 	return item.value, item.priority
 }
 
-// Pop the value with the greatest priority off the stack and returns it.
+// Pops the value with the greates priority off the stack and returns it.
 // Currently no shrinking is done.
-func (p *Prque[P, V]) Pop() (V, P) {
-	item := heap.Pop(p.cont).(*item[P, V])
+func (p *Prque) Pop() (interface{}, int64) {
+	item := heap.Pop(p.cont).(*item)
 	return item.value, item.priority
 }
 
-// PopItem pops only the item from the queue, dropping the associated priority value.
-func (p *Prque[P, V]) PopItem() V {
-	return heap.Pop(p.cont).(*item[P, V]).value
+// Pops only the item from the queue, dropping the associated priority value.
+func (p *Prque) PopItem() interface{} {
+	return heap.Pop(p.cont).(*item).value
 }
 
 // Remove removes the element with the given index.
-func (p *Prque[P, V]) Remove(i int) V {
-	return heap.Remove(p.cont, i).(*item[P, V]).value
+func (p *Prque) Remove(i int) interface{} {
+	if i < 0 {
+		return nil
+	}
+	return heap.Remove(p.cont, i)
 }
 
-// Empty checks whether the priority queue is empty.
-func (p *Prque[P, V]) Empty() bool {
+// Checks whether the priority queue is empty.
+func (p *Prque) Empty() bool {
 	return p.cont.Len() == 0
 }
 
-// Size returns the number of element in the priority queue.
-func (p *Prque[P, V]) Size() int {
+// Returns the number of element in the priority queue.
+func (p *Prque) Size() int {
 	return p.cont.Len()
 }
 
-// Reset clears the contents of the priority queue.
-func (p *Prque[P, V]) Reset() {
-	*p = *New[P, V](p.cont.setIndex)
+// Clears the contents of the priority queue.
+func (p *Prque) Reset() {
+	*p = *New(p.cont.setIndex)
 }

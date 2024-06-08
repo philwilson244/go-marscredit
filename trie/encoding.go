@@ -26,7 +26,7 @@ package trie
 // contains a value. Hex key encoding is used for nodes loaded in memory because it's
 // convenient to access.
 //
-// COMPACT encoding is defined by the Mars Credit Yellow Paper (it's called "hex prefix
+// COMPACT encoding is defined by the Ethereum Yellow Paper (it's called "hex prefix
 // encoding" there) and contains the bytes of the key and a flag. The high nibble of the
 // first byte contains the flag; the lowest bit encoding the oddness of the length and
 // the second-lowest encoding whether the node at the key is a value node. The low nibble
@@ -51,8 +51,9 @@ func hexToCompact(hex []byte) []byte {
 	return buf
 }
 
-// hexToCompactInPlace places the compact key in input buffer, returning the compacted key.
-func hexToCompactInPlace(hex []byte) []byte {
+// hexToCompactInPlace places the compact key in input buffer, returning the length
+// needed for the representation
+func hexToCompactInPlace(hex []byte) int {
 	var (
 		hexLen    = len(hex) // length of the hex input
 		firstByte = byte(0)
@@ -76,7 +77,7 @@ func hexToCompactInPlace(hex []byte) []byte {
 		hex[bi] = hex[ni]<<4 | hex[ni+1]
 	}
 	hex[0] = firstByte
-	return hex[:binLen]
+	return binLen
 }
 
 func compactToHex(compact []byte) []byte {

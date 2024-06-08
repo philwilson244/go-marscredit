@@ -21,6 +21,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
+	"golang.org/x/crypto/sha3"
 )
 
 // hasher is a type used for the trie Hash operation. A hasher has some
@@ -29,7 +30,7 @@ type hasher struct {
 	sha      crypto.KeccakState
 	tmp      []byte
 	encbuf   rlp.EncoderBuffer
-	parallel bool // Whether to use parallel threads when hashing
+	parallel bool // Whether to use paralallel threads when hashing
 }
 
 // hasherPool holds pureHashers
@@ -37,7 +38,7 @@ var hasherPool = sync.Pool{
 	New: func() interface{} {
 		return &hasher{
 			tmp:    make([]byte, 0, 550), // cap is as large as a full fullNode.
-			sha:    crypto.NewKeccakState(),
+			sha:    sha3.NewLegacyKeccak256().(crypto.KeccakState),
 			encbuf: rlp.NewEncoderBuffer(nil),
 		}
 	},
@@ -83,19 +84,20 @@ func (h *hasher) hash(n node, force bool) (hashed node, cached node) {
 		}
 		return hashed, cached
 	default:
-		// Value and hash nodes don't have children, so they're left as were
+		// Value and hash nodes don't have children so they're left as were
 		return n, n
 	}
 }
 
 // hashShortNodeChildren collapses the short node. The returned collapsed node
 // holds a live reference to the Key, and must not be modified.
+// The cached
 func (h *hasher) hashShortNodeChildren(n *shortNode) (collapsed, cached *shortNode) {
 	// Hash the short node's child, caching the newly hashed subtree
 	collapsed, cached = n.copy(), n.copy()
 	// Previously, we did copy this one. We don't seem to need to actually
 	// do that, since we don't overwrite/reuse keys
-	// cached.Key = common.CopyBytes(n.Key)
+	//cached.Key = common.CopyBytes(n.Key)
 	collapsed.Key = hexToCompact(n.Key)
 	// Unless the child is a valuenode or hashnode, hash it
 	switch n.Val.(type) {
@@ -151,7 +153,7 @@ func (h *hasher) shortnodeToHash(n *shortNode, force bool) node {
 	return h.hashData(enc)
 }
 
-// fullnodeToHash is used to create a hashNode from a fullNode, (which
+// shortnodeToHash is used to creates a hashNode from a set of hashNodes, (which
 // may contain nil values)
 func (h *hasher) fullnodeToHash(n *fullNode, force bool) node {
 	n.encode(h.encbuf)
@@ -168,8 +170,8 @@ func (h *hasher) fullnodeToHash(n *fullNode, force bool) node {
 //
 // All node encoding must be done like this:
 //
-//	node.encode(h.encbuf)
-//	enc := h.encodedBytes()
+//     node.encode(h.encbuf)
+//     enc := h.encodedBytes()
 //
 // This convention exists because node.encode can only be inlined/escape-analyzed when
 // called on a concrete receiver type.
@@ -189,7 +191,7 @@ func (h *hasher) hashData(data []byte) hashNode {
 }
 
 // proofHash is used to construct trie proofs, and returns the 'collapsed'
-// node (for later RLP encoding) as well as the hashed node -- unless the
+// node (for later RLP encoding) aswell as the hashed node -- unless the
 // node is smaller than 32 bytes, in which case it will be returned as is.
 // This method does not do anything on value- or hash-nodes.
 func (h *hasher) proofHash(original node) (collapsed, hashed node) {
@@ -201,7 +203,7 @@ func (h *hasher) proofHash(original node) (collapsed, hashed node) {
 		fn, _ := h.hashFullNodeChildren(n)
 		return fn, h.fullnodeToHash(fn, false)
 	default:
-		// Value and hash nodes don't have children, so they're left as were
+		// Value and hash nodes don't have children so they're left as were
 		return n, n
 	}
 }

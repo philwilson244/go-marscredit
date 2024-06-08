@@ -21,6 +21,7 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -30,6 +31,20 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/tests"
 )
+
+// callTrace is the result of a callTracer run.
+type callTrace struct {
+	Type    string          `json:"type"`
+	From    common.Address  `json:"from"`
+	To      common.Address  `json:"to"`
+	Input   hexutil.Bytes   `json:"input"`
+	Output  hexutil.Bytes   `json:"output"`
+	Gas     *hexutil.Uint64 `json:"gas,omitempty"`
+	GasUsed *hexutil.Uint64 `json:"gasUsed,omitempty"`
+	Value   *hexutil.Big    `json:"value,omitempty"`
+	Error   string          `json:"error,omitempty"`
+	Calls   []callTrace     `json:"calls,omitempty"`
+}
 
 func BenchmarkTransactionTrace(b *testing.B) {
 	key, _ := crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
@@ -56,12 +71,12 @@ func BenchmarkTransactionTrace(b *testing.B) {
 		Transfer:    core.Transfer,
 		Coinbase:    common.Address{},
 		BlockNumber: new(big.Int).SetUint64(uint64(5)),
-		Time:        5,
+		Time:        new(big.Int).SetUint64(uint64(5)),
 		Difficulty:  big.NewInt(0xffffffff),
 		GasLimit:    gas,
 		BaseFee:     big.NewInt(8),
 	}
-	alloc := types.GenesisAlloc{}
+	alloc := core.GenesisAlloc{}
 	// The code pushes 'deadbeef' into memory, then the other params, and calls CREATE2, then returns
 	// the address
 	loop := []byte{
@@ -69,19 +84,17 @@ func BenchmarkTransactionTrace(b *testing.B) {
 		byte(vm.PUSH1), 0, // jumpdestination
 		byte(vm.JUMP),
 	}
-	alloc[common.HexToAddress("0x00000000000000000000000000000000deadbeef")] = types.Account{
+	alloc[common.HexToAddress("0x00000000000000000000000000000000deadbeef")] = core.GenesisAccount{
 		Nonce:   1,
 		Code:    loop,
 		Balance: big.NewInt(1),
 	}
-	alloc[from] = types.Account{
+	alloc[from] = core.GenesisAccount{
 		Nonce:   1,
 		Code:    []byte{},
 		Balance: big.NewInt(500000000000000),
 	}
-	state := tests.MakePreState(rawdb.NewMemoryDatabase(), alloc, false, rawdb.HashScheme)
-	defer state.Close()
-
+	_, statedb := tests.MakePreState(rawdb.NewMemoryDatabase(), alloc, false)
 	// Create the tracer, the EVM environment and run it
 	tracer := logger.NewStructLogger(&logger.Config{
 		Debug: false,
@@ -89,8 +102,8 @@ func BenchmarkTransactionTrace(b *testing.B) {
 		//EnableMemory: false,
 		//EnableReturnData: false,
 	})
-	evm := vm.NewEVM(context, txContext, state.StateDB, params.AllEthashProtocolChanges, vm.Config{Tracer: tracer.Hooks()})
-	msg, err := core.TransactionToMessage(tx, signer, context.BaseFee)
+	evm := vm.NewEVM(context, txContext, statedb, params.AllEthashProtocolChanges, vm.Config{Debug: true, Tracer: tracer})
+	msg, err := tx.AsMessage(signer, nil)
 	if err != nil {
 		b.Fatalf("failed to prepare transaction for tracing: %v", err)
 	}
@@ -98,13 +111,13 @@ func BenchmarkTransactionTrace(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		snap := state.StateDB.Snapshot()
+		snap := statedb.Snapshot()
 		st := core.NewStateTransition(evm, msg, new(core.GasPool).AddGas(tx.Gas()))
 		_, err = st.TransitionDb()
 		if err != nil {
 			b.Fatal(err)
 		}
-		state.StateDB.RevertToSnapshot(snap)
+		statedb.RevertToSnapshot(snap)
 		if have, want := len(tracer.StructLogs()), 244752; have != want {
 			b.Fatalf("trace wrong, want %d steps, have %d", want, have)
 		}

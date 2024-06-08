@@ -518,7 +518,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeAddress is a prototype that represents address type
+ * SolidityTypeAddress is a prootype that represents address type
  * It matches:
  * address
  * address[]
@@ -546,7 +546,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeBool is a prototype that represents bool type
+ * SolidityTypeBool is a prootype that represents bool type
  * It matches:
  * bool
  * bool[]
@@ -926,7 +926,7 @@ var SolidityParam = require('./param');
  * @returns {SolidityParam}
  */
 var formatInputInt = function (value) {
-    BigNumber.config(c.MARS_BIGNUMBER_ROUNDING_MODE);
+    BigNumber.config(c.ETH_BIGNUMBER_ROUNDING_MODE);
     var result = utils.padLeft(utils.toTwosComplement(value).toString(16), 64);
     return new SolidityParam(result);
 };
@@ -1033,7 +1033,7 @@ var formatOutputInt = function (param) {
  *
  * @method formatOutputUInt
  * @param {SolidityParam}
- * @returns {BigNumber} right-aligned output bytes formatted to uint
+ * @returns {BigNumeber} right-aligned output bytes formatted to uint
  */
 var formatOutputUInt = function (param) {
     var value = param.staticPart() || "0";
@@ -1146,7 +1146,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeInt is a prototype that represents int type
+ * SolidityTypeInt is a prootype that represents int type
  * It matches:
  * int
  * int[]
@@ -1334,7 +1334,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeReal is a prototype that represents real type
+ * SolidityTypeReal is a prootype that represents real type
  * It matches:
  * real
  * real[]
@@ -1647,7 +1647,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeUInt is a prototype that represents uint type
+ * SolidityTypeUInt is a prootype that represents uint type
  * It matches:
  * uint
  * uint[]
@@ -1681,7 +1681,7 @@ var f = require('./formatters');
 var SolidityType = require('./type');
 
 /**
- * SolidityTypeUReal is a prototype that represents ureal type
+ * SolidityTypeUReal is a prootype that represents ureal type
  * It matches:
  * ureal
  * ureal[]
@@ -1758,10 +1758,10 @@ if (typeof XMLHttpRequest === 'undefined') {
  */
 
 
-/// required to define MARS_BIGNUMBER_ROUNDING_MODE
+/// required to define ETH_BIGNUMBER_ROUNDING_MODE
 var BigNumber = require('bignumber.js');
 
-var MARS_UNITS = [
+var ETH_UNITS = [
     'wei',
     'kwei',
     'Mwei',
@@ -1792,11 +1792,11 @@ var MARS_UNITS = [
 ];
 
 module.exports = {
-    MARS_PADDING: 32,
-    MARS_SIGNATURE_LENGTH: 4,
-    MARS_UNITS: MARS_UNITS,
-    MARS_BIGNUMBER_ROUNDING_MODE: { ROUNDING_MODE: BigNumber.ROUND_DOWN },
-    MARS_POLLING_TIMEOUT: 1000/2,
+    ETH_PADDING: 32,
+    ETH_SIGNATURE_LENGTH: 4,
+    ETH_UNITS: ETH_UNITS,
+    ETH_BIGNUMBER_ROUNDING_MODE: { ROUNDING_MODE: BigNumber.ROUND_DOWN },
+    ETH_POLLING_TIMEOUT: 1000/2,
     defaultBlock: 'latest',
     defaultAccount: undefined
 };
@@ -2031,7 +2031,7 @@ var fromAscii = function(str) {
  *
  * @method transformToFullName
  * @param {Object} json-abi
- * @return {String} full function/event name
+ * @return {String} full fnction/event name
  */
 var transformToFullName = function (json) {
     if (json.name.indexOf('(') !== -1) {
@@ -2307,7 +2307,7 @@ var toChecksumAddress = function (address) {
 };
 
 /**
- * Transforms given string to valid 20 bytes-length address with 0x prefix
+ * Transforms given string to valid 20 bytes-length addres with 0x prefix
  *
  * @method toAddress
  * @param {String} address
@@ -2361,7 +2361,7 @@ var isFunction = function (object) {
 };
 
 /**
- * Returns true if object is Object, otherwise false
+ * Returns true if object is Objet, otherwise false
  *
  * @method isObject
  * @param {Object}
@@ -2409,7 +2409,7 @@ var isJson = function (str) {
 };
 
 /**
- * Returns true if given string is a valid Mars Credit block header bloom.
+ * Returns true if given string is a valid Ethereum block header bloom.
  *
  * @method isBloom
  * @param {String} hex encoded bloom filter
@@ -2757,7 +2757,7 @@ var Batch = function (web3) {
  * Should be called to add create new request to batch request
  *
  * @method add
- * @param {Object} jsonrpc request object
+ * @param {Object} jsonrpc requet object
  */
 Batch.prototype.add = function (request) {
     this.requests.push(request);
@@ -3696,7 +3696,7 @@ var outputBigNumberFormatter = function (number) {
 };
 
 var isPredefinedBlockNumber = function (blockNumber) {
-    return blockNumber === 'latest' || blockNumber === 'pending' || blockNumber === 'earliest' || blockNumber === 'finalized' || blockNumber === 'safe';
+    return blockNumber === 'latest' || blockNumber === 'pending' || blockNumber === 'earliest' || blockNumber === 'finalized';
 };
 
 var inputDefaultBlockNumberFormatter = function (blockNumber) {
@@ -3734,7 +3734,7 @@ var inputCallFormatter = function (options){
         options.to = inputAddressFormatter(options.to);
     }
 
-    ['maxFeePerBlobGas', 'maxFeePerGas', 'maxPriorityFeePerGas', 'gasPrice', 'gas', 'value', 'nonce'].filter(function (key) {
+    ['maxFeePerGas', 'maxPriorityFeePerGas', 'gasPrice', 'gas', 'value', 'nonce'].filter(function (key) {
         return options[key] !== undefined;
     }).forEach(function(key){
         options[key] = utils.fromDecimal(options[key]);
@@ -3759,7 +3759,7 @@ var inputTransactionFormatter = function (options){
         options.to = inputAddressFormatter(options.to);
     }
 
-    ['maxFeePerBlobGas', 'maxFeePerGas', 'maxPriorityFeePerGas', 'gasPrice', 'gas', 'value', 'nonce'].filter(function (key) {
+    ['maxFeePerGas', 'maxPriorityFeePerGas', 'gasPrice', 'gas', 'value', 'nonce'].filter(function (key) {
         return options[key] !== undefined;
     }).forEach(function(key){
         options[key] = utils.fromDecimal(options[key]);
@@ -3789,9 +3789,6 @@ var outputTransactionFormatter = function (tx){
     if(tx.maxPriorityFeePerGas !== undefined) {
       tx.maxPriorityFeePerGas = utils.toBigNumber(tx.maxPriorityFeePerGas);
     }
-    if(tx.maxFeePerBlobGas !== undefined) {
-      tx.maxFeePerBlobGas = utils.toBigNumber(tx.maxFeePerBlobGas);
-    }
     tx.value = utils.toBigNumber(tx.value);
     return tx;
 };
@@ -3812,12 +3809,6 @@ var outputTransactionReceiptFormatter = function (receipt){
     receipt.gasUsed = utils.toDecimal(receipt.gasUsed);
     if(receipt.effectiveGasPrice !== undefined) {
       receipt.effectiveGasPrice = utils.toBigNumber(receipt.effectiveGasPrice);
-    }
-    if(receipt.blobGasPrice !== undefined) {
-      receipt.blobGasPrice = utils.toBigNumber(receipt.blobGasPrice);
-    }
-    if(receipt.blobGasUsed !== undefined) {
-      receipt.blobGasUsed = utils.toBigNumber(receipt.blobGasUsed);
     }
     if(utils.isArray(receipt.logs)) {
         receipt.logs = receipt.logs.map(function(log){
@@ -3840,17 +3831,11 @@ var outputBlockFormatter = function(block) {
     if (block.baseFeePerGas !== undefined) {
       block.baseFeePerGas = utils.toBigNumber(block.baseFeePerGas);
     }
-    if (block.blobGasUsed !== undefined) {
-      block.blobGasUsed = utils.toBigNumber(block.blobGasUsed);
-    }
-    if (block.excessBlobGas !== undefined) {
-      block.excessBlobGas = utils.toBigNumber(block.excessBlobGas);
-    }
     block.gasLimit = utils.toDecimal(block.gasLimit);
     block.gasUsed = utils.toDecimal(block.gasUsed);
     block.size = utils.toDecimal(block.size);
     block.timestamp = utils.toDecimal(block.timestamp);
-    if (block.number !== null)
+    if(block.number !== null)
         block.number = utils.toDecimal(block.number);
 
     block.difficulty = utils.toBigNumber(block.difficulty);
@@ -3976,8 +3961,6 @@ var outputSyncingFormatter = function(result) {
     result.healedBytecodeBytes = utils.toDecimal(result.healedBytecodeBytes);
     result.healingTrienodes = utils.toDecimal(result.healingTrienodes);
     result.healingBytecode = utils.toDecimal(result.healingBytecode);
-    result.txIndexFinishedBlocks = utils.toDecimal(result.txIndexFinishedBlocks);
-    result.txIndexRemainingBlocks = utils.toDecimal(result.txIndexRemainingBlocks);
 
     return result;
 };
@@ -4570,11 +4553,11 @@ Iban.fromBban = function (bban) {
  * @return {Iban} the IBAN object
  */
 Iban.createIndirect = function (options) {
-    return Iban.fromBban('MARS' + options.institution + options.identifier);
+    return Iban.fromBban('ETH' + options.institution + options.identifier);
 };
 
 /**
- * This method should be used to check if given string is valid iban object
+ * Thos method should be used to check if given string is valid iban object
  *
  * @method isValid
  * @param {String} iban string
@@ -4592,7 +4575,7 @@ Iban.isValid = function (iban) {
  * @returns {Boolean} true if it is, otherwise false
  */
 Iban.prototype.isValid = function () {
-    return /^XE[0-9]{2}(MARS[0-9A-Z]{13}|[0-9A-Z]{30,31})$/.test(this._iban) &&
+    return /^XE[0-9]{2}(ETH[0-9A-Z]{13}|[0-9A-Z]{30,31})$/.test(this._iban) &&
         mod9710(iso13616Prepare(this._iban)) === 1;
 };
 
@@ -5517,11 +5500,6 @@ var properties = function () {
         new Property({
             name: 'gasPrice',
             getter: 'eth_gasPrice',
-            outputFormatter: formatters.outputBigNumberFormatter
-        }),
-        new Property({
-            name: 'blobBaseFee',
-            getter: 'eth_blobBaseFee',
             outputFormatter: formatters.outputBigNumberFormatter
         }),
         new Property({
@@ -6521,7 +6499,7 @@ RequestManager.prototype.reset = function (keepIsSyncing) {
  */
 RequestManager.prototype.poll = function () {
     /*jshint maxcomplexity: 6 */
-    this.timeout = setTimeout(this.poll.bind(this), c.MARS_POLLING_TIMEOUT);
+    this.timeout = setTimeout(this.poll.bind(this), c.ETH_POLLING_TIMEOUT);
 
     if (Object.keys(this.polls).length === 0) {
         return;
@@ -6728,7 +6706,7 @@ var exchangeAbi = require('../contracts/SmartExchange.json');
  * @method transfer
  * @param {String} from
  * @param {String} to iban
- * @param {Value} value to be transferred
+ * @param {Value} value to be tranfered
  * @param {Function} callback, callback
  */
 var transfer = function (eth, from, to, value, callback) {
@@ -6758,7 +6736,7 @@ var transfer = function (eth, from, to, value, callback) {
  * @method transferToAddress
  * @param {String} from
  * @param {String} to
- * @param {Value} value to be transferred
+ * @param {Value} value to be tranfered
  * @param {Function} callback, callback
  */
 var transferToAddress = function (eth, from, to, value, callback) {
@@ -7112,7 +7090,7 @@ module.exports = transfer;
 	        /**
 	         * Initializes a newly created cipher.
 	         *
-	         * @param {number} xformMode Either the encryption or decryption transformation mode constant.
+	         * @param {number} xformMode Either the encryption or decryption transormation mode constant.
 	         * @param {WordArray} key The key.
 	         * @param {Object} cfg (Optional) The configuration options to use for this operation.
 	         *
@@ -9466,7 +9444,7 @@ module.exports = transfer;
 	            var M_offset_14 = M[offset + 14];
 	            var M_offset_15 = M[offset + 15];
 
-	            // Working variables
+	            // Working varialbes
 	            var a = H[0];
 	            var b = H[1];
 	            var c = H[2];
@@ -10915,7 +10893,7 @@ module.exports = transfer;
 	    - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 	    - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHMARSER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	*/
 
 	(function (Math) {

@@ -18,7 +18,7 @@ package enode
 
 import (
 	"crypto/ecdsa"
-	"errors"
+	"fmt"
 	"io"
 
 	"github.com/ethereum/go-ethereum/common/math"
@@ -28,18 +28,17 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-// ValidSchemes is a List of known secure identity schemes.
+// List of known secure identity schemes.
 var ValidSchemes = enr.SchemeMap{
 	"v4": V4ID{},
 }
 
-// ValidSchemesForTesting is a List of identity schemes for testing.
 var ValidSchemesForTesting = enr.SchemeMap{
 	"v4":   V4ID{},
 	"null": NullID{},
 }
 
-// V4ID is the "v4" identity scheme.
+// v4ID is the "v4" identity scheme.
 type V4ID struct{}
 
 // SignV4 signs a record using the v4 scheme.
@@ -67,7 +66,7 @@ func (V4ID) Verify(r *enr.Record, sig []byte) error {
 	if err := r.Load(&entry); err != nil {
 		return err
 	} else if len(entry) != 33 {
-		return errors.New("invalid public key")
+		return fmt.Errorf("invalid public key")
 	}
 
 	h := sha3.NewLegacyKeccak256()
@@ -157,5 +156,5 @@ func SignNull(r *enr.Record, id ID) *Node {
 	if err := r.SetSig(NullID{}, []byte{}); err != nil {
 		panic(err)
 	}
-	return newNodeWithID(r, id)
+	return &Node{r: *r, id: id}
 }

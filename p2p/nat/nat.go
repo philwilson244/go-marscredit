@@ -29,7 +29,7 @@ import (
 	natpmp "github.com/jackpal/go-nat-pmp"
 )
 
-// Interface An implementation of nat.Interface can map local ports to ports
+// An implementation of nat.Interface can map local ports to ports
 // accessible from the Internet.
 type Interface interface {
 	// These methods manage a mapping between a port on the local
@@ -38,14 +38,14 @@ type Interface interface {
 	// protocol is "UDP" or "TCP". Some implementations allow setting
 	// a display name for the mapping. The mapping may be removed by
 	// the gateway when its lifetime ends.
-	AddMapping(protocol string, extport, intport int, name string, lifetime time.Duration) (uint16, error)
+	AddMapping(protocol string, extport, intport int, name string, lifetime time.Duration) error
 	DeleteMapping(protocol string, extport, intport int) error
 
-	// ExternalIP should return the external (Internet-facing)
+	// This method should return the external (Internet-facing)
 	// address of the gateway device.
 	ExternalIP() (net.IP, error)
 
-	// String should return name of the method. This is used for logging.
+	// Should return name of the method. This is used for logging.
 	String() string
 }
 
@@ -53,20 +53,20 @@ type Interface interface {
 // The following formats are currently accepted.
 // Note that mechanism names are not case-sensitive.
 //
-//	"" or "none"         return nil
-//	"extip:77.12.33.4"   will assume the local machine is reachable on the given IP
-//	"any"                uses the first auto-detected mechanism
-//	"upnp"               uses the Universal Plug and Play protocol
-//	"pmp"                uses NAT-PMP with an auto-detected gateway address
-//	"pmp:192.168.0.1"    uses NAT-PMP with the given gateway address
+//     "" or "none"         return nil
+//     "extip:77.12.33.4"   will assume the local machine is reachable on the given IP
+//     "any"                uses the first auto-detected mechanism
+//     "upnp"               uses the Universal Plug and Play protocol
+//     "pmp"                uses NAT-PMP with an auto-detected gateway address
+//     "pmp:192.168.0.1"    uses NAT-PMP with the given gateway address
 func Parse(spec string) (Interface, error) {
 	var (
-		before, after, found = strings.Cut(spec, ":")
-		mech                 = strings.ToLower(before)
-		ip                   net.IP
+		parts = strings.SplitN(spec, ":", 2)
+		mech  = strings.ToLower(parts[0])
+		ip    net.IP
 	)
-	if found {
-		ip = net.ParseIP(after)
+	if len(parts) > 1 {
+		ip = net.ParseIP(parts[1])
 		if ip == nil {
 			return nil, errors.New("invalid IP address")
 		}
@@ -86,28 +86,25 @@ func Parse(spec string) (Interface, error) {
 	case "pmp", "natpmp", "nat-pmp":
 		return PMP(ip), nil
 	default:
-		return nil, fmt.Errorf("unknown mechanism %q", before)
+		return nil, fmt.Errorf("unknown mechanism %q", parts[0])
 	}
 }
 
 const (
-	DefaultMapTimeout = 10 * time.Minute
+	mapTimeout = 10 * time.Minute
 )
 
 // Map adds a port mapping on m and keeps it alive until c is closed.
 // This function is typically invoked in its own goroutine.
-//
-// Note that Map does not handle the situation where the NAT interface assigns a different
-// external port than the requested one.
 func Map(m Interface, c <-chan struct{}, protocol string, extport, intport int, name string) {
 	log := log.New("proto", protocol, "extport", extport, "intport", intport, "interface", m)
-	refresh := time.NewTimer(DefaultMapTimeout)
+	refresh := time.NewTimer(mapTimeout)
 	defer func() {
 		refresh.Stop()
 		log.Debug("Deleting port mapping")
 		m.DeleteMapping(protocol, extport, intport)
 	}()
-	if _, err := m.AddMapping(protocol, extport, intport, name, DefaultMapTimeout); err != nil {
+	if err := m.AddMapping(protocol, extport, intport, name, mapTimeout); err != nil {
 		log.Debug("Couldn't add port mapping", "err", err)
 	} else {
 		log.Info("Mapped network port")
@@ -120,10 +117,10 @@ func Map(m Interface, c <-chan struct{}, protocol string, extport, intport int, 
 			}
 		case <-refresh.C:
 			log.Trace("Refreshing port mapping")
-			if _, err := m.AddMapping(protocol, extport, intport, name, DefaultMapTimeout); err != nil {
+			if err := m.AddMapping(protocol, extport, intport, name, mapTimeout); err != nil {
 				log.Debug("Couldn't add port mapping", "err", err)
 			}
-			refresh.Reset(DefaultMapTimeout)
+			refresh.Reset(mapTimeout)
 		}
 	}
 }
@@ -138,8 +135,8 @@ func (n ExtIP) String() string              { return fmt.Sprintf("ExtIP(%v)", ne
 
 // These do nothing.
 
-func (ExtIP) AddMapping(string, int, int, string, time.Duration) (uint16, error) { return 0, nil }
-func (ExtIP) DeleteMapping(string, int, int) error                               { return nil }
+func (ExtIP) AddMapping(string, int, int, string, time.Duration) error { return nil }
+func (ExtIP) DeleteMapping(string, int, int) error                     { return nil }
 
 // Any returns a port mapper that tries to discover any supported
 // mechanism on the local network.
@@ -196,9 +193,9 @@ func startautodisc(what string, doit func() Interface) Interface {
 	return &autodisc{what: what, doit: doit}
 }
 
-func (n *autodisc) AddMapping(protocol string, extport, intport int, name string, lifetime time.Duration) (uint16, error) {
+func (n *autodisc) AddMapping(protocol string, extport, intport int, name string, lifetime time.Duration) error {
 	if err := n.wait(); err != nil {
-		return 0, err
+		return err
 	}
 	return n.found.AddMapping(protocol, extport, intport, name, lifetime)
 }

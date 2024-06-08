@@ -34,7 +34,7 @@ type instructionIterator struct {
 	started bool
 }
 
-// NewInstructionIterator creates a new instruction iterator.
+// NewInstructionIterator create a new instruction iterator.
 func NewInstructionIterator(code []byte) *instructionIterator {
 	it := new(instructionIterator)
 	it.code = code
@@ -66,7 +66,7 @@ func (it *instructionIterator) Next() bool {
 
 	it.op = vm.OpCode(it.code[it.pc])
 	if it.op.IsPush() {
-		a := uint64(it.op) - uint64(vm.PUSH0)
+		a := uint64(it.op) - uint64(vm.PUSH1) + 1
 		u := it.pc + 1 + a
 		if uint64(len(it.code)) <= it.pc || uint64(len(it.code)) < u {
 			it.error = fmt.Errorf("incomplete push instruction at %v", it.pc)
@@ -109,7 +109,7 @@ func PrintDisassembled(code string) error {
 	it := NewInstructionIterator(script)
 	for it.Next() {
 		if it.Arg() != nil && 0 < len(it.Arg()) {
-			fmt.Printf("%05x: %v %#x\n", it.PC(), it.Op(), it.Arg())
+			fmt.Printf("%05x: %v 0x%x\n", it.PC(), it.Op(), it.Arg())
 		} else {
 			fmt.Printf("%05x: %v\n", it.PC(), it.Op())
 		}
@@ -124,7 +124,7 @@ func Disassemble(script []byte) ([]string, error) {
 	it := NewInstructionIterator(script)
 	for it.Next() {
 		if it.Arg() != nil && 0 < len(it.Arg()) {
-			instrs = append(instrs, fmt.Sprintf("%05x: %v %#x\n", it.PC(), it.Op(), it.Arg()))
+			instrs = append(instrs, fmt.Sprintf("%05x: %v 0x%x\n", it.PC(), it.Op(), it.Arg()))
 		} else {
 			instrs = append(instrs, fmt.Sprintf("%05x: %v\n", it.PC(), it.Op()))
 		}

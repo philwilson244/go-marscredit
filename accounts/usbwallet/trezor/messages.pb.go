@@ -22,7 +22,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// *
+//*
 // Mapping between TREZOR wire identifier (uint) and a protobuf message
 type MessageType int32
 
@@ -96,17 +96,17 @@ const (
 	MessageType_MessageType_DebugLinkMemory      MessageType = 111
 	MessageType_MessageType_DebugLinkMemoryWrite MessageType = 112
 	MessageType_MessageType_DebugLinkFlashErase  MessageType = 113
-	// Mars Credit
-	MessageType_MessageType_Mars CreditGetPublicKey     MessageType = 450
-	MessageType_MessageType_Mars CreditPublicKey        MessageType = 451
-	MessageType_MessageType_Mars CreditGetAddress       MessageType = 56
-	MessageType_MessageType_Mars CreditAddress          MessageType = 57
-	MessageType_MessageType_Mars CreditSignTx           MessageType = 58
-	MessageType_MessageType_Mars CreditTxRequest        MessageType = 59
-	MessageType_MessageType_Mars CreditTxAck            MessageType = 60
-	MessageType_MessageType_Mars CreditSignMessage      MessageType = 64
-	MessageType_MessageType_Mars CreditVerifyMessage    MessageType = 65
-	MessageType_MessageType_Mars CreditMessageSignature MessageType = 66
+	// Ethereum
+	MessageType_MessageType_EthereumGetPublicKey     MessageType = 450
+	MessageType_MessageType_EthereumPublicKey        MessageType = 451
+	MessageType_MessageType_EthereumGetAddress       MessageType = 56
+	MessageType_MessageType_EthereumAddress          MessageType = 57
+	MessageType_MessageType_EthereumSignTx           MessageType = 58
+	MessageType_MessageType_EthereumTxRequest        MessageType = 59
+	MessageType_MessageType_EthereumTxAck            MessageType = 60
+	MessageType_MessageType_EthereumSignMessage      MessageType = 64
+	MessageType_MessageType_EthereumVerifyMessage    MessageType = 65
+	MessageType_MessageType_EthereumMessageSignature MessageType = 66
 	// NEM
 	MessageType_MessageType_NEMGetAddress       MessageType = 67
 	MessageType_MessageType_NEMAddress          MessageType = 68
@@ -306,16 +306,16 @@ var MessageType_name = map[int32]string{
 	111: "MessageType_DebugLinkMemory",
 	112: "MessageType_DebugLinkMemoryWrite",
 	113: "MessageType_DebugLinkFlashErase",
-	450: "MessageType_Mars CreditGetPublicKey",
-	451: "MessageType_Mars CreditPublicKey",
-	56:  "MessageType_Mars CreditGetAddress",
-	57:  "MessageType_Mars CreditAddress",
-	58:  "MessageType_Mars CreditSignTx",
-	59:  "MessageType_Mars CreditTxRequest",
-	60:  "MessageType_Mars CreditTxAck",
-	64:  "MessageType_Mars CreditSignMessage",
-	65:  "MessageType_Mars CreditVerifyMessage",
-	66:  "MessageType_Mars CreditMessageSignature",
+	450: "MessageType_EthereumGetPublicKey",
+	451: "MessageType_EthereumPublicKey",
+	56:  "MessageType_EthereumGetAddress",
+	57:  "MessageType_EthereumAddress",
+	58:  "MessageType_EthereumSignTx",
+	59:  "MessageType_EthereumTxRequest",
+	60:  "MessageType_EthereumTxAck",
+	64:  "MessageType_EthereumSignMessage",
+	65:  "MessageType_EthereumVerifyMessage",
+	66:  "MessageType_EthereumMessageSignature",
 	67:  "MessageType_NEMGetAddress",
 	68:  "MessageType_NEMAddress",
 	69:  "MessageType_NEMSignTx",
@@ -502,16 +502,16 @@ var MessageType_value = map[string]int32{
 	"MessageType_DebugLinkMemory":                           111,
 	"MessageType_DebugLinkMemoryWrite":                      112,
 	"MessageType_DebugLinkFlashErase":                       113,
-	"MessageType_Mars CreditGetPublicKey":                      450,
-	"MessageType_Mars CreditPublicKey":                         451,
-	"MessageType_Mars CreditGetAddress":                        56,
-	"MessageType_Mars CreditAddress":                           57,
-	"MessageType_Mars CreditSignTx":                            58,
-	"MessageType_Mars CreditTxRequest":                         59,
-	"MessageType_Mars CreditTxAck":                             60,
-	"MessageType_Mars CreditSignMessage":                       64,
-	"MessageType_Mars CreditVerifyMessage":                     65,
-	"MessageType_Mars CreditMessageSignature":                  66,
+	"MessageType_EthereumGetPublicKey":                      450,
+	"MessageType_EthereumPublicKey":                         451,
+	"MessageType_EthereumGetAddress":                        56,
+	"MessageType_EthereumAddress":                           57,
+	"MessageType_EthereumSignTx":                            58,
+	"MessageType_EthereumTxRequest":                         59,
+	"MessageType_EthereumTxAck":                             60,
+	"MessageType_EthereumSignMessage":                       64,
+	"MessageType_EthereumVerifyMessage":                     65,
+	"MessageType_EthereumMessageSignature":                  66,
 	"MessageType_NEMGetAddress":                             67,
 	"MessageType_NEMAddress":                                68,
 	"MessageType_NEMSignTx":                                 69,

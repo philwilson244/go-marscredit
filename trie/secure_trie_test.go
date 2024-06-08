@@ -18,28 +18,25 @@ package trie
 
 import (
 	"bytes"
-	"fmt"
 	"runtime"
 	"sync"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/trie/trienode"
+	"github.com/ethereum/go-ethereum/ethdb/memorydb"
 )
 
-func newEmptySecure() *StateTrie {
-	trie, _ := NewStateTrie(TrieID(types.EmptyRootHash), newTestDatabase(rawdb.NewMemoryDatabase(), rawdb.HashScheme))
+func newEmptySecure() *SecureTrie {
+	trie, _ := NewSecure(common.Hash{}, NewDatabase(memorydb.New()))
 	return trie
 }
 
-// makeTestStateTrie creates a large enough secure trie for testing.
-func makeTestStateTrie() (*testDb, *StateTrie, map[string][]byte) {
+// makeTestSecureTrie creates a large enough secure trie for testing.
+func makeTestSecureTrie() (*Database, *SecureTrie, map[string][]byte) {
 	// Create an empty trie
-	triedb := newTestDatabase(rawdb.NewMemoryDatabase(), rawdb.HashScheme)
-	trie, _ := NewStateTrie(TrieID(types.EmptyRootHash), triedb)
+	triedb := NewDatabase(memorydb.New())
+	trie, _ := NewSecure(common.Hash{}, triedb)
 
 	// Fill it with some arbitrary data
 	content := make(map[string][]byte)
@@ -47,25 +44,22 @@ func makeTestStateTrie() (*testDb, *StateTrie, map[string][]byte) {
 		// Map the same data under multiple keys
 		key, val := common.LeftPadBytes([]byte{1, i}, 32), []byte{i}
 		content[string(key)] = val
-		trie.MustUpdate(key, val)
+		trie.Update(key, val)
 
 		key, val = common.LeftPadBytes([]byte{2, i}, 32), []byte{i}
 		content[string(key)] = val
-		trie.MustUpdate(key, val)
+		trie.Update(key, val)
 
 		// Add some other data to inflate the trie
 		for j := byte(3); j < 13; j++ {
 			key, val = common.LeftPadBytes([]byte{j, i}, 32), []byte{j, i}
 			content[string(key)] = val
-			trie.MustUpdate(key, val)
+			trie.Update(key, val)
 		}
 	}
-	root, nodes, _ := trie.Commit(false)
-	if err := triedb.Update(root, types.EmptyRootHash, trienode.NewWithNodeSet(nodes)); err != nil {
-		panic(fmt.Errorf("failed to commit db %v", err))
-	}
-	// Re-create the trie based on the new state
-	trie, _ = NewStateTrie(TrieID(root), triedb)
+	trie.Commit(nil)
+
+	// Return the generated trie
 	return triedb, trie, content
 }
 
@@ -83,9 +77,9 @@ func TestSecureDelete(t *testing.T) {
 	}
 	for _, val := range vals {
 		if val.v != "" {
-			trie.MustUpdate([]byte(val.k), []byte(val.v))
+			trie.Update([]byte(val.k), []byte(val.v))
 		} else {
-			trie.MustDelete([]byte(val.k))
+			trie.Delete([]byte(val.k))
 		}
 	}
 	hash := trie.Hash()
@@ -97,13 +91,13 @@ func TestSecureDelete(t *testing.T) {
 
 func TestSecureGetKey(t *testing.T) {
 	trie := newEmptySecure()
-	trie.MustUpdate([]byte("foo"), []byte("bar"))
+	trie.Update([]byte("foo"), []byte("bar"))
 
 	key := []byte("foo")
 	value := []byte("bar")
 	seckey := crypto.Keccak256(key)
 
-	if !bytes.Equal(trie.MustGet(key), value) {
+	if !bytes.Equal(trie.Get(key), value) {
 		t.Errorf("Get did not return bar")
 	}
 	if k := trie.GetKey(seckey); !bytes.Equal(k, key) {
@@ -111,16 +105,16 @@ func TestSecureGetKey(t *testing.T) {
 	}
 }
 
-func TestStateTrieConcurrency(t *testing.T) {
+func TestSecureTrieConcurrency(t *testing.T) {
 	// Create an initial trie and copy if for concurrent access
-	_, trie, _ := makeTestStateTrie()
+	_, trie, _ := makeTestSecureTrie()
 
 	threads := runtime.NumCPU()
-	tries := make([]*StateTrie, threads)
+	tries := make([]*SecureTrie, threads)
 	for i := 0; i < threads; i++ {
 		tries[i] = trie.Copy()
 	}
-	// Start a batch of goroutines interacting with the trie
+	// Start a batch of goroutines interactng with the trie
 	pend := new(sync.WaitGroup)
 	pend.Add(threads)
 	for i := 0; i < threads; i++ {
@@ -130,18 +124,18 @@ func TestStateTrieConcurrency(t *testing.T) {
 			for j := byte(0); j < 255; j++ {
 				// Map the same data under multiple keys
 				key, val := common.LeftPadBytes([]byte{byte(index), 1, j}, 32), []byte{j}
-				tries[index].MustUpdate(key, val)
+				tries[index].Update(key, val)
 
 				key, val = common.LeftPadBytes([]byte{byte(index), 2, j}, 32), []byte{j}
-				tries[index].MustUpdate(key, val)
+				tries[index].Update(key, val)
 
 				// Add some other data to inflate the trie
 				for k := byte(3); k < 13; k++ {
 					key, val = common.LeftPadBytes([]byte{byte(index), k, j}, 32), []byte{k, j}
-					tries[index].MustUpdate(key, val)
+					tries[index].Update(key, val)
 				}
 			}
-			tries[index].Commit(false)
+			tries[index].Commit(nil)
 		}(i)
 	}
 	// Wait for all threads to finish

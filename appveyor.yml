@@ -7,10 +7,10 @@ image:
 
 environment:
   matrix:
-    - GMARS_ARCH: amd64
-      GMARS_MINGW: 'C:\msys64\mingw64'
-    - GMARS_ARCH: 386
-      GMARS_MINGW: 'C:\msys64\mingw32'
+    - GETH_ARCH: amd64
+      GETH_MINGW: 'C:\msys64\mingw64'
+    - GETH_ARCH: 386
+      GETH_MINGW: 'C:\msys64\mingw32'
 
 install:
   - git submodule update --init --depth 1 --recursive
@@ -26,13 +26,13 @@ for:
       - go run build/ci.go lint
       - go run build/ci.go install -dlgo
     test_script:
-      - go run build/ci.go test -dlgo -short
+      - go run build/ci.go test -dlgo -coverage
 
   # linux/386 is disabled.
   - matrix:
       exclude:
         - image: Ubuntu
-          GMARS_ARCH: 386
+          GETH_ARCH: 386
 
   # Windows builds for amd64 + 386.
   - matrix:
@@ -42,16 +42,16 @@ for:
       # We use gcc from MSYS2 because it is the most recent compiler version available on
       # AppVeyor. Note: gcc.exe only works properly if the corresponding bin/ directory is
       # contained in PATH.
-      GMARS_CC: '%GMARS_MINGW%\bin\gcc.exe'
-      PATH: '%GMARS_MINGW%\bin;C:\Program Files (x86)\NSIS\;%PATH%'
+      GETH_CC: '%GETH_MINGW%\bin\gcc.exe'
+      PATH: '%GETH_MINGW%\bin;C:\Program Files (x86)\NSIS\;%PATH%'
     build_script:
-      - 'echo %GMARS_ARCH%'
-      - 'echo %GMARS_CC%'
-      - '%GMARS_CC% --version'
-      - go run build/ci.go install -dlgo -arch %GMARS_ARCH% -cc %GMARS_CC%
+      - 'echo %GETH_ARCH%'
+      - 'echo %GETH_CC%'
+      - '%GETH_CC% --version'
+      - go run build/ci.go install -dlgo -arch %GETH_ARCH% -cc %GETH_CC%
     after_build:
       # Upload builds. Note that ci.go makes this a no-op PR builds.
-      - go run build/ci.go archive -arch %GMARS_ARCH% -type zip -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
-      - go run build/ci.go nsis -arch %GMARS_ARCH% -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
+      - go run build/ci.go archive -arch %GETH_ARCH% -type zip -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
+      - go run build/ci.go nsis -arch %GETH_ARCH% -signer WINDOWS_SIGNING_KEY -upload gethstore/builds
     test_script:
-      - go run build/ci.go test -dlgo -arch %GMARS_ARCH% -cc %GMARS_CC% -short
+      - go run build/ci.go test -dlgo -arch %GETH_ARCH% -cc %GETH_CC% -coverage

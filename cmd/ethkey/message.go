@@ -21,24 +21,23 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/cmd/utils"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/urfave/cli/v2"
+	"gopkg.in/urfave/cli.v1"
 )
 
 type outputSign struct {
 	Signature string
 }
 
-var msgfileFlag = &cli.StringFlag{
+var msgfileFlag = cli.StringFlag{
 	Name:  "msgfile",
 	Usage: "file containing the message to sign/verify",
 }
 
-var commandSignMessage = &cli.Command{
+var commandSignMessage = cli.Command{
 	Name:      "signmessage",
 	Usage:     "sign a message",
 	ArgsUsage: "<keyfile> <message>",
@@ -69,7 +68,7 @@ To sign a message contained in a file, use the --msgfile flag.
 			utils.Fatalf("Error decrypting key: %v", err)
 		}
 
-		signature, err := crypto.Sign(accounts.TextHash(message), key.PrivateKey)
+		signature, err := crypto.Sign(signHash(message), key.PrivateKey)
 		if err != nil {
 			utils.Fatalf("Failed to sign message: %v", err)
 		}
@@ -89,7 +88,7 @@ type outputVerify struct {
 	RecoveredPublicKey string
 }
 
-var commandVerifyMessage = &cli.Command{
+var commandVerifyMessage = cli.Command{
 	Name:      "verifymessage",
 	Usage:     "verify the signature of a signed message",
 	ArgsUsage: "<address> <signature> <message>",
@@ -114,7 +113,7 @@ It is possible to refer to a file containing the message.`,
 			utils.Fatalf("Signature encoding is not hexadecimal: %v", err)
 		}
 
-		recoveredPubkey, err := crypto.SigToPub(accounts.TextHash(message), signature)
+		recoveredPubkey, err := crypto.SigToPub(signHash(message), signature)
 		if err != nil || recoveredPubkey == nil {
 			utils.Fatalf("Signature verification failed: %v", err)
 		}
@@ -144,7 +143,7 @@ It is possible to refer to a file containing the message.`,
 
 func getMessage(ctx *cli.Context, msgarg int) []byte {
 	if file := ctx.String(msgfileFlag.Name); file != "" {
-		if ctx.NArg() > msgarg {
+		if len(ctx.Args()) > msgarg {
 			utils.Fatalf("Can't use --msgfile and message argument at the same time.")
 		}
 		msg, err := os.ReadFile(file)
@@ -152,9 +151,9 @@ func getMessage(ctx *cli.Context, msgarg int) []byte {
 			utils.Fatalf("Can't read message file: %v", err)
 		}
 		return msg
-	} else if ctx.NArg() == msgarg+1 {
+	} else if len(ctx.Args()) == msgarg+1 {
 		return []byte(ctx.Args().Get(msgarg))
 	}
-	utils.Fatalf("Invalid number of arguments: want %d, got %d", msgarg+1, ctx.NArg())
+	utils.Fatalf("Invalid number of arguments: want %d, got %d", msgarg+1, len(ctx.Args()))
 	return nil
 }

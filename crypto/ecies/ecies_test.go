@@ -23,7 +23,7 @@
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHMARSER IN CONTRACT, STRICT LIABILITY, OR TORT
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -35,7 +35,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
+	"fmt"
 	"math/big"
 	"testing"
 
@@ -62,7 +62,7 @@ func TestKDF(t *testing.T) {
 	}
 }
 
-var ErrBadSharedKeys = errors.New("ecies: shared keys don't match")
+var ErrBadSharedKeys = fmt.Errorf("ecies: shared keys don't match")
 
 // cmpParams compares a set of ECIES parameters. We assume, as per the
 // docs, that AES is the only supported symmetric encryption algorithm.
@@ -334,6 +334,7 @@ func testParamSelection(t *testing.T, c testCase) {
 	if err == nil {
 		t.Fatalf("ecies: encryption should not have succeeded (%s)\n", c.Name)
 	}
+
 }
 
 // Ensure that the basic public key validation in the decryption operation

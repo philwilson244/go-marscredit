@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"maps"
 	"math"
 	"net"
 	"sync"
@@ -148,7 +147,7 @@ func (s *SimAdapter) DialRPC(id enode.ID) (*rpc.Client, error) {
 	if !ok {
 		return nil, fmt.Errorf("unknown node: %s", id)
 	}
-	return node.node.Attach(), nil
+	return node.node.Attach()
 }
 
 // GetNode returns the node with the given ID if it exists
@@ -173,7 +172,7 @@ type SimNode struct {
 	registerOnce sync.Once
 }
 
-// Close closes the underlying node.Node to release
+// Close closes the underlaying node.Node to release
 // acquired resources.
 func (sn *SimNode) Close() error {
 	return sn.node.Close()
@@ -207,7 +206,7 @@ func (sn *SimNode) ServeRPC(conn *websocket.Conn) error {
 	if err != nil {
 		return err
 	}
-	codec := rpc.NewFuncCodec(conn, func(v any, _ bool) error { return conn.WriteJSON(v) }, conn.ReadJSON)
+	codec := rpc.NewFuncCodec(conn, conn.WriteJSON, conn.ReadJSON)
 	handler.ServeCodec(codec, 0)
 	return nil
 }
@@ -216,7 +215,10 @@ func (sn *SimNode) ServeRPC(conn *websocket.Conn) error {
 // simulation_snapshot RPC method
 func (sn *SimNode) Snapshots() (map[string][]byte, error) {
 	sn.lock.RLock()
-	services := maps.Clone(sn.running)
+	services := make(map[string]node.Lifecycle, len(sn.running))
+	for name, service := range sn.running {
+		services[name] = service
+	}
 	sn.lock.RUnlock()
 	if len(services) == 0 {
 		return nil, errors.New("no running services")
@@ -272,7 +274,10 @@ func (sn *SimNode) Start(snapshots map[string][]byte) error {
 	}
 
 	// create an in-process RPC client
-	client := sn.node.Attach()
+	client, err := sn.node.Attach()
+	if err != nil {
+		return err
+	}
 	sn.lock.Lock()
 	sn.client = client
 	sn.lock.Unlock()
@@ -313,7 +318,11 @@ func (sn *SimNode) Services() []node.Lifecycle {
 func (sn *SimNode) ServiceMap() map[string]node.Lifecycle {
 	sn.lock.RLock()
 	defer sn.lock.RUnlock()
-	return maps.Clone(sn.running)
+	services := make(map[string]node.Lifecycle, len(sn.running))
+	for name, service := range sn.running {
+		services[name] = service
+	}
+	return services
 }
 
 // Server returns the underlying p2p.Server

@@ -87,6 +87,15 @@ func NewKeyStore(keydir string, scryptN, scryptP int) *KeyStore {
 	return ks
 }
 
+// NewPlaintextKeyStore creates a keystore for the given directory.
+// Deprecated: Use NewKeyStore.
+func NewPlaintextKeyStore(keydir string) *KeyStore {
+	keydir, _ = filepath.Abs(keydir)
+	ks := &KeyStore{storage: &keyStorePlain{keydir}}
+	ks.init(keydir)
+	return ks
+}
+
 func (ks *KeyStore) init(keydir string) {
 	// Lock the mutex since the account cache might call back with events
 	ks.mu.Lock()
@@ -312,10 +321,11 @@ func (ks *KeyStore) Unlock(a accounts.Account, passphrase string) error {
 // Lock removes the private key with the given address from memory.
 func (ks *KeyStore) Lock(addr common.Address) error {
 	ks.mu.Lock()
-	unl, found := ks.unlocked[addr]
-	ks.mu.Unlock()
-	if found {
+	if unl, found := ks.unlocked[addr]; found {
+		ks.mu.Unlock()
 		ks.expire(addr, unl, time.Duration(0)*time.Nanosecond)
+	} else {
+		ks.mu.Unlock()
 	}
 	return nil
 }
@@ -476,7 +486,7 @@ func (ks *KeyStore) Update(a accounts.Account, passphrase, newPassphrase string)
 	return ks.storage.StoreKey(a.URL.Path, key, newPassphrase)
 }
 
-// ImportPreSaleKey decrypts the given Mars Credit presale wallet and stores
+// ImportPreSaleKey decrypts the given Ethereum presale wallet and stores
 // a key file in the key directory. The key file is encrypted with the same passphrase.
 func (ks *KeyStore) ImportPreSaleKey(keyJSON []byte, passphrase string) (accounts.Account, error) {
 	a, _, err := importPreSaleKey(ks.storage, keyJSON, passphrase)
@@ -488,16 +498,10 @@ func (ks *KeyStore) ImportPreSaleKey(keyJSON []byte, passphrase string) (account
 	return a, nil
 }
 
-// isUpdating returns whether the event notification loop is running.
-// This method is mainly meant for tests.
-func (ks *KeyStore) isUpdating() bool {
-	ks.mu.RLock()
-	defer ks.mu.RUnlock()
-	return ks.updating
-}
-
 // zeroKey zeroes a private key in memory.
 func zeroKey(k *ecdsa.PrivateKey) {
 	b := k.D.Bits()
-	clear(b)
+	for i := range b {
+		b[i] = 0
+	}
 }

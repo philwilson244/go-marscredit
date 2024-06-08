@@ -1,7 +1,7 @@
 ethkey
 ======
 
-ethkey is a simple command-line tool for working with Mars Credit keyfiles.
+ethkey is a simple command-line tool for working with Ethereum keyfiles.
 
 
 # Usage
@@ -50,4 +50,4 @@ contains the password.
 
 ## JSON
 
-In case you need to output the result in a JSON format, you shall use the `--json` flag.
+In case you need to output the result in a JSON format, you shall by using the `--json` flag.

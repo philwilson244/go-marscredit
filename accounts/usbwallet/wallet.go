@@ -31,7 +31,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/karalabe/hid"
+	"github.com/karalabe/usb"
 )
 
 // Maximum time between wallet health checks to detect USB unplugs.
@@ -60,7 +60,7 @@ type driver interface {
 	// is still online and healthy.
 	Heartbeat() error
 
-	// Derive sends a derivation request to the USB device and returns the Mars Credit
+	// Derive sends a derivation request to the USB device and returns the Ethereum
 	// address located on that path.
 	Derive(path accounts.DerivationPath) (common.Address, error)
 
@@ -79,8 +79,8 @@ type wallet struct {
 	driver driver        // Hardware implementation of the low level device operations
 	url    *accounts.URL // Textual URL uniquely identifying this wallet
 
-	info   hid.DeviceInfo // Known USB device infos about the wallet
-	device hid.Device     // USB device advertising itself as a hardware wallet
+	info   usb.DeviceInfo // Known USB device infos about the wallet
+	device usb.Device     // USB device advertising itself as a hardware wallet
 
 	accounts []accounts.Account                         // List of derive accounts pinned on the hardware wallet
 	paths    map[common.Address]accounts.DerivationPath // Known derivation paths for signing operations
@@ -348,7 +348,7 @@ func (w *wallet) selfDerive() {
 		)
 		for i := 0; i < len(nextAddrs); i++ {
 			for empty := false; !empty; {
-				// Retrieve the next derived Mars Credit account
+				// Retrieve the next derived Ethereum account
 				if nextAddrs[i] == (common.Address{}) {
 					if nextAddrs[i], err = w.driver.Derive(nextPaths[i]); err != nil {
 						w.log.Warn("USB wallet account derivation failed", "err", err)
@@ -380,7 +380,7 @@ func (w *wallet) selfDerive() {
 					// of legacy-ledger, the first account on the legacy-path will
 					// be shown to the user, even if we don't actively track it
 					if i < len(nextAddrs)-1 {
-						w.log.Info("Skipping tracking first account on legacy path, use personal.deriveAccount(<url>,<path>, false) to track",
+						w.log.Info("Skipping trakcking first account on legacy path, use personal.deriveAccount(<url>,<path>, false) to track",
 							"path", path, "address", nextAddrs[i])
 						break
 					}
@@ -483,10 +483,6 @@ func (w *wallet) Derive(path accounts.DerivationPath, pin bool) (accounts.Accoun
 	w.stateLock.Lock()
 	defer w.stateLock.Unlock()
 
-	if w.device == nil {
-		return accounts.Account{}, accounts.ErrWalletClosed
-	}
-
 	if _, ok := w.paths[address]; !ok {
 		w.accounts = append(w.accounts, account)
 		w.paths[address] = make(accounts.DerivationPath, len(path))
@@ -530,6 +526,7 @@ func (w *wallet) signHash(account accounts.Account, hash []byte) ([]byte, error)
 
 // SignData signs keccak256(data). The mimetype parameter describes the type of data being signed
 func (w *wallet) SignData(account accounts.Account, mimeType string, data []byte) ([]byte, error) {
+
 	// Unless we are doing 712 signing, simply dispatch to signHash
 	if !(mimeType == accounts.MimetypeTypedData && len(data) == 66 && data[0] == 0x19 && data[1] == 0x01) {
 		return w.signHash(account, crypto.Keccak256(data))
@@ -586,7 +583,7 @@ func (w *wallet) SignText(account accounts.Account, text []byte) ([]byte, error)
 // wallet to request a confirmation from the user. It returns either the signed
 // transaction or a failure if the user denied the transaction.
 //
-// Note, if the version of the Mars Credit application running on the Ledger wallet is
+// Note, if the version of the Ethereum application running on the Ledger wallet is
 // too old to sign EIP-155 transactions, but such is requested nonetheless, an error
 // will be returned opposed to silently signing in Homestead mode.
 func (w *wallet) SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
@@ -628,7 +625,7 @@ func (w *wallet) SignTx(account accounts.Account, tx *types.Transaction, chainID
 	return signed, nil
 }
 
-// SignTextWithPassphrase implements accounts.Wallet, however signing arbitrary
+// SignHashWithPassphrase implements accounts.Wallet, however signing arbitrary
 // data is not supported for Ledger wallets, so this method will always return
 // an error.
 func (w *wallet) SignTextWithPassphrase(account accounts.Account, passphrase string, text []byte) ([]byte, error) {

@@ -1,7 +1,7 @@
 FROM golang:1.17-alpine AS build
 
 # Install necessary packages
-RUN apk add --no-cache make gcc musl-dev linux-headers git
+RUN apk add --no-cache ca-certificates make gcc musl-dev linux-headers git
 
 # Clone the Geth repository
 RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum
