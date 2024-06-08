@@ -50,4 +50,4 @@ EXPOSE 8545
 EXPOSE 8546
 
 # Use the output_enode script to log the enode URL
-CMD ["sh /entrypoint_${NODE_ID}.sh"]
+CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
