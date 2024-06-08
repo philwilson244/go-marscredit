@@ -3,7 +3,7 @@
 echo "Starting Node 1"
 
 # Initialize Geth with the genesis file
-geth init /genesis.json --datadir /data
+# geth init /genesis.json --datadir /data
 
 # Start Geth and enable mining
 exec geth --datadir /data \
