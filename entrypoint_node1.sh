@@ -9,10 +9,10 @@ geth init /genesis.json
 echo "marscredit011" > /data/passwordfile
 
 # Create a new account and capture the address
-ACCOUNT_ADDRESS=$(geth account new --datadir /data --password /data/passwordfile | grep -oP '(?<=Address: \{).*(?=\})')
+ACCOUNT_ADDRESS=$(geth account new --datadir /data --password /data/passwordfile | awk -F'[{}]' '{print $2}')
 
 # Export the private key of the created account
-PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | grep -oP '(?<=Private key: ).*')
+PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | awk '/Private key/ {print $3}')
 
 # Log the private key (ensure this log is stored securely)
 echo "Private key for $ACCOUNT_ADDRESS: $PRIVATE_KEY"
