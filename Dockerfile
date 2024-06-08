@@ -22,7 +22,7 @@ FROM alpine:latest
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 
 # Copy the genesis file
-# COPY genesis.json /genesis.json
+COPY genesis.json /genesis.json
 
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /entrypoint_node1.sh

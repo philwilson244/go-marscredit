@@ -2,6 +2,8 @@
 
 echo "Starting Node 2"
 
+mkdir -p /data
+
 # Start Geth and enable mining
 exec geth --datadir /data \
     --syncmode "full" \
