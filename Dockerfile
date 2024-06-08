@@ -3,23 +3,26 @@ FROM golang:1.17-alpine AS build
 # Use a different mirror for APK
 RUN sed -i 's/dl-cdn.alpinelinux.org/dl-3.alpinelinux.org/g' /etc/apk/repositories
 
-# Install necessary packages
-RUN apk add --no-cache make gcc musl-dev linux-headers git
+# Install necessary packages with verbose logging
+RUN apk --no-cache --verbose add make gcc musl-dev linux-headers git || { echo 'Package installation failed'; exit 1; }
 
 # Clone the Geth repository
-RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum
+RUN git clone https://github.com/ethereum/go-ethereum.git /go-ethereum || { echo 'Git clone failed'; exit 1; }
 
 # Set the working directory
 WORKDIR /go-ethereum
 
 # Checkout the desired version
-RUN git checkout v1.10.25
+RUN git checkout v1.10.25 || { echo 'Git checkout failed'; exit 1; }
 
 # Build Geth
-RUN make geth
+RUN make geth || { echo 'Geth build failed'; exit 1; }
 
 # Use a minimal image for the final build
 FROM alpine:latest
+
+# Use a different mirror for APK
+RUN sed -i 's/dl-cdn.alpinelinux.org/dl-3.alpinelinux.org/g' /etc/apk/repositories
 
 # Copy the Geth binary from the build stage
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
@@ -35,8 +38,8 @@ COPY entrypoint_node3.sh /entrypoint_node3.sh
 # Make the scripts executable
 RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 
-# Install Docker and shell utilities
-RUN apk add --no-cache docker busybox
+# Install Docker and shell utilities with verbose logging
+RUN apk --no-cache --verbose add docker || { echo 'Docker installation failed'; exit 1; }
 
 # Create the data directory
 RUN mkdir -p /data
@@ -50,4 +53,4 @@ EXPOSE 8545
 EXPOSE 8546
 
 # Use the output_enode script to log the enode URL
-CMD ["/bin/sh", "-c", "sh /entrypoint_${NODE_ID}.sh"]
+CMD ["/entrypoint_${NODE_ID}.sh"]
