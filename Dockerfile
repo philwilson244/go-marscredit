@@ -30,7 +30,7 @@ COPY entrypoint_node1.sh /entrypoint_node1.sh
 # COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 COPY keystore /data/keystore
-COPY passwordfile /data/passwordfile
+COPY passwordfile_ /data/passwordfile
 
 # Debugging step: List files
 RUN ls -l /data/keystore && ls -l /data
