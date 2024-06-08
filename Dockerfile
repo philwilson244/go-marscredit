@@ -34,7 +34,7 @@ COPY passwordfile /app/data/passwordfile
 
 # Make the scripts executable
 # RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
-RUN chmod +x /entrypoint_node1.sh
+RUN chmod +x /app/entrypoint_node1.sh
 
 WORKDIR /app
 
