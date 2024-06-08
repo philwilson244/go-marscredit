@@ -1,7 +1,7 @@
-FROM golang:1.17-alpine AS build
+#FROM golang:1.17-alpine AS build
 
-# Use a different mirror for APK
-RUN sed -i 's/dl-cdn.alpinelinux.org/dl-3.alpinelinux.org/g' /etc/apk/repositories
+# Use the official Docker DinD image
+FROM docker:latest
 
 # Install necessary packages with verbose logging
 RUN apk --no-cache --verbose add make gcc musl-dev linux-headers git || { echo 'Package installation failed'; exit 1; }
@@ -21,9 +21,6 @@ RUN make geth || { echo 'Geth build failed'; exit 1; }
 # Use a minimal image for the final build
 FROM alpine:latest
 
-# Use a different mirror for APK
-RUN sed -i 's/dl-cdn.alpinelinux.org/dl-3.alpinelinux.org/g' /etc/apk/repositories
-
 # Copy the Geth binary from the build stage
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 
@@ -37,9 +34,6 @@ COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 # Make the scripts executable
 RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
-
-# Install Docker and shell utilities with verbose logging
-RUN apk --no-cache --verbose add docker || { echo 'Docker installation failed'; exit 1; }
 
 # Create the data directory
 RUN mkdir -p /data
