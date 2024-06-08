@@ -32,6 +32,9 @@ COPY entrypoint_node3.sh /entrypoint_node3.sh
 # Make the scripts executable
 RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
 
+# Install Docker and shell utilities
+RUN apk add --no-cache docker busybox
+
 # Create the data directory
 RUN mkdir -p /data
 
