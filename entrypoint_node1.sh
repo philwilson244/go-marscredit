@@ -10,6 +10,7 @@ echo "marscredit011" > /data/passwordfile
 
 # Create a new account and capture the address
 ACCOUNT_OUTPUT=$(geth account new --datadir /data --password /data/passwordfile)
+echo "Account creation output: $ACCOUNT_OUTPUT"
 ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | sed -n 's/.*Address: {\([^}]*\)}.*/\1/p')
 
 # Check if the account was created successfully
@@ -18,8 +19,11 @@ if [ -z "$ACCOUNT_ADDRESS" ]; then
   exit 1
 fi
 
+echo "Account Address: $ACCOUNT_ADDRESS"
+
 # Export the private key of the created account
 EXPORT_OUTPUT=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS)
+echo "Export output: $EXPORT_OUTPUT"
 PRIVATE_KEY=$(echo "$EXPORT_OUTPUT" | sed -n 's/.*Private key: \(.*\)/\1/p')
 
 # Check if the private key was exported successfully
@@ -49,4 +53,8 @@ exec geth --datadir /data \
     --miner.etherbase $ACCOUNT_ADDRESS \
     --unlock $ACCOUNT_ADDRESS \
     --password /data/passwordfile \
-    --allow-i
+    --allow-insecure-unlock \
+    --verbosity 5 \
+    --maxpeers 50 \
+    --cache 2048 \
+    --nodiscover
