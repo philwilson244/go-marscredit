@@ -3,22 +3,21 @@
 echo "Starting Node 1"
 
 # Initialize Geth with the genesis file
-geth init /genesis.json
+geth init /genesis.json --datadir /data
 
 # Create a password file
 echo "marscredit011" > /data/passwordfile
 
 # Create a new account and capture the address
-ACCOUNT_ADDRESS=$(geth account new --datadir /data --password /data/passwordfile | awk -F'[{}]' '{print $2}')
+ACCOUNT_OUTPUT=$(geth account new --datadir /data --password /data/passwordfile)
+ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | awk -F'[{}]' '{print $2}')
+KEYFILE=$(echo "$ACCOUNT_OUTPUT" | grep -oP '.*keystore.*')
 
 # Export the private key of the created account
-PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | awk '/Private key/ {print $3}')
+PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | grep -oP '(?<=Private key: ).*')
 
 # Log the private key (ensure this log is stored securely)
 echo "Private key for $ACCOUNT_ADDRESS: $PRIVATE_KEY"
-
-# Set the private key as an environment variable
-export PRIVATE_KEY=$PRIVATE_KEY
 
 # Start Geth and enable mining
 exec geth --datadir /data \
