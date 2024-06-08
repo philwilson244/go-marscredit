@@ -42,8 +42,6 @@ RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh
 # Create the data directory
 RUN mkdir -p /data
 
-VOLUME /data
-
 # Expose necessary ports
 EXPOSE 8541 8542 8543 8544 8545 8546 30303
 
