@@ -11,7 +11,8 @@ echo "marscredit011" > /data/passwordfile
 # Create a new account and capture the address
 ACCOUNT_OUTPUT=$(geth account new --datadir /data --password /data/passwordfile)
 echo "Account creation output: $ACCOUNT_OUTPUT"
-ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | sed -n 's/.*Address: {\([^}]*\)}.*/\1/p')
+ACCOUNT_ADDRESS=$(echo "$ACCOUNT_OUTPUT" | sed -n 's/.*Public address of the key:   \([^ ]*\).*/\1/p')
+KEYFILE=$(echo "$ACCOUNT_OUTPUT" | sed -n 's/.*Path of the secret key file: \(.*\)/\1/p')
 
 # Check if the account was created successfully
 if [ -z "$ACCOUNT_ADDRESS" ]; then
@@ -20,15 +21,22 @@ if [ -z "$ACCOUNT_ADDRESS" ]; then
 fi
 
 echo "Account Address: $ACCOUNT_ADDRESS"
+echo "Keyfile path: $KEYFILE"
 
-# Export the private key of the created account
-EXPORT_OUTPUT=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS)
-echo "Export output: $EXPORT_OUTPUT"
-PRIVATE_KEY=$(echo "$EXPORT_OUTPUT" | sed -n 's/.*Private key: \(.*\)/\1/p')
+# Extract the private key from the keystore file using Python
+PRIVATE_KEY=$(python3 - <<EOF
+import json
+from eth_account import Account
+with open("$KEYFILE") as keyfile:
+    encrypted_key = json.load(keyfile)
+    private_key = Account.decrypt(encrypted_key, "marscredit011")
+    print(private_key.hex())
+EOF
+)
 
-# Check if the private key was exported successfully
+# Check if the private key was extracted successfully
 if [ -z "$PRIVATE_KEY" ]; then
-  echo "Failed to export the private key for the account $ACCOUNT_ADDRESS."
+  echo "Failed to extract the private key for the account $ACCOUNT_ADDRESS."
   exit 1
 fi
 
@@ -39,22 +47,4 @@ echo "Private key for $ACCOUNT_ADDRESS: $PRIVATE_KEY"
 exec geth --datadir /data \
     --syncmode "full" \
     --http \
-    --http.addr "0.0.0.0" \
-    --http.port 8541 \
-    --http.api personal,eth,net,web3,miner \
-    --http.vhosts=* \
-    --http.corsdomain=* \
-    --networkid 110110 \
-    --ws \
-    --ws.addr "0.0.0.0" \
-    --ws.port 8544 \
-    --mine \
-    --miner.threads=1 \
-    --miner.etherbase $ACCOUNT_ADDRESS \
-    --unlock $ACCOUNT_ADDRESS \
-    --password /data/passwordfile \
-    --allow-insecure-unlock \
-    --verbosity 5 \
-    --maxpeers 50 \
-    --cache 2048 \
-    --nodiscover
+    --h
