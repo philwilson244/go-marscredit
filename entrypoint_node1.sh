@@ -8,6 +8,18 @@ geth init /genesis.json
 # Create a password file
 echo "marscredit011" > /data/passwordfile
 
+# Create a new account and capture the address
+ACCOUNT_ADDRESS=$(geth account new --datadir /data --password /data/passwordfile | grep -oP '(?<=Address: \{).*(?=\})')
+
+# Export the private key of the created account
+PRIVATE_KEY=$(geth account export --datadir /data --password /data/passwordfile $ACCOUNT_ADDRESS | grep -oP '(?<=Private key: ).*')
+
+# Log the private key (ensure this log is stored securely)
+echo "Private key for $ACCOUNT_ADDRESS: $PRIVATE_KEY"
+
+# Set the private key as an environment variable
+export PRIVATE_KEY=$PRIVATE_KEY
+
 # Start Geth and enable mining
 exec geth --datadir /data \
     --syncmode "full" \
@@ -23,8 +35,8 @@ exec geth --datadir /data \
     --ws.port 8544 \
     --mine \
     --miner.threads=1 \
-    --miner.etherbase 0xD21602919e81e32A456195e9cE34215Af504535A \
-    --unlock 0xD21602919e81e32A456195e9cE34215Af504535A \
+    --miner.etherbase $ACCOUNT_ADDRESS \
+    --unlock $ACCOUNT_ADDRESS \
     --password /data/passwordfile \
     --allow-insecure-unlock \
     --verbosity 5 \
