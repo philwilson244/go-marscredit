@@ -27,7 +27,7 @@ const (
 	// frontierDurationLimit is for Frontier:
 	// The decision boundary on the blocktime duration used to determine
 	// whether difficulty should go up or down.
-	frontierDurationLimit = 13
+	frontierDurationLimit = 1.5
 	// minimumDifficulty The minimum that the difficulty may ever be.
 	minimumDifficulty = 131072
 	// expDiffPeriod is the exponential difficulty period
@@ -43,7 +43,7 @@ const (
 func CalcDifficultyFrontierU256(time uint64, parent *types.Header) *big.Int {
 	/*
 		Algorithm
-		block_diff = pdiff + pdiff / 2048 * (1 if time - ptime < 13 else -1) + int(2^((num // 100000) - 2))
+		block_diff = pdiff + pdiff / 2048 * (1 if time - ptime < frontierDurationLimit else -1) + int(2^((num // 100000) - 2))
 
 		Where:
 		- pdiff  = parent.difficulty
@@ -65,7 +65,7 @@ func CalcDifficultyFrontierU256(time uint64, parent *types.Header) *big.Int {
 		pDiff.SetUint64(minimumDifficulty)
 	}
 	// 'pdiff' now contains:
-	// pdiff + pdiff / 2048 * (1 if time - ptime < 13 else -1)
+	// pdiff + pdiff / 2048 * (1 if time - ptime < frontierDurationLimit else -1)
 
 	if periodCount := (parent.Number.Uint64() + 1) / expDiffPeriodUint; periodCount > 1 {
 		// diff = diff + 2^(periodCount - 2)
@@ -99,7 +99,7 @@ func CalcDifficultyHomesteadU256(time uint64, parent *types.Header) *big.Int {
 	adjust := pDiff.Clone()
 	adjust.Rsh(adjust, difficultyBoundDivisor) // adjust: pDiff / 2048
 
-	x := (time - parent.Time) / 10 // (time - ptime) / 10)
+	x := (time - parent.Time) / 1.5 // (time - ptime) / 1.5
 	var neg = true
 	if x == 0 {
 		x = 1
@@ -110,11 +110,11 @@ func CalcDifficultyHomesteadU256(time uint64, parent *types.Header) *big.Int {
 		x = x - 1
 	}
 	z := new(uint256.Int).SetUint64(x)
-	adjust.Mul(adjust, z) // adjust: (pdiff / 2048) * max((time - ptime) / 10 - 1, 99)
+	adjust.Mul(adjust, z) // adjust: (pdiff / 2048) * max((time - ptime) / 1.5 - 1, 99)
 	if neg {
-		pDiff.Sub(pDiff, adjust) // pdiff - pdiff / 2048 * max((time - ptime) / 10 - 1, 99)
+		pDiff.Sub(pDiff, adjust) // pdiff - pdiff / 2048 * max((time - ptime) / 1.5 - 1, 99)
 	} else {
-		pDiff.Add(pDiff, adjust) // pdiff + pdiff / 2048 * max((time - ptime) / 10 - 1, 99)
+		pDiff.Add(pDiff, adjust) // pdiff + pdiff / 2048 * max((time - ptime) / 1.5 - 1, 99)
 	}
 	if pDiff.LtUint64(minimumDifficulty) {
 		pDiff.SetUint64(minimumDifficulty)
@@ -139,13 +139,13 @@ func MakeDifficultyCalculatorU256(bombDelay *big.Int) func(time uint64, parent *
 		/*
 			https://github.com/ethereum/EIPs/issues/100
 			pDiff = parent.difficulty
-			BLOCK_DIFF_FACTOR = 9
+			BLOCK_DIFF_FACTOR = 1.5
 			a = pDiff + (pDiff // BLOCK_DIFF_FACTOR) * adj_factor
 			b = min(parent.difficulty, MIN_DIFF)
 			child_diff = max(a,b )
 		*/
-		x := (time - parent.Time) / 9 // (block_timestamp - parent_timestamp) // 9
-		c := uint64(1)                // if parent.unclehash == emptyUncleHashHash
+		x := (time - parent.Time) / 1.5 // (block_timestamp - parent_timestamp) // 1.5
+		c := uint64(1)                  // if parent.unclehash == emptyUncleHashHash
 		if parent.UncleHash != types.EmptyUncleHash {
 			c = 2
 		}
@@ -154,12 +154,12 @@ func MakeDifficultyCalculatorU256(bombDelay *big.Int) func(time uint64, parent *
 			// x is now _negative_ adjustment factor
 			x = x - c // - ( (t-p)/p -( 2 or 1) )
 		} else {
-			x = c - x // (2 or 1) - (t-p)/9
+			x = c - x // (2 or 1) - (t-p)/1.5
 		}
 		if x > 99 {
 			x = 99 // max(x, 99)
 		}
-		// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
+		// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 1.5), -99))
 		y := new(uint256.Int)
 		y.SetFromBig(parent.Difficulty)    // y: p_diff
 		pDiff := y.Clone()                 // pdiff: p_diff
