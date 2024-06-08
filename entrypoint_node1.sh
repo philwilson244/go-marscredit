@@ -6,7 +6,7 @@ echo "Starting Node 1"
 geth init /genesis.json
 
 # Create a password file
-echo "marscredit011" > /passwordfile
+echo "marscredit011" > /data/passwordfile
 
 # Start Geth and enable mining
 exec geth --datadir /data \
@@ -25,7 +25,7 @@ exec geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0xD21602919e81e32A456195e9cE34215Af504535A \
     --unlock 0xD21602919e81e32A456195e9cE34215Af504535A \
-    --password /passwordFile \
+    --password /data/passwordFile \
     --allow-insecure-unlock \
     --verbosity 5 \
     --maxpeers 50 \
