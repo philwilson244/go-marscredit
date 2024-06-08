@@ -1,5 +1,8 @@
 FROM golang:1.17-alpine AS build
 
+# Use a different mirror for APK
+RUN sed -i 's/dl-cdn.alpinelinux.org/dl-3.alpinelinux.org/g' /etc/apk/repositories
+
 # Install necessary packages
 RUN apk add --no-cache make gcc musl-dev linux-headers git
 
