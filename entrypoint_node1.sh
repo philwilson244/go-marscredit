@@ -9,4 +9,25 @@ geth init /genesis.json
 echo "marscredit011" > /passwordfile
 
 # Start Geth and enable mining
-exec geth --datadir /data --syncmode "full" --http --http.addr "0.0.0.0" --http.port 8541 --http.api personal,eth,net,web3,miner --http.vhosts=* --http.corsdomain=* --networkid 110110 --ws --ws.addr "0.0.0.0" --ws.port 8544 --mine --miner.threads=1 --etherbase 0xD21602919e81e32A456195e9cE34215Af504535A --unlock 0xD21602919e81e32A456195e9cE34215Af504535A --password /passwordfile --allow-insecure-unlock --verbosity 5 --maxpeers 50 --cache 2048 --nodiscover
+exec geth --datadir /data \
+    --syncmode "full" \
+    --http \
+    --http.addr "0.0.0.0" \
+    --http.port 8541 \
+    --http.api personal,eth,net,web3,miner \
+    --http.vhosts=* \
+    --http.corsdomain=* \
+    --networkid 110110 \
+    --ws \
+    --ws.addr "0.0.0.0" \
+    --ws.port 8544 \
+    --mine \
+    --miner.threads=1 \
+    --miner.etherbase 0xD21602919e81e32A456195e9cE34215Af504535A \
+    --unlock 0xD21602919e81e32A456195e9cE34215Af504535A \
+    --password /passwordFile \
+    --allow-insecure-unlock \
+    --verbosity 5 \
+    --maxpeers 50 \
+    --cache 2048 \
+    --nodiscover
