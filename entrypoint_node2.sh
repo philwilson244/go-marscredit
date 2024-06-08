@@ -19,7 +19,7 @@ exec geth --datadir /app/data \
     --miner.etherbase 0xD21602919e81e32A456195e9cE34215Af504535A \
     --bootnodes "enode://41cb4f04ac043653e60319939ffe266d8d8470829f1a433a2d6b11839888d2b32bd0e66aba812d4ac93a271e4e7418f858fe06f7a32e0d7f3a0177527f91a6c0@node1.marscredit.xyz:8541?discport=0" \
     --allow-insecure-unlock \
-    --verbosity 5 \
+    --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover
