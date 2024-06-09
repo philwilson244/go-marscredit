@@ -12,14 +12,14 @@ echo "marscredit011" > /app/data/passwordfile
 exec geth --datadir /app/data \
     --syncmode "full" \
     --http \
-    --http.addr "0.0.0.0" \
+    --http.addr "127.0.0.1" \
     --http.port 8541 \
     --http.api personal,eth,net,web3,miner \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
-    --ws.addr "0.0.0.0" \
+    --ws.addr "127.0.0.1" \
     --ws.port 8544 \
     --mine \
     --miner.threads=1 \
