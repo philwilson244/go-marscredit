@@ -1,0 +1,6 @@
+services:
+  go-marscredit:
+    build: .
+    ports:
+      - "8541:8541"
+      - "8544:8544"
