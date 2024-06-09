@@ -26,7 +26,7 @@ COPY genesis.json /app/genesis.json
 
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-COPY entrypoint_node2.sh /app/entrypoint_node2.sh
+# COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 # COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 COPY keystore /app/data/keystore
@@ -34,7 +34,7 @@ COPY passwordfile /app/data/passwordfile
 
 # Make the scripts executable
 # RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
-RUN chmod +x /app/entrypoint_node1.sh /app/entrypoint_node2.sh
+RUN chmod +x /app/entrypoint_node1.sh
 
 WORKDIR /app
 
