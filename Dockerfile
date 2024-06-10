@@ -26,7 +26,7 @@ COPY genesis.json /app/genesis.json
 
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-# COPY entrypoint_node2.sh /app/entrypoint_node2.sh
+COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 # COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 COPY keystore /app/data/keystore
