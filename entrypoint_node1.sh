@@ -12,7 +12,6 @@ echo "marscredit011" > /app/data/passwordfile
 exec geth --datadir /app/data \
     --syncmode "full" \
     --http \
-    --http.addr= node1.marscredit.xyz \
     --http.port 8541 \
     --http.api personal,eth,net,web3,miner \
     --http.vhosts=* \
