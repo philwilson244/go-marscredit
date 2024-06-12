@@ -15,7 +15,7 @@ shutdown() {
 trap shutdown SIGTERM
 
 mkdir -p /app/geth/ethash
-mkdir -p /app/.ethash
+mkdir -p /data/.ethash
 mkdir -p /data/geth/chaindata
 mkdir -p /app/keystore
 
@@ -88,7 +88,7 @@ geth --datadir /data \
     --cache 2048 \
     --nodiscover \
     --nodekey /data/geth/nodekey \
-    --ethash.dagdir /app/.ethash &
+    --ethash.dagdir /data/.ethash &
 
 # Wait indefinitely so the script doesn't exit
 wait

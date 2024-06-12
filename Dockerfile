@@ -25,7 +25,7 @@ RUN apk add --no-cache bash
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 
 # Create necessary directories
-RUN mkdir -p /app/geth/ethash && mkdir -p /app/.ethash && mkdir -p /data/geth/chaindata && mkdir -p /app/keystore
+RUN mkdir -p /data/geth/ethash && mkdir -p /data/.ethash && mkdir -p /data/geth/chaindata && mkdir -p /app/keystore
 
 # Copy the genesis file and other necessary files
 COPY genesis.json /app/genesis.json
