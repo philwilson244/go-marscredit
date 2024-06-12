@@ -22,6 +22,12 @@ mkdir -p /app/data/geth/ethash
 mkdir -p /app/data/.ethash
 mkdir -p /app/data/keystore
 
+# Log the contents of the volume
+echo "Logging contents of /app/data:"
+ls -la /app/data
+ls -la /app/data/geth
+
+
 # Initialize Geth with the genesis file (only needed for first run)
 if [ ! -d "/app/data/geth/chaindata" ]; then
     geth init /app/genesis.json --datadir /app/data
@@ -53,7 +59,6 @@ geth --datadir /app/data \
     --nodiscover \
     --nodekey /app/data/geth/nodekey \
     --ethash.dagdir /app/data/.ethash &
-
 
 # Wait indefinitely so the script doesn't exit
 wait
