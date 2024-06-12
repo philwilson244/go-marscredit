@@ -45,7 +45,8 @@ geth --datadir /data \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
-    --nodekey /data/geth/nodekey &
+    --nodekey /data/geth/nodekey \
+    --ethash.dagdir /data/.ethash &
 
 
 # Wait indefinitely so the script doesn't exit

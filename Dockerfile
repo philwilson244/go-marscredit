@@ -39,9 +39,6 @@ RUN chmod +x /app/entrypoint_node1.sh
 
 WORKDIR /app
 
-# Create the data directory
-RUN mkdir -p /data/geth/ethash && mkdir -p /data/.ethash
-
 # Expose necessary ports
 EXPOSE 8541 30303
 
