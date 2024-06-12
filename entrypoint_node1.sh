@@ -12,6 +12,10 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
+# Ensure directories exist
+mkdir -p /app/data/geth/ethash
+mkdir -p /root/.ethash
+
 # Initialize Geth with the genesis file (only needed for first run)
 geth init /app/genesis.json --datadir /app/data
 

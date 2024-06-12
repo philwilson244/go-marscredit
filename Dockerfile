@@ -18,6 +18,9 @@ RUN make geth
 # Use a minimal image for the final build
 FROM alpine:latest
 
+# Install bash
+RUN apk add --no-cache bash
+
 # Copy the Geth binary from the build stage
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 
@@ -26,23 +29,20 @@ COPY genesis.json /app/genesis.json
 
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-# COPY entrypoint_node2.sh /app/entrypoint_node2.sh
-# COPY entrypoint_node3.sh /entrypoint_node3.sh
 
 COPY keystore /app/data/keystore
 COPY passwordfile /app/data/passwordfile
 
-# Make the scripts executable
-# RUN chmod +x /entrypoint_node1.sh /entrypoint_node2.sh /entrypoint_node3.sh
+# Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh
 
 WORKDIR /app
 
 # Create the data directory
-RUN mkdir -p /data
+RUN mkdir -p /app/data/geth/ethash && mkdir -p /root/.ethash
 
 # Expose necessary ports
 EXPOSE 8541
 
-# Use the output_enode script to log the enode URL
-CMD ["/bin/sh", "-c", "sh /app/entrypoint_${NODE_ID}.sh"]
+# Use the entrypoint script
+CMD ["/app/entrypoint_node1.sh"]
