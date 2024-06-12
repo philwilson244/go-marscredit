@@ -2,11 +2,21 @@
 
 echo "Starting Node 1"
 
-# Initialize Geth with the genesis file
-# geth init /app/genesis.json --datadir /app/data
+# Function to handle shutdown
+shutdown() {
+    echo "Shutting down Geth..."
+    pkill geth
+    exit 0
+}
+
+# Trap SIGTERM signal (sent by Railway when stopping the container)
+trap shutdown SIGTERM
+
+# Initialize Geth with the genesis file (only needed for first run)
+geth init /app/genesis.json --datadir /app/data
 
 # Create a password file
-# echo "marscredit011" > /app/data/passwordfile
+echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
 exec geth --datadir /app/data \
@@ -29,3 +39,6 @@ exec geth --datadir /app/data \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover
+
+# Wait indefinitely so the script doesn't exit
+wait
