@@ -12,6 +12,11 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
+# Ensure directories exist and handle existing file issue
+if [ -f /app/data/keystore ]; then
+    rm /app/data/keystore
+fi
+
 # Ensure directories exist
 mkdir -p /app/data/geth/ethash
 mkdir -p /app/data/.ethash
