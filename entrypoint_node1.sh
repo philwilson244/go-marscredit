@@ -78,6 +78,7 @@ geth init /app/genesis.json --datadir /data
 # Start Geth and enable mining
 echo "Starting Geth and enabling mining"
 geth --datadir /data \
+    --keystore /app/keystore \
     --syncmode "full" \
     --http \
     --http.port 8541 \
