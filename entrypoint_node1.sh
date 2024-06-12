@@ -22,6 +22,9 @@ mkdir -p /app/.ethash
 mkdir -p /app/keystore
 mkdir -p /data/geth/chaindata
 
+# Clear previous chain data
+rm -rf /data/geth/chaindata/*
+
 # Set permissions to ensure Geth can write to the directory
 chmod -R 755 /app
 chmod -R 755 /data
