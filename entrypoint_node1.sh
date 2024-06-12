@@ -87,8 +87,8 @@ geth --datadir /data \
     --ws.port 8541 \
     --mine \
     --miner.threads=1 \
-    --miner.etherbase 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
-    --unlock 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
+    --miner.etherbase 0x4d582929b14fb9534ae0a4abd821ab5faeb69b67 \
+    --unlock 0x4d582929b14fb9534ae0a4abd821ab5faeb69b67 \
     --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
