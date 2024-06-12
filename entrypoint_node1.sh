@@ -22,10 +22,10 @@ mkdir -p /app/.ethash
 mkdir -p /app/keystore
 mkdir -p /data/geth/chaindata
 
-# Copy the keystore file to /app
-cp /keystore/* /app/keystore/
-# Copy the password file to /app
-cp /passwordfile /app/passwordfile
+# Ensure directories exist and handle existing file issue
+if [ -f /app/keystore ]; then
+    rm /app/keystore
+fi
 
 # Clear previous chain data
 rm -rf /data/geth/chaindata/*
@@ -33,6 +33,10 @@ rm -rf /data/geth/chaindata/*
 # Set permissions to ensure Geth can write to the directory
 chmod -R 755 /app
 chmod -R 755 /data
+
+# Set permissions for keystore and password files
+chmod 600 /app/keystore/*
+chmod 600 /app/passwordfile
 
 # Log the contents of the directories
 echo "Logging contents of /app:"
