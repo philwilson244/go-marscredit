@@ -64,7 +64,7 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
     --unlock 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
-    --password /app/data/passwordfile \
+    --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \
