@@ -113,7 +113,7 @@ geth --datadir /data \
     --unlock 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
     --password /app/passwordfile \
     --allow-insecure-unlock \
-    --verbosity 6 \
+    --verbosity 9 \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
