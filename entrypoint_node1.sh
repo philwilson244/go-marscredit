@@ -22,6 +22,11 @@ mkdir -p /app/.ethash
 mkdir -p /app/keystore
 mkdir -p /data/geth/chaindata
 
+# Copy the keystore file to /app
+cp /keystore/* /app/keystore/
+# Copy the password file to /app
+cp /passwordfile /app/passwordfile
+
 # Clear previous chain data
 rm -rf /data/geth/chaindata/*
 
