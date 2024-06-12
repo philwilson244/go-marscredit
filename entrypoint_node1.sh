@@ -12,7 +12,7 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
-# Ensure directories exist
+# Ensure directories exist and handle existing file issue
 if [ -f /app/keystore ]; then
     rm /app/keystore
 fi
@@ -42,12 +42,12 @@ else
 fi
 
 # Initialize Geth with the genesis file (only needed for first run)
-if [ ! -d "/data/geth/chaindata/CURRENT" ]; then
+if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
+    echo "Initializing Geth with genesis file"
     geth init /app/genesis.json --datadir /data
+else
+    echo "chaindata directory exists and is not empty"
 fi
-
-## Create a password file
-echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
 geth --datadir /data \
