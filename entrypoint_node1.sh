@@ -37,7 +37,7 @@ echo "Logging contents of /app/keystore:"
 ls -la /app/keystore
 
 echo "Checking for specific key file:"
-KEY_FILE="/app/keystore/UTC--2024-06-08T21-04-28.406274000Z--4d582929B14fb9534AE0A4ABd821ab5FAeb69B67"
+KEY_FILE="/app/keystore/UTC--2024-06-08T21-04-28.406274000Z--4d582929b14fb9534ae0a4abd821ab5faeb69b67"
 if [ -f "$KEY_FILE" ]; then
     echo "Key file $KEY_FILE exists."
 else
