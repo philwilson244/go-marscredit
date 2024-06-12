@@ -35,7 +35,7 @@ COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 
 COPY keystore/* /app/keystore
 COPY passwordfile /app/passwordfile
-COPY nodekey /app/geth/nodekey
+COPY nodekey /data/geth/nodekey
 
 # Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh
