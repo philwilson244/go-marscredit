@@ -12,18 +12,10 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
-# Ensure directories exist and handle existing file issue
-# if [ -f /app/keystore ]; then
-#     rm /app/keystore
-# fi
-
 mkdir -p /app/geth/ethash
 mkdir -p /app/.ethash
 mkdir -p /data/geth/chaindata
 mkdir -p /app/keystore
-
-# Clear previous chain data
-rm -rf /data/geth/chaindata/*
 
 # Set permissions to ensure Geth can write to the directory
 chmod -R 755 /app
@@ -35,9 +27,6 @@ ls -la /app
 
 echo "---- Logging contents of /data:"
 ls -la /data
-
-echo "---- Logging contents of /app/data:"
-ls -la /app/data
 
 echo "---- Logging contents of /app/keystore:"
 ls -la /app/keystore
@@ -55,25 +44,21 @@ fi
 ls -la $KEY_FILE
 cat $KEY_FILE
 
-# Initialize Geth with the genesis file
-echo "---- Initializing Geth with genesis file"
-geth init /app/genesis.json --datadir /data
+echo "Logging contents of /data/geth/chaindata (if exists):"
+if [ -d /data/geth/chaindata ]; then
+    ls -la /data/geth/chaindata
+else
+    echo "chaindata directory does not exist, creating now"
+    mkdir -p /data/geth/chaindata
+fi
 
-# echo "Logging contents of /data/geth/chaindata (if exists):"
-# if [ -d /data/geth/chaindata ]; then
-#     ls -la /data/geth/chaindata
-# else
-#     echo "chaindata directory does not exist, creating now"
-#     mkdir -p /data/geth/chaindata
-# fi
-
-# # Initialize Geth with the genesis file (only needed for first run)
-# if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
-#     echo "Initializing Geth with genesis file"
-#     geth init /app/genesis.json --datadir /data
-# else
-#     echo "chaindata directory exists and is not empty"
-# fi
+# Initialize Geth with the genesis file (only needed for first run)
+if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
+    echo "Initializing Geth with genesis file"
+    geth init /app/genesis.json --datadir /data
+else
+    echo "chaindata directory exists and is not empty"
+fi
 
 # Start Geth and enable mining
 echo "Starting Geth and enabling mining"
