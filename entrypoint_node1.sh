@@ -70,6 +70,10 @@ else
     cat /app/passwordfile
 fi
 
+# Explicitly log and check permissions of the keystore file
+ls -la /app/keystore/$KEY_FILE
+cat /app/keystore/$KEY_FILE
+
 # Start Geth and enable mining
 geth --datadir /data \
     --syncmode "full" \
