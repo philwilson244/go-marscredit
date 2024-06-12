@@ -25,7 +25,16 @@ mkdir -p /app/data/keystore
 # Log the contents of the volume
 echo "Logging contents of /app/data:"
 ls -la /app/data
+
+echo "Logging contents of /app/data/geth:"
 ls -la /app/data/geth
+
+echo "Logging contents of /app/data/geth/chaindata (if exists):"
+if [ -d /app/data/geth/chaindata ]; then
+    ls -la /app/data/geth/chaindata
+else
+    echo "chaindata directory does not exist"
+fi
 
 
 # Initialize Geth with the genesis file (only needed for first run)
