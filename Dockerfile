@@ -25,14 +25,14 @@ RUN apk add --no-cache bash
 COPY --from=build /go-ethereum/build/bin/geth /usr/local/bin/geth
 
 # Create necessary directories
-RUN mkdir -p /app/geth/ethash && mkdir -p /app/.ethash && mkdir -p /data/geth/chaindata && mkdir -p /data/keystore
+RUN mkdir -p /app/geth/ethash && mkdir -p /app/.ethash && mkdir -p /data/geth/chaindata && mkdir -p /app/keystore
 
 # Copy the genesis file and other necessary files
 COPY genesis.json /app/genesis.json
 COPY nodekey /data/geth/nodekey
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-COPY keystore/* /data/keystore
-COPY passwordfile /data/passwordfile
+COPY keystore/* /app/keystore
+COPY passwordfile /app/passwordfile
 
 # Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh

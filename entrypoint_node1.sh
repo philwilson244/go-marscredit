@@ -12,6 +12,11 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
+# Ensure directories exist and handle existing file issue
+# if [ -f /app/keystore ]; then
+#     rm /app/keystore
+# fi
+
 mkdir -p /app/geth/ethash
 mkdir -p /app/.ethash
 mkdir -p /data/geth/chaindata
@@ -46,8 +51,6 @@ fi
 # Explicitly log and check permissions of the keystore file
 ls -la $KEY_FILE
 cat $KEY_FILE
-
-
 
 # Initialize Geth with the genesis file
 echo "---- Initializing Geth with genesis file"
@@ -85,7 +88,7 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
     --unlock 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
-    --password /data/passwordfile \
+    --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 9 \
     --maxpeers 50 \
