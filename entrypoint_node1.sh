@@ -33,6 +33,9 @@ ls -la /app
 echo "Logging contents of /data:"
 ls -la /data
 
+echo "Logging contents of /app/keystore:"
+ls -la /app/keystore
+
 echo "Logging contents of /data/geth/chaindata (if exists):"
 if [ -d /data/geth/chaindata ]; then
     ls -la /data/geth/chaindata
@@ -47,6 +50,18 @@ if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
     geth init /app/genesis.json --datadir /data
 else
     echo "chaindata directory exists and is not empty"
+fi
+
+# Check if the password file exists
+if [ ! -f "/app/passwordfile" ]; then
+    echo "Password file not found!"
+    exit 1
+fi
+
+# Check if the key file exists in the keystore
+if [ -z "$(ls -A /app/keystore)" ]; then
+    echo "Keystore directory is empty!"
+    exit 1
 fi
 
 # Start Geth and enable mining
