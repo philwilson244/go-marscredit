@@ -49,7 +49,7 @@ else
     echo "chaindata directory exists and is not empty"
 fi
 
-## Create a password file
+# Create a password file
 echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
