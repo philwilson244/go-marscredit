@@ -37,7 +37,7 @@ echo "Logging contents of /app/keystore:"
 ls -la /app/keystore
 
 echo "Checking for specific key file:"
-KEY_FILE="/app/keystore/UTC--2024-06-08T21-04-28.406274000Z--4d582929b14fb9534ae0a4abd821ab5faeb69b67"
+KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
 if [ -f "$KEY_FILE" ]; then
     echo "Key file $KEY_FILE exists."
 else
@@ -45,21 +45,9 @@ else
     exit 1
 fi
 
-echo "Logging contents of /data/geth/chaindata (if exists):"
-if [ -d /data/geth/chaindata ]; then
-    ls -la /data/geth/chaindata
-else
-    echo "chaindata directory does not exist, creating now"
-    mkdir -p /data/geth/chaindata
-fi
-
-# Initialize Geth with the genesis file (only needed for first run)
-if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
-    echo "Initializing Geth with genesis file"
-    geth init /app/genesis.json --datadir /data
-else
-    echo "chaindata directory exists and is not empty"
-fi
+# Explicitly log and check permissions of the keystore file
+ls -la $KEY_FILE
+cat $KEY_FILE
 
 # Check if the password file exists
 if [ ! -f "/app/passwordfile" ]; then
@@ -70,9 +58,25 @@ else
     cat /app/passwordfile
 fi
 
-# Explicitly log and check permissions of the keystore file
-ls -la $KEY_FILE
-cat $KEY_FILE
+# Initialize Geth with the genesis file
+echo "Initializing Geth with genesis file"
+geth init /app/genesis.json --datadir /data
+
+# echo "Logging contents of /data/geth/chaindata (if exists):"
+# if [ -d /data/geth/chaindata ]; then
+#     ls -la /data/geth/chaindata
+# else
+#     echo "chaindata directory does not exist, creating now"
+#     mkdir -p /data/geth/chaindata
+# fi
+
+# # Initialize Geth with the genesis file (only needed for first run)
+# if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
+#     echo "Initializing Geth with genesis file"
+#     geth init /app/genesis.json --datadir /data
+# else
+#     echo "chaindata directory exists and is not empty"
+# fi
 
 # Start Geth and enable mining
 geth --datadir /data \
@@ -87,8 +91,8 @@ geth --datadir /data \
     --ws.port 8541 \
     --mine \
     --miner.threads=1 \
-    --miner.etherbase 0x4d582929b14fb9534ae0a4abd821ab5faeb69b67 \
-    --unlock 0x4d582929b14fb9534ae0a4abd821ab5faeb69b67 \
+    --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
+    --unlock 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
     --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
