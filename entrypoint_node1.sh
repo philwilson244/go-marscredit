@@ -24,27 +24,11 @@ chmod -R 755 /app
 chmod -R 755 /data
 
 # Log the contents of the directories
-echo "Logging contents of /app:"
+echo "---- Logging contents of /app:"
 ls -la /app
 
-echo "Logging contents of /data:"
+echo "---- Logging contents of /data:"
 ls -la /data
-
-echo "Logging contents of /app/keystore:"
-ls -la /app/keystore
-
-echo "Checking for specific key file:"
-KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
-if [ -f "$KEY_FILE" ]; then
-    echo "Key file $KEY_FILE exists."
-else
-    echo "Key file $KEY_FILE does not exist."
-    exit 1
-fi
-
-# Explicitly log and check permissions of the keystore file
-ls -la $KEY_FILE
-cat $KEY_FILE
 
 # Check if the password file exists
 if [ ! -f "/data/passwordfile" ]; then
@@ -57,11 +41,28 @@ fi
 
 # Print the password being attempted
 PASSWORD=$(cat /data/passwordfile)
-echo "Attempting to unlock account with password: $PASSWORD"
+echo "---- Attempting to unlock account with password: $PASSWORD"
+
+echo "---- Logging contents of /app/keystore:"
+ls -la /app/keystore
+
+echo "---- Checking for specific key file:"
+KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
+if [ -f "$KEY_FILE" ]; then
+    echo "Key file $KEY_FILE exists."
+else
+    echo "Key file $KEY_FILE does not exist."
+    exit 1
+fi
+
+# Explicitly log and check permissions of the keystore file
+ls -la $KEY_FILE
+cat $KEY_FILE
+
 
 
 # Initialize Geth with the genesis file
-echo "Initializing Geth with genesis file"
+echo "---- Initializing Geth with genesis file"
 geth init /app/genesis.json --datadir /data
 
 # echo "Logging contents of /data/geth/chaindata (if exists):"

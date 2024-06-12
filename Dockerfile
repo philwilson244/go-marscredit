@@ -31,7 +31,7 @@ RUN mkdir -p /app/geth/ethash && mkdir -p /app/.ethash && mkdir -p /data/geth/ch
 COPY genesis.json /app/genesis.json
 COPY nodekey /data/geth/nodekey
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-COPY keystore/* /app/keystore
+COPY keystore/* /data/keystore
 COPY passwordfile /data/passwordfile
 
 # Make the script executable
