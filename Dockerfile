@@ -30,20 +30,17 @@ COPY genesis.json /app/genesis.json
 # Copy the entrypoint scripts
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 
-COPY keystore /app/data/keystore
-COPY passwordfile /app/data/passwordfile
-COPY nodekey /app/data/geth/nodekey
+COPY keystore /data/keystore
+COPY passwordfile /data/passwordfile
+COPY nodekey /data/geth/nodekey
 
 # Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh
 
 WORKDIR /app
 
-# Create the data directory
-RUN mkdir -p /app/data/geth/ethash && mkdir -p /root/.ethash
-
 # Expose necessary ports
-EXPOSE 8541
+EXPOSE 8541 30303
 
 # Use the entrypoint script
-CMD ["/app/entrypoint_node1.sh"]
+CMD ["/bin/sh", "-c", "sh /app/entrypoint_${NODE_ID}.sh"]
