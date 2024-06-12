@@ -12,41 +12,45 @@ shutdown() {
 # Trap SIGTERM signal (sent by Railway when stopping the container)
 trap shutdown SIGTERM
 
-# Ensure directories exist and handle existing file issue
-if [ -f /app/data/keystore ]; then
-    rm /app/data/keystore
-fi
-
 # Ensure directories exist
-mkdir -p /app/data/geth/ethash
-mkdir -p /app/data/.ethash
-mkdir -p /app/data/keystore
-
-# Log the contents of the volume
-echo "Logging contents of /app/data:"
-ls -la /app/data
-
-echo "Logging contents of /app/data/geth:"
-ls -la /app/data/geth
-
-echo "Logging contents of /app/data/geth/chaindata (if exists):"
-if [ -d /app/data/geth/chaindata ]; then
-    ls -la /app/data/geth/chaindata
-else
-    echo "chaindata directory does not exist"
+if [ -f /app/keystore ]; then
+    rm /app/keystore
 fi
 
+mkdir -p /app/geth/ethash
+mkdir -p /app/.ethash
+mkdir -p /app/keystore
+mkdir -p /data/geth/chaindata
+
+# Set permissions to ensure Geth can write to the directory
+chmod -R 755 /app
+chmod -R 755 /data
+
+# Log the contents of the directories
+echo "Logging contents of /app:"
+ls -la /app
+
+echo "Logging contents of /data:"
+ls -la /data
+
+echo "Logging contents of /data/geth/chaindata (if exists):"
+if [ -d /data/geth/chaindata ]; then
+    ls -la /data/geth/chaindata
+else
+    echo "chaindata directory does not exist, creating now"
+    mkdir -p /data/geth/chaindata
+fi
 
 # Initialize Geth with the genesis file (only needed for first run)
-if [ ! -d "/app/data/geth/chaindata" ]; then
-    geth init /app/genesis.json --datadir /app/data
+if [ ! -d "/data/geth/chaindata/CURRENT" ]; then
+    geth init /app/genesis.json --datadir /data
 fi
 
 ## Create a password file
 echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
-geth --datadir /app/data \
+geth --datadir /data \
     --syncmode "full" \
     --http \
     --http.port 8541 \
@@ -66,8 +70,8 @@ geth --datadir /app/data \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
-    --nodekey /app/data/geth/nodekey \
-    --ethash.dagdir /app/data/.ethash &
+    --nodekey /app/geth/nodekey \
+    --ethash.dagdir /app/.ethash &
 
 # Wait indefinitely so the script doesn't exit
 wait
