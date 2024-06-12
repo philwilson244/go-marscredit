@@ -17,7 +17,9 @@ mkdir -p /app/data/geth/ethash
 mkdir -p /root/.ethash
 
 # Initialize Geth with the genesis file (only needed for first run)
-geth init /app/genesis.json --datadir /app/data
+if [ ! -d "/app/data/geth/chaindata" ]; then
+    geth init /app/genesis.json --datadir /app/data
+fi
 
 # Create a password file
 echo "marscredit011" > /app/data/passwordfile
@@ -42,7 +44,9 @@ geth --datadir /app/data \
     --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
-    --nodiscover
+    --nodiscover \
+    --nodekey /app/data/geth/nodekey &
+
 
 # Wait indefinitely so the script doesn't exit
 wait
