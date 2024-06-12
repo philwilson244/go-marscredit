@@ -82,6 +82,7 @@ geth init /app/genesis.json --datadir /data
 # fi
 
 # Start Geth and enable mining
+echo "Starting Geth and enabling mining"
 geth --datadir /data \
     --syncmode "full" \
     --http \
