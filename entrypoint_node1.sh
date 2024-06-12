@@ -4,8 +4,10 @@ echo "Starting Node 1"
 
 # Function to handle shutdown
 shutdown() {
-    echo "Shutting down Geth..."
-    pkill geth
+    echo "Shutting down Geth gracefully..."
+    pkill -SIGTERM geth
+    wait $!
+    echo "Geth has been shut down."
     exit 0
 }
 
