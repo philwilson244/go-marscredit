@@ -17,7 +17,7 @@ mkdir -p /data/geth/ethash
 mkdir -p /data/.ethash
 
 # Initialize Geth with the genesis file (only needed for first run)
-if [ ! -d "/app/data/geth/chaindata" ]; then
+if [ ! -d "/data/geth/chaindata" ]; then
     geth init /app/genesis.json --datadir /data
 fi
 
