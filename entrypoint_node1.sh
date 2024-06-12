@@ -19,7 +19,7 @@ geth init /app/genesis.json --datadir /app/data
 echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
-exec geth --datadir /app/data \
+geth --datadir /app/data \
     --syncmode "full" \
     --http \
     --http.port 8541 \
@@ -35,7 +35,7 @@ exec geth --datadir /app/data \
     --unlock 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
     --password /app/data/passwordfile \
     --allow-insecure-unlock \
-    --verbosity 5 \
+    --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover
