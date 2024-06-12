@@ -61,6 +61,11 @@ else
     cat /app/passwordfile
 fi
 
+# Print the password being attempted
+PASSWORD=$(cat /app/passwordfile)
+echo "Attempting to unlock account with password: $PASSWORD"
+
+
 # Initialize Geth with the genesis file
 echo "Initializing Geth with genesis file"
 geth init /app/genesis.json --datadir /data
