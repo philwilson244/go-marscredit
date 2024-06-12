@@ -22,11 +22,6 @@ mkdir -p /app/.ethash
 mkdir -p /data/keystore
 mkdir -p /data/geth/chaindata
 
-# Ensure directories exist and handle existing file issue
-if [ -f /data/keystore ]; then
-    rm /data/keystore
-fi
-
 # Clear previous chain data
 rm -rf /data/geth/chaindata/*
 
