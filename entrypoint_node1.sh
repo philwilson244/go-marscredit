@@ -19,12 +19,12 @@ fi
 
 mkdir -p /app/geth/ethash
 mkdir -p /app/.ethash
-mkdir -p /app/keystore
+mkdir -p /data/keystore
 mkdir -p /data/geth/chaindata
 
 # Ensure directories exist and handle existing file issue
-if [ -f /app/keystore ]; then
-    rm /app/keystore
+if [ -f /data/keystore ]; then
+    rm /data/keystore
 fi
 
 # Clear previous chain data
@@ -34,10 +34,6 @@ rm -rf /data/geth/chaindata/*
 chmod -R 755 /app
 chmod -R 755 /data
 
-# Set permissions for keystore and password files
-chmod 600 /app/keystore/*
-chmod 600 /app/passwordfile
-
 # Log the contents of the directories
 echo "Logging contents of /app:"
 ls -la /app
@@ -45,11 +41,11 @@ ls -la /app
 echo "Logging contents of /data:"
 ls -la /data
 
-echo "Logging contents of /app/keystore:"
-ls -la /app/keystore
+echo "Logging contents of /data/keystore:"
+ls -la /data/keystore
 
 echo "Checking for specific key file:"
-KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
+KEY_FILE="/data/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
 if [ -f "$KEY_FILE" ]; then
     echo "Key file $KEY_FILE exists."
 else
@@ -62,16 +58,16 @@ ls -la $KEY_FILE
 cat $KEY_FILE
 
 # Check if the password file exists
-if [ ! -f "/app/passwordfile" ]; then
+if [ ! -f "/data/passwordfile" ]; then
     echo "Password file not found!"
     exit 1
 else
     echo "Password file found:"
-    cat /app/passwordfile
+    cat /data/passwordfile
 fi
 
 # Print the password being attempted
-PASSWORD=$(cat /app/passwordfile)
+PASSWORD=$(cat /data/passwordfile)
 echo "Attempting to unlock account with password: $PASSWORD"
 
 
@@ -111,7 +107,7 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
     --unlock 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
-    --password /app/passwordfile \
+    --password /data/passwordfile \
     --allow-insecure-unlock \
     --verbosity 9 \
     --maxpeers 50 \
