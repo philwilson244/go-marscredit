@@ -30,19 +30,6 @@ ls -la /app
 echo "---- Logging contents of /data:"
 ls -la /data
 
-# Check if the password file exists
-if [ ! -f "/data/passwordfile" ]; then
-    echo "Password file not found!"
-    exit 1
-else
-    echo "Password file found:"
-    cat /data/passwordfile
-fi
-
-# Print the password being attempted
-PASSWORD=$(cat /data/passwordfile)
-echo "---- Attempting to unlock account with password: $PASSWORD"
-
 echo "---- Logging contents of /data/keystore:"
 ls -la /data/keystore
 
