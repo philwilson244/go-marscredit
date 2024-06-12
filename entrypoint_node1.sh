@@ -15,6 +15,7 @@ trap shutdown SIGTERM
 mkdir -p /app/geth/ethash
 mkdir -p /app/.ethash
 mkdir -p /data/geth/chaindata
+mkdir -p /app/keystore
 
 # Clear previous chain data
 rm -rf /data/geth/chaindata/*
@@ -30,11 +31,11 @@ ls -la /app
 echo "---- Logging contents of /data:"
 ls -la /data
 
-echo "---- Logging contents of /data/keystore:"
-ls -la /data/keystore
+echo "---- Logging contents of /app/keystore:"
+ls -la /app/keystore
 
 echo "---- Checking for specific key file:"
-KEY_FILE="/data/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
+KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
 if [ -f "$KEY_FILE" ]; then
     echo "Key file $KEY_FILE exists."
 else
