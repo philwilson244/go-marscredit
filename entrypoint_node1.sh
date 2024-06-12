@@ -36,6 +36,13 @@ ls -la /data
 echo "Logging contents of /app/keystore:"
 ls -la /app/keystore
 
+# Check if the keystore file for the account exists
+if [ -f "/app/keystore/UTC--2024-06-08T21-04-28.406274000Z--4d582929b14fb9534ae0a4abd821ab5faeb69b67" ]; then
+    echo "Key file exists."
+else
+    echo "Key file does not exist."
+fi
+
 echo "Logging contents of /data/geth/chaindata (if exists):"
 if [ -d /data/geth/chaindata ]; then
     ls -la /data/geth/chaindata
@@ -56,12 +63,9 @@ fi
 if [ ! -f "/app/passwordfile" ]; then
     echo "Password file not found!"
     exit 1
-fi
-
-# Check if the key file exists in the keystore
-if [ -z "$(ls -A /app/keystore)" ]; then
-    echo "Keystore directory is empty!"
-    exit 1
+else
+    echo "Password file found:"
+    cat /app/passwordfile
 fi
 
 # Start Geth and enable mining
