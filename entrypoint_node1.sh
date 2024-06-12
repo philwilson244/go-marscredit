@@ -27,7 +27,7 @@ if [ ! -d "/app/data/geth/chaindata" ]; then
     geth init /app/genesis.json --datadir /app/data
 fi
 
-# Create a password file
+## Create a password file
 echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
