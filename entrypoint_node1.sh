@@ -71,8 +71,8 @@ else
 fi
 
 # Explicitly log and check permissions of the keystore file
-ls -la /app/keystore/$KEY_FILE
-cat /app/keystore/$KEY_FILE
+ls -la $KEY_FILE
+cat $KEY_FILE
 
 # Start Geth and enable mining
 geth --datadir /data \
