@@ -50,7 +50,7 @@ else
 fi
 
 ## Create a password file
-echo "marscredit011" > /app/passwordfile
+echo "marscredit011" > /app/data/passwordfile
 
 # Start Geth and enable mining
 geth --datadir /data \
@@ -67,7 +67,7 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
     --unlock 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
-    --password /app/passwordfile \
+    --password /app/data/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \
