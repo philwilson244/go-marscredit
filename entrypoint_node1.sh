@@ -15,6 +15,7 @@ trap shutdown SIGTERM
 # Ensure directories exist
 mkdir -p /app/data/geth/ethash
 mkdir -p /app/data/.ethash
+mkdir -p /app/data/keystore
 
 # Initialize Geth with the genesis file (only needed for first run)
 if [ ! -d "/app/data/geth/chaindata" ]; then
