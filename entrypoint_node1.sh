@@ -49,9 +49,6 @@ else
     echo "chaindata directory exists and is not empty"
 fi
 
-# Create a password file
-echo "marscredit011" > /app/data/passwordfile
-
 # Start Geth and enable mining
 geth --datadir /data \
     --syncmode "full" \
@@ -67,14 +64,14 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
     --unlock 0x4d582929B14fb9534AE0A4ABd821ab5FAeb69B67 \
-    --password /app/data/passwordfile \
+    --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
     --nodekey /data/geth/nodekey \
-    --ethash.dagdir /app/data/.ethash &
+    --ethash.dagdir /app/.ethash &
 
 # Wait indefinitely so the script doesn't exit
 wait
