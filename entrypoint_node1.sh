@@ -43,11 +43,11 @@ fi
 PASSWORD=$(cat /data/passwordfile)
 echo "---- Attempting to unlock account with password: $PASSWORD"
 
-echo "---- Logging contents of /app/keystore:"
-ls -la /app/keystore
+echo "---- Logging contents of /data/keystore:"
+ls -la /data/keystore
 
 echo "---- Checking for specific key file:"
-KEY_FILE="/app/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
+KEY_FILE="/data/keystore/UTC--2024-06-12T21-51-26.975004000Z--c1133a2b8e92a747ebf2a937be3d79c29231f407"
 if [ -f "$KEY_FILE" ]; then
     echo "Key file $KEY_FILE exists."
 else
