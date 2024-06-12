@@ -37,6 +37,7 @@ COPY nodekey /app/data/geth/nodekey
 # Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh
 
+# Create app directory
 WORKDIR /app
 
 # Expose necessary ports
