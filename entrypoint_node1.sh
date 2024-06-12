@@ -36,8 +36,8 @@ ls -la /app
 echo "---- Logging contents of /data:"
 ls -la /data
 
-echo "---- Logging contents of /data/app:"
-ls -la /data/app
+echo "---- Logging contents of /app/data:"
+ls -la /app/data
 
 echo "---- Logging contents of /app/keystore:"
 ls -la /app/keystore
