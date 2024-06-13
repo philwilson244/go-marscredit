@@ -80,3 +80,10 @@ exec geth --datadir /data \
     
 # Wait indefinitely so the script doesn't exit
 wait
+
+# Periodically log the connected peers
+while true; do
+    sleep 60
+    echo "---- Logging connected peers ----"
+    geth attach http://127.0.0.1:8541 --exec "admin.peers"
+done
