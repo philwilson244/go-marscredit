@@ -30,13 +30,13 @@ RUN mkdir -p /data/geth/ethash && mkdir -p /data/.ethash && mkdir -p /data/geth/
 # Copy the genesis file and other necessary files
 COPY genesis.json /app/genesis.json
 COPY nodekey /data/geth/nodekey
-# COPY entrypoint_node1.sh /app/entrypoint_node1.sh
+COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 COPY keystore/* /app/keystore
 COPY passwordfile /app/passwordfile
 
 # Make the script executable
-# RUN chmod +x /app/entrypoint_node1.sh
+RUN chmod +x /app/entrypoint_node1.sh
 RUN chmod +x /app/entrypoint_node2.sh
 
 # Create app directory
