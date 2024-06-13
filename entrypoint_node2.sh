@@ -37,6 +37,11 @@ else
     mkdir -p /data/geth/chaindata
 fi
 
+echo "Logging contents of /data/geth/nodekey (if exists):"
+if [ -d /data/geth/nodekey ]; then
+    ls -la /data/geth/nodekey
+fi
+
 # Check if the node is already initialized
 if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
     echo "Node not initialized. Ensure it connects to the bootnode to sync."
