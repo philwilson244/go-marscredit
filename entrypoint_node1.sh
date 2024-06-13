@@ -70,7 +70,7 @@ geth --datadir /data \
     --http \
     --http.addr "0.0.0.0" \
     --http.port 8541 \
-    --http.api personal,eth,net,web3,miner \
+    --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
