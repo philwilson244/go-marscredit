@@ -37,16 +37,19 @@ else
     mkdir -p /data/geth/chaindata
 fi
 
-echo "Logging contents of /app/nodekey2 (if exists):"
-if [ -d /app/nodekey2 ]; then
-    ls -la /app/nodekey2
+# Generate nodekey if not present
+echo "Checking for nodekey..."
+if [ ! -f "/app/nodekey2" ]; then
+    echo "Generating new nodekey..."
+    bootnode -genkey /app/nodekey2
+else
+    echo "nodekey2 file exists."
 fi
 
-# Check if the node is already initialized
-if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
-    echo "Node not initialized. Ensure it connects to the bootnode to sync."
-else
-    echo "Node already initialized. Proceeding to connect and sync."
+# Log the contents of the nodekey
+echo "Logging contents of /app/nodekey2 (if exists):"
+if [ -f /app/nodekey2 ]; then
+    ls -la /app/nodekey2
 fi
 
 # Start Geth and enable mining
