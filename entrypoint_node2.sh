@@ -69,7 +69,7 @@ exec geth --datadir /data \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
-    --bootnodes "enode://fc2c53ecb705b9b736c0c43d2c52377699e0bc5ce5ef0cc1fd72e680b7f385f8109a305d0ab7d5e9e691152d921b93521ffd6c1b21484bc28984bb93a72d3092@node1.marscredit.xyz:30303" \
+    --bootnodes "enode://fc2c53ecb705b9b736c0c43d2c52377699e0bc5ce5ef0cc1fd72e680b7f385f8109a305d0ab7d5e9e691152d921b93521ffd6c1b21484bc28984bb93a72d3092@proxy.marscredit.xyz:8080" \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \

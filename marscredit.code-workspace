@@ -8,6 +8,9 @@
     },
     {
       "path": "../blockscout"
+    },
+    {
+      "path": "../railway-reverse-proxy-nginx"
     }
   ],
   "settings": {}
