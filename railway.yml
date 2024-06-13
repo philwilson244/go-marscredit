@@ -2,5 +2,6 @@ services:
   go-marscredit:
     build: .
     ports:
+      - "443:8541"
       - "8541:8541"
       - "30303:30303"
