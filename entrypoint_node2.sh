@@ -37,9 +37,9 @@ else
     mkdir -p /data/geth/chaindata
 fi
 
-echo "Logging contents of /data/geth/nodekey (if exists):"
-if [ -d /data/geth/nodekey ]; then
-    ls -la /data/geth/nodekey
+echo "Logging contents of /app/nodekey2 (if exists):"
+if [ -d /app/nodekey2 ]; then
+    ls -la /app/nodekey2
 fi
 
 # Check if the node is already initialized
@@ -72,7 +72,7 @@ exec geth --datadir /data \
     --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
-    --nodekey /data/geth/nodekey2 \
+    --nodekey /app/nodekey2 \
     --ethash.dagdir /data/.ethash &
     
 # Wait indefinitely so the script doesn't exit
