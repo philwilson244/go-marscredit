@@ -52,6 +52,9 @@ if [ -f /app/nodekey2 ]; then
     ls -la /app/nodekey2
 fi
 
+# Wait for private networking to initialize
+sleep 5
+
 # Start Geth and enable mining
 echo "Starting Geth on node2 and enabling mining"
 exec geth --datadir /data \
