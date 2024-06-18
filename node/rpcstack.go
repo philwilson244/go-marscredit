@@ -143,7 +143,17 @@ func (h *httpServer) start() error {
 		return err
 	}
 	h.listener = listener
-	go h.server.Serve(listener)
+	go func() {
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				h.log.Error("Error accepting connection", "err", err)
+				continue
+			}
+
+			go h.handleConnection(conn)
+		}
+	}()
 
 	if h.wsAllowed() {
 		url := fmt.Sprintf("ws://%v", listener.Addr())
@@ -179,6 +189,27 @@ func (h *httpServer) start() error {
 		}
 	}
 	return nil
+}
+
+// custom multiplexer function
+func (h *httpServer) handleConnection(conn net.Conn) {
+	defer conn.Close()
+
+	// Example logic to distinguish connection types
+	buf := make([]byte, 1)
+	if _, err := conn.Read(buf); err != nil {
+		h.log.Error("Error reading connection", "err", err)
+		return
+	}
+
+	if buf[0] == 0x16 { // Example: Assuming TLS/HTTPS/WebSocket
+		// Handle HTTP/WS connections
+		http.Serve(h, conn)
+	} else { // Assume P2P
+		// Pass the connection to the P2P server
+		p2pServer := h.server // Replace this with the actual P2P server instance
+		p2pServer.Server().Handle(conn)
+	}
 }
 
 func (h *httpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
