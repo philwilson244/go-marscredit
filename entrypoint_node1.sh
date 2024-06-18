@@ -68,15 +68,16 @@ geth --datadir /data \
     --keystore /app/keystore \
     --syncmode "full" \
     --http \
-    --http.addr "0.0.0.0" \
-    --http.port 8541 \
+    --http.addr '::' \
+    --http.port 30303 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
-    --ws.addr "0.0.0.0" \
-    --ws.port 8541 \
+    --ws.addr '::' \
+    --ws.port 30303 \
+    --port 30303 \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
