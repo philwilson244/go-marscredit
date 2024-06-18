@@ -133,7 +133,7 @@ func (h *httpServer) start() error {
 		h.server.IdleTimeout = h.timeouts.IdleTimeout
 	}
 
-	// Start the custom multiplexer.
+	// Start the server.
 	listener, err := net.Listen("tcp", h.endpoint)
 	if err != nil {
 		// If the server fails to start, we need to clear out the RPC and WS
@@ -143,17 +143,7 @@ func (h *httpServer) start() error {
 		return err
 	}
 	h.listener = listener
-	go func() {
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				h.log.Error("Error accepting connection", "err", err)
-				continue
-			}
-
-			go h.handleConnection(conn)
-		}
-	}()
+	go h.server.Serve(listener)
 
 	if h.wsAllowed() {
 		url := fmt.Sprintf("ws://%v", listener.Addr())
@@ -184,31 +174,11 @@ func (h *httpServer) start() error {
 	for _, path := range paths {
 		name := h.handlerNames[path]
 		if !logged[name] {
-			h.log.Info(name+" enabled", "url", "http://"+listener.Addr().String()+path)
+			log.Info(name+" enabled", "url", "http://"+listener.Addr().String()+path)
 			logged[name] = true
 		}
 	}
 	return nil
-}
-
-func (h *httpServer) handleConnection(conn net.Conn) {
-	defer conn.Close()
-
-	// Example logic to distinguish connection types
-	buf := make([]byte, 1)
-	if _, err := conn.Read(buf); err != nil {
-		h.log.Error("Error reading connection", "err", err)
-		return
-	}
-
-	if buf[0] == 0x16 { // Example: Assuming TLS/HTTPS/WebSocket
-		// Handle HTTP/WS connections
-		http.Serve(h, conn)
-	} else { // Assume P2P
-		// Direct to P2P handler
-		p2pServer := h.server // Ensure this points to the correct P2P server instance
-		p2pServer.Server().Handle(conn)
-	}
 }
 
 func (h *httpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
