@@ -69,14 +69,14 @@ geth --datadir /data \
     --syncmode "full" \
     --http \
     --http.addr "0.0.0.0" \
-    --http.port 8545 \
+    --http.port 10101 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
     --ws.addr "0.0.0.0" \
-    --ws.port 8546 \
+    --ws.port 10101 \
     --port 10101 \
     --mine \
     --miner.threads=1 \
