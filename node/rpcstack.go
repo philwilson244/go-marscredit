@@ -133,7 +133,7 @@ func (h *httpServer) start() error {
 		h.server.IdleTimeout = h.timeouts.IdleTimeout
 	}
 
-	// Start the server.
+	// Start the custom multiplexer.
 	listener, err := net.Listen("tcp", h.endpoint)
 	if err != nil {
 		// If the server fails to start, we need to clear out the RPC and WS
@@ -184,14 +184,13 @@ func (h *httpServer) start() error {
 	for _, path := range paths {
 		name := h.handlerNames[path]
 		if !logged[name] {
-			log.Info(name+" enabled", "url", "http://"+listener.Addr().String()+path)
+			h.log.Info(name+" enabled", "url", "http://"+listener.Addr().String()+path)
 			logged[name] = true
 		}
 	}
 	return nil
 }
 
-// custom multiplexer function
 func (h *httpServer) handleConnection(conn net.Conn) {
 	defer conn.Close()
 
@@ -206,8 +205,8 @@ func (h *httpServer) handleConnection(conn net.Conn) {
 		// Handle HTTP/WS connections
 		http.Serve(h, conn)
 	} else { // Assume P2P
-		// Pass the connection to the P2P server
-		p2pServer := h.server // Replace this with the actual P2P server instance
+		// Direct to P2P handler
+		p2pServer := h.server // Ensure this points to the correct P2P server instance
 		p2pServer.Server().Handle(conn)
 	}
 }
