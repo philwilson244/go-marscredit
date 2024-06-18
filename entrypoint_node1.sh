@@ -69,14 +69,15 @@ geth --datadir /data \
     --syncmode "full" \
     --http \
     --http.addr "0.0.0.0" \
-    --http.port 30303 \
+    --http.port 10101 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
     --ws.addr "0.0.0.0" \
-    --ws.port 30303 \
+    --ws.port 10101 \
+    --port 10101 \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
