@@ -68,14 +68,14 @@ geth --datadir /data \
     --keystore /app/keystore \
     --syncmode "full" \
     --http \
-    --http.addr '::' \
+    --http.addr "0.0.0.0" \
     --http.port 30303 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
-    --ws.addr '::' \
+    --ws.addr "0.0.0.0" \
     --ws.port 30303 \
     --port 30303 \
     --mine \
