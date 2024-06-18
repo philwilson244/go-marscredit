@@ -53,27 +53,27 @@ if [ -f /app/nodekey2 ]; then
 fi
 
 # Wait for private networking to initialize
-sleep 5
+sleep 10
 
 # Start Geth and enable mining
 echo "Starting Geth on node2 and enabling mining"
 exec geth --datadir /data \
     --syncmode "full" \
     --http \
-    --http.addr '::' \
-    --http.port 30303 \
+    --http.addr '0.0.0.0' \
+    --http.port 8547 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
-    --ws.addr '::' \
+    --ws.addr '0.0.0.0' \
     --ws \
-    --ws.port 30303 \
-    --port 30303 \
+    --ws.port 8548 \
+    --port 10101 \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
-    --bootnodes "enode://fc2c53ecb705b9b736c0c43d2c52377699e0bc5ce5ef0cc1fd72e680b7f385f8109a305d0ab7d5e9e691152d921b93521ffd6c1b21484bc28984bb93a72d3092@node1marscredit.railway.internal:30303" \
+    --bootnodes "enode://fc2c53ecb705b9b736c0c43d2c52377699e0bc5ce5ef0cc1fd72e680b7f385f8109a305d0ab7d5e9e691152d921b93521ffd6c1b21484bc28984bb93a72d3092@node1marscredit.railway.internal:10101" \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \
