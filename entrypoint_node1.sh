@@ -54,13 +54,16 @@ else
     mkdir -p /data/geth/chaindata
 fi
 
-# Initialize Geth with the genesis file (only needed for first run)
-if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
-    echo "Initializing Geth with genesis file"
-    geth init /app/genesis.json --datadir /data
-else
-    echo "chaindata directory exists and is not empty"
-fi
+# # Initialize Geth with the genesis file (only needed for first run)
+# if [ ! -f "/data/geth/chaindata/CURRENT" ]; then
+#     echo "Initializing Geth with genesis file"
+#     geth init /app/genesis.json --datadir /data
+# else
+#     echo "chaindata directory exists and is not empty"
+# fi
+
+echo "Initializing Geth with genesis file"
+geth init /app/genesis.json --datadir /data
 
 # Start Geth and enable mining
 echo "Starting Geth and enabling mining"
