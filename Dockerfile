@@ -44,7 +44,7 @@ RUN chmod +x /app/entrypoint_node1.sh
 WORKDIR /app
 
 # Expose necessary ports
-EXPOSE 443 30303
+EXPOSE 443 30303 30304
 
 # Use the entrypoint script
 CMD ["/bin/sh", "-c", "sh /app/entrypoint_${NODE_ID}.sh"]
