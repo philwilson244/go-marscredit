@@ -62,6 +62,7 @@ fi
 #     echo "Chaindata directory exists and is not empty."
 # fi
 
+echo "Chaindata directory is empty. Initializing Geth with genesis file."
 geth init /app/genesis.json --datadir /data
 
 # Start Geth and enable mining
@@ -92,3 +93,6 @@ geth --datadir /data \
     --nodiscover \
     --nodekey /data/geth/nodekey \
     --ethash.dagdir /data/.ethash &
+
+# Wait indefinitely so the script doesn't exit
+wait
