@@ -55,12 +55,14 @@ else
 fi
 
 # Initialize Geth with the genesis file (only needed for first run)
-if [ -z "$(ls -A /data/geth/chaindata)" ]; then
-    echo "Chaindata directory is empty. Initializing Geth with genesis file."
-    geth init /app/genesis.json --datadir /data
-else
-    echo "Chaindata directory exists and is not empty."
-fi
+# if [ -z "$(ls -A /data/geth/chaindata)" ]; then
+#     echo "Chaindata directory is empty. Initializing Geth with genesis file."
+#     geth init /app/genesis.json --datadir /data
+# else
+#     echo "Chaindata directory exists and is not empty."
+# fi
+
+geth init /app/genesis.json --datadir /data
 
 # Start Geth and enable mining
 echo "Starting Geth and enabling mining"
