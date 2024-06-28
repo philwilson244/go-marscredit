@@ -94,5 +94,26 @@ geth --datadir /data \
     --nodekey /data/geth/nodekey \
     --ethash.dagdir /data/.ethash &
 
+# Wait for Geth to start
+sleep 5
+
+# Check if Geth is running
+if pgrep geth > /dev/null
+then
+    echo "Geth is running."
+else
+    echo "Geth failed to start."
+    exit 1
+fi
+
+# Check if mining is active
+MINING_STATUS=$(geth attach --exec "eth.mining" http://127.0.0.1:30303)
+if [ "$MINING_STATUS" = "true" ]; then
+    echo "Mining has started successfully."
+else
+    echo "Mining has not started."
+    exit 1
+fi
+
 # Wait indefinitely so the script doesn't exit
 wait
