@@ -111,8 +111,16 @@ MINING_STATUS=$(geth attach --exec "eth.mining" http://127.0.0.1:30303)
 if [ "$MINING_STATUS" = "true" ]; then
     echo "Mining has started successfully."
 else
-    echo "Mining has not started."
-    exit 1
+    echo "Mining has not started. Attempting to start mining manually."
+    geth attach --exec "miner.start()" http://127.0.0.1:30303
+    sleep 5
+    MINING_STATUS=$(geth attach --exec "eth.mining" http://127.0.0.1:30303)
+    if [ "$MINING_STATUS" = "true" ]; then
+        echo "Mining has started successfully after manual attempt."
+    else
+        echo "Mining still has not started."
+        exit 1
+    fi
 fi
 
 # Wait indefinitely so the script doesn't exit
