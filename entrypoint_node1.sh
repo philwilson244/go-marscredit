@@ -76,7 +76,7 @@ geth --datadir /data \
     --networkid 110110 \
     --ws \
     --ws.addr "0.0.0.0" \
-    --ws.port 30304 \
+    --ws.port 30303 \
     --port 443
     --mine \
     --miner.threads=1 \
@@ -90,6 +90,3 @@ geth --datadir /data \
     --nodiscover \
     --nodekey /data/geth/nodekey \
     --ethash.dagdir /data/.ethash &
-
-# Wait indefinitely so the script doesn't exit
-wait

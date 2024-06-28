@@ -2,4 +2,5 @@ services:
   go-marscredit:
     build: .
     ports:
-      - "443:10101"
+      - "443:443"
+      - "30303:30303"
