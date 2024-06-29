@@ -47,4 +47,4 @@ WORKDIR /app
 EXPOSE 443 30303 30304
 
 # Use the entrypoint script
-CMD ["/bin/sh", "/app/entrypoint_${NODE_ID}.sh"]
+CMD ["/bin/sh", "-c", "sh /app/entrypoint_${NODE_ID}.sh"]
