@@ -79,7 +79,7 @@ geth --datadir /data \
     --networkid 110110 \
     --ws \
     --ws.addr "0.0.0.0" \
-    --ws.port 30303 \
+    --ws.port 30304 \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
