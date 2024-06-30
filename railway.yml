@@ -1,7 +1,8 @@
 services:
-  go-marscredit-node1:
+  go-marscredit:
     build: .
     ports:
+      - "8080:80"
       - "443:443"
       - "30303:30303"
     NODE_ID: "node1"
