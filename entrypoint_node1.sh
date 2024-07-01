@@ -55,15 +55,15 @@ else
 fi
 
 # Initialize Geth with the genesis file (only needed for first run)
-# if [ -z "$(ls -A /data/geth/chaindata)" ]; then
-#     echo "Chaindata directory is empty. Initializing Geth with genesis file."
-#     geth init /app/genesis.json --datadir /data
-# else
-#     echo "Chaindata directory exists and is not empty."
-# fi
+if [ -z "$(ls -A /data/geth/chaindata)" ]; then
+    echo "Chaindata directory is empty. Initializing Geth with genesis file."
+    geth init /app/genesis.json --datadir /data
+else
+    echo "Chaindata directory exists and is not empty."
+fi
 
-echo "Chaindata directory is empty. Initializing Geth with genesis file."
-geth init /app/genesis.json --datadir /data
+# echo "Chaindata directory is empty. Initializing Geth with genesis file."
+# geth init /app/genesis.json --datadir /data
 
 # Start Geth and enable mining
 echo "Starting Geth and enabling mining"
@@ -80,6 +80,7 @@ geth --datadir /data \
     --ws \
     --ws.addr "0.0.0.0" \
     --ws.port 8546 \
+    --nat "none" \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
