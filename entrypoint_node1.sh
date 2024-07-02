@@ -70,6 +70,10 @@ echo "Starting Geth and enabling mining"
 geth --datadir /data \
     --keystore /app/keystore \
     --syncmode "full" \
+    --rpc \
+    --rpcport 8545 \
+    --rpcaddr "0.0.0.0" \
+    --rpcvhosts=* \
     --http \
     --http.addr "0.0.0.0" \
     --http.port 8545 \
