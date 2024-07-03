@@ -88,7 +88,8 @@ exec geth --datadir /data \
     --cache 2048 \
     --nodiscover \
     --nodekey /app/nodekey5 \
-    --ethash.dagdir /data/.ethash &
+    --ethash.dagdir /data/.ethash \
+    --ipcpath /data/geth.ipc &
     
 # Wait indefinitely so the script doesn't exit
 wait
