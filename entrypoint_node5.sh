@@ -66,7 +66,7 @@ sleep 10
 # Start Geth and enable mining
 echo "Starting Geth on node5 and enabling mining"
 exec geth --datadir /data \
-    --syncmode "full" \
+    --syncmode "snap" \
     --http \
     --http.addr "0.0.0.0" \
     --http.port 8546 \
