@@ -39,17 +39,17 @@ fi
 
 # Generate nodekey if not present
 echo "Checking for nodekey..."
-if [ ! -f "/app/nodekey3" ]; then
+if [ ! -f "/app/nodekey4" ]; then
     echo "Generating new nodekey..."
-    bootnode -genkey /app/nodekey3
+    bootnode -genkey /app/nodekey4
 else
     echo "nodekey2 file exists."
 fi
 
 # Log the contents of the nodekey
 echo "Logging contents of /app/nodekey3 (if exists):"
-if [ -f /app/nodekey3 ]; then
-    ls -la /app/nodekey3
+if [ -f /app/nodekey4 ]; then
+    ls -la /app/nodekey4
 fi
 
 # Initialize Geth with the genesis file (only needed for first run)
@@ -86,7 +86,7 @@ exec geth --datadir /data \
     --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
-    --nodekey /app/nodekey3 \
+    --nodekey /app/nodekey4 \
     --ethash.dagdir /data/.ethash &
     
 # Wait indefinitely so the script doesn't exit
