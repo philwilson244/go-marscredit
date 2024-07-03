@@ -67,16 +67,16 @@ sleep 10
 echo "Starting Geth on node5 and enabling mining"
 exec geth --datadir /data \
     --syncmode "snap" \
-    --http \
-    --http.addr "0.0.0.0" \
-    --http.port 8546 \
-    --http.api personal,eth,net,web3,miner,admin \
-    --http.vhosts=* \
-    --http.corsdomain=* \
-    --networkid 110110 \
-    --ws \
-    --ws.addr "0.0.0.0" \
-    --ws.port 8546 \
+    # --http \
+    # --http.addr "0.0.0.0" \
+    # --http.port 8546 \
+    # --http.api personal,eth,net,web3,miner,admin \
+    # --http.vhosts=* \
+    # --http.corsdomain=* \
+    # --networkid 110110 \
+    # --ws \
+    # --ws.addr "0.0.0.0" \
+    # --ws.port 8546 \
     --port 30303 \
     --nat "any" \
     --mine \
