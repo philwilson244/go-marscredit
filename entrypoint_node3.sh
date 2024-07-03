@@ -86,7 +86,7 @@ exec geth --datadir /data \
     --verbosity 6 \
     --maxpeers 50 \
     --cache 2048 \
-    --nodekey /app/nodekey3 \
+    --nodekey /data/nodekey3 \
     --ethash.dagdir /data/.ethash &
     
 # Wait indefinitely so the script doesn't exit
