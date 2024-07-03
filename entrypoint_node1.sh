@@ -76,6 +76,7 @@ geth --datadir /data \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
+    --http.timeout 120s \
     --networkid 110110 \
     --ws \
     --ws.addr "0.0.0.0" \
