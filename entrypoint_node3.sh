@@ -64,7 +64,7 @@ fi
 sleep 10
 
 # Start Geth and enable mining
-echo "Starting Geth on node4 and enabling mining"
+echo "Starting Geth on node3 and enabling mining"
 exec geth --datadir /data \
     --syncmode "full" \
     --http \
