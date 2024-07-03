@@ -61,19 +61,19 @@ exec geth --datadir /data \
     --syncmode "full" \
     --http \
     --http.addr '0.0.0.0' \
-    --http.port 8547 \
+    --http.port 8545 \
     --http.api personal,eth,net,web3,miner,admin \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws.addr '0.0.0.0' \
     --ws \
-    --ws.port 8548 \
-    --port 30303 \
+    --ws.port 8546 \
+    --nat "none" \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
-    --bootnodes "enode://bf93a274569cd009e4172c1a41b8bde1fb8d8e7cff1e5130707a0cf5be4ce0fc673c8a138ecb7705025ea4069da8c1d4b7ffc66e8666f7936aa432ce57693353@node1.marscredit.xyz:8545" \
+    --bootnodes "enode://bf93a274569cd009e4172c1a41b8bde1fb8d8e7cff1e5130707a0cf5be4ce0fc673c8a138ecb7705025ea4069da8c1d4b7ffc66e8666f7936aa432ce57693353@roundhouse.proxy.rlwy.net:23151" \
     --allow-insecure-unlock \
     --verbosity 6 \
     --maxpeers 50 \

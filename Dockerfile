@@ -32,13 +32,13 @@ COPY genesis.json /app/genesis.json
 COPY nodekey /data/geth/nodekey
 COPY nodekey2 /app/nodekey2
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
-# COPY entrypoint_node2.sh /app/entrypoint_node2.sh
+COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 COPY keystore/* /app/keystore
 COPY passwordfile /app/passwordfile
 
 # Make the script executable
 RUN chmod +x /app/entrypoint_node1.sh
-# RUN chmod +x /app/entrypoint_node2.sh
+RUN chmod +x /app/entrypoint_node2.sh
 
 # Create app directory
 WORKDIR /app
