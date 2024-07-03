@@ -43,7 +43,7 @@ if [ ! -f "/app/nodekey3" ]; then
     echo "Generating new nodekey..."
     bootnode -genkey /app/nodekey3
 else
-    echo "nodekey2 file exists."
+    echo "nodekey3 file exists."
 fi
 
 # Log the contents of the nodekey
