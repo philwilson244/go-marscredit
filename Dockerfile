@@ -31,10 +31,12 @@ RUN mkdir -p /data/geth/ethash && mkdir -p /data/.ethash && mkdir -p /data/geth/
 COPY genesis.json /app/genesis.json
 COPY nodekey /data/geth/nodekey
 COPY nodekey2 /app/nodekey2
-COPY nodekey2 /app/nodekey3
+COPY nodekey3 /app/nodekey3
+COPY nodekey4 /app/nodekey4
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 COPY entrypoint_node3.sh /app/entrypoint_node3.sh
+COPY entrypoint_node4.sh /app/entrypoint_node4.sh
 COPY keystore/* /app/keystore
 COPY passwordfile /app/passwordfile
 
@@ -42,6 +44,7 @@ COPY passwordfile /app/passwordfile
 RUN chmod +x /app/entrypoint_node1.sh
 RUN chmod +x /app/entrypoint_node2.sh
 RUN chmod +x /app/entrypoint_node3.sh
+RUN chmod +x /app/entrypoint_node4.sh
 
 # Create app directory
 WORKDIR /app
