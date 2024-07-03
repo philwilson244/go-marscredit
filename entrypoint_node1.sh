@@ -89,7 +89,7 @@ geth --datadir /data \
     --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
-    --maxpeers 2 \
+    --maxpeers 50 \
     --cache 2048 \
     --nodiscover \
     --nodekey /data/geth/nodekey \
