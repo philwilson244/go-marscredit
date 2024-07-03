@@ -91,6 +91,7 @@ geth --datadir /data \
     --verbosity 6 \
     --maxpeers 2 \
     --cache 2048 \
+    --nodiscover \
     --nodekey /data/geth/nodekey \
     --ethash.dagdir /data/.ethash &
 
