@@ -78,7 +78,7 @@ exec geth --datadir /data \
     --ws.addr 0.0.0.0 \
     --ws.port 8546 \
     --port 30304 \
-    --nat "any" \
+    --nat "none" \
     --mine \
     --miner.threads=1 \
     --miner.etherbase 0xD21602919e81e32A456195e9cE34215Af504535A \
