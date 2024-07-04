@@ -69,7 +69,7 @@ exec geth --datadir /data \
     --syncmode "full" \
     --http \
     --http.addr 0.0.0.0 \
-    --http.port 8545 \
+    --http.port 8546 \
     --http.api personal,eth,net,web3,miner \
     --http.vhosts=* \
     --http.corsdomain=* \
