@@ -77,7 +77,6 @@ exec geth --datadir /data \
     --ws \
     --ws.addr 0.0.0.0 \
     --ws.port 8546 \
-    --port 30304 \
     --nat "any" \
     --mine \
     --miner.threads=1 \
