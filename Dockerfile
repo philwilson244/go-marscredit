@@ -33,12 +33,12 @@ COPY nodekey /data/geth/nodekey
 COPY nodekey2 /app/nodekey2
 COPY nodekey3 /app/nodekey3
 COPY nodekey4 /app/nodekey4
-COPY nodekey5 /app/nodekey5
+COPY nodekey99 /app/nodekey99
 COPY entrypoint_node1.sh /app/entrypoint_node1.sh
 COPY entrypoint_node2.sh /app/entrypoint_node2.sh
 COPY entrypoint_node3.sh /app/entrypoint_node3.sh
 COPY entrypoint_node4.sh /app/entrypoint_node4.sh
-COPY entrypoint_node5.sh /app/entrypoint_node5.sh
+COPY entrypoint_node99.sh /app/entrypoint_node99.sh
 COPY keystore/* /app/keystore
 COPY passwordfile /app/passwordfile
 
@@ -47,7 +47,7 @@ RUN chmod +x /app/entrypoint_node1.sh
 RUN chmod +x /app/entrypoint_node2.sh
 RUN chmod +x /app/entrypoint_node3.sh
 RUN chmod +x /app/entrypoint_node4.sh
-RUN chmod +x /app/entrypoint_node5.sh
+RUN chmod +x /app/entrypoint_node99.sh
 
 # Create app directory
 WORKDIR /app
