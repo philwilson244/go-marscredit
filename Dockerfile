@@ -52,7 +52,7 @@ RUN chmod +x /app/entrypoint_node99.sh
 # Create app directory
 WORKDIR /app
 
-EXPOSE 443 8545 8546 30303 30304 30305
+EXPOSE 443 8545 8546 30303 30304 30305 30905
 
 # Use the entrypoint script
 CMD ["/bin/sh", "-c", "/app/entrypoint_${NODE_ID}.sh"]
