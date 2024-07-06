@@ -53,12 +53,14 @@ if [ -f /app/nodekey99 ]; then
 fi
 
 # Initialize Geth with the genesis file (only needed for first run)
-if [ -z "$(ls -A /data/geth/chaindata)" ]; then
-    echo "Chaindata directory is empty. Initializing Geth with genesis file."
-    geth init /app/genesis.json --datadir /data
-else
-    echo "Chaindata directory exists and is not empty."
-fi
+# if [ -z "$(ls -A /data/geth/chaindata)" ]; then
+#     echo "Chaindata directory is empty. Initializing Geth with genesis file."
+#     geth init /app/genesis.json --datadir /data
+# else
+#     echo "Chaindata directory exists and is not empty."
+# fi
+
+echo "Chaindata directory is empty. Initializing Geth with genesis file."
 
 # Wait for private networking to initialize
 sleep 10
