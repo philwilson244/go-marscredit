@@ -70,13 +70,14 @@ exec geth --datadir /data \
     --http \
     --http.addr 0.0.0.0 \
     --http.port 8546 \
-    --http.api personal,eth,net,web3,miner \
+    --http.api personal,eth,net,web3 \
     --http.vhosts=* \
     --http.corsdomain=* \
     --networkid 110110 \
     --ws \
     --ws.addr 0.0.0.0 \
     --ws.port 8546 \
+    --port 30304 \
     --nat "none" \
     --mine \
     --miner.threads=1 \
