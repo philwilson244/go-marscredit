@@ -60,7 +60,7 @@ fi
 #     echo "Chaindata directory exists and is not empty."
 # fi
 
-echo "Chaindata directory is empty. Initializing Geth with genesis file."
+geth init /app/genesis.json --datadir /data
 
 # Wait for private networking to initialize
 sleep 10
