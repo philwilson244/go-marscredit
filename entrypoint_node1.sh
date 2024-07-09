@@ -86,6 +86,7 @@ geth --datadir /data \
     --miner.threads=1 \
     --miner.etherbase 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
     --unlock 0xc1133A2B8E92a747eBF2A937bE3D79c29231f407 \
+    --bootnodes="enode://ca3639067a580a0f1db7412aeeef6d5d5e93606ed7f236a5343fe0d1115fb8c2bea2a22fa86e9794b544f886a4cb0de1afcbccf60960802bf00d81dab9553ec9@monorail.proxy.rlwy.net:26254,enode://7f2ee75a1c112735aaa43de1e5a6c4d7e07d03a5352b5782ed8e0c7cc046a8c8839ad093b09649e0b4a6ed8900211fb4438765c99d07bb00006ef080a1aa9ab6@viaduct.proxy.rlwy.net:30270,enode://98710174f4798dae1931e417944ac7a7fb3268d38ef8d3941c8fcc44fe178b118003d8b3d61d85af39c561235a1708f8dd61f8ba47df4c4a6b9156e272af2cfc@monorail.proxy.rlwy.net:29138" \
     --password /app/passwordfile \
     --allow-insecure-unlock \
     --verbosity 6 \
